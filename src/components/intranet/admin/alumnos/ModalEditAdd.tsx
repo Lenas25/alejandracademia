@@ -39,7 +39,7 @@ function ModalEditAdd({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateUser>({
+  } = useForm<User>({
     defaultValues: selectedUser
       ? {
           name: selectedUser.name,
