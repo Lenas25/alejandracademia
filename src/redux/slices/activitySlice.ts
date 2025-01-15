@@ -1,10 +1,5 @@
 
-import rutas from "@/utils/endpoints";
-import { CreateUser, User } from "@/types/user";
 import { createSlice } from "@reduxjs/toolkit";
-import { createUser, fetchUsers } from "../service/userService";
-import { deleteUser } from "../service/userService";
-import { updateUser } from "../service/userService";
 import { fetchActivity } from "../service/activityService";
 import { Activity } from "@/types/activity";
 

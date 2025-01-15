@@ -1,6 +1,5 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { Course } from "@/types/course";
 import { fetchGrade, gradeByEnrollment, updateGrade } from "../service/gradeService";
 import { Grade, GradeUsers } from "@/types/grade";
 

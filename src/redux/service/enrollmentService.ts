@@ -59,7 +59,7 @@ export const fetchEnrollmentByUser = createAsyncThunk(
 
 export const updateEnrollment = createAsyncThunk(
     'enrollments/updateEnrollment',
-    async ({ courseId, data }: { courseId: number | undefined, data: CreateEnrollment }, { dispatch, rejectWithValue }) => {
+    async ({ courseId, data }: { courseId: number | undefined, data: CreateEnrollment }, { dispatch }) => {
       try {
         const response = await enrollmentAPI.patch(`/${courseId}/`, data, {
           headers: {
@@ -79,7 +79,7 @@ export const updateEnrollment = createAsyncThunk(
 
 export const finishEnrollment = createAsyncThunk(
   'enrollments/finishEnrollment',
-  async ({ courseId }: { courseId: number | undefined }, { dispatch, rejectWithValue }) => {
+  async ({ courseId }: { courseId: number | undefined }, { dispatch }) => {
     try {
       const response = await enrollmentAPI.patch(`/finish/${courseId}`, {}, {
         headers: {

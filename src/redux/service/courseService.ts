@@ -1,5 +1,4 @@
 import rutas from "@/utils/endpoints";
-import { Activity } from "@/types/activity";
 import { Course, CreateCourse } from "@/types/course";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -33,7 +32,7 @@ export const fetchCourses = createAsyncThunk(
 
 export const createCourse = createAsyncThunk(
     'courses/createCourse',
-    async (data: CreateCourse , { dispatch, rejectWithValue }) => {
+    async (data: CreateCourse , { dispatch }) => {
       try {
         const response = await coursesAPI.post('/', data, {
           headers: {
@@ -53,9 +52,9 @@ export const createCourse = createAsyncThunk(
 
 export const updateCourse = createAsyncThunk(
     'courses/updateCourse',
-    async ({ courseId, data }: { courseId: number | undefined, data: Course }, { dispatch, rejectWithValue }) => {
+    async ({ courseId, data }: { courseId: number | undefined, data: Course }, { dispatch }) => {
       try {
-        const {createdAt, updatedAt, id, ...rest} = data
+        const { ...rest } = data
         const response = await coursesAPI.patch(`${courseId}/`, rest, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -74,7 +73,7 @@ export const updateCourse = createAsyncThunk(
 
 export const deleteCourse = createAsyncThunk(
     'courses/deleteCourse',
-    async (courseId: number, { dispatch, rejectWithValue }) => {
+    async (courseId: number, { dispatch }) => {
       try {
         const response = await coursesAPI.delete(`${courseId}/`, {
           headers: {

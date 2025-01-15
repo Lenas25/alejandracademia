@@ -1,6 +1,4 @@
 import rutas from "@/utils/endpoints";
-import { Activity } from "@/types/activity";
-import { Course, CreateCourse } from "@/types/course";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 

@@ -54,11 +54,6 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
     defaultValues,
   });
 
-  const { fields } = useFieldArray({
-    control,
-    name: "grades",
-  });
-
   useEffect(() => {
     defaultValues.grades.forEach((gr, index) => {
       setValue(`grades.${index}.grade`, Number(gr.grade));
@@ -105,7 +100,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
               <div key={gr.id_enrollment}>
                 <div className="flex flex-row justify-between">
                   <p className="flex gap-2 items-center md:w-full">
-                    {gr.enrollment.user?.id}
+                    {gr.enrollment.user.id}
                     <IconArrowRight />
                     {gr.enrollment.user.name} {gr.enrollment.user.lastName}
                   </p>

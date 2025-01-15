@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { CreateUser, UpdateUser, User } from "@/types/user";
+import { CreateUser, User } from "@/types/user";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -31,7 +31,7 @@ export const fetchUsers = createAsyncThunk(
 
 export const createUser = createAsyncThunk(
   'users/createUser',
-  async (data: CreateUser, { dispatch, rejectWithValue }) => {
+  async (data: CreateUser, { dispatch }) => {
     try {
       const response = await usersAPI.post('/', data, {
         headers: {
@@ -51,9 +51,9 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
   'users/updateUser',
-  async ({ userId, data }: { userId: number | undefined, data: User }, { dispatch, rejectWithValue }) => {
+  async ({ userId, data }: { userId: number | undefined, data: User }, { dispatch }) => {
     try {
-      const { createdAt, updatedAt, id, ...rest } = data
+      const { ...rest } = data
       const response = await usersAPI.patch(`${userId}/`, rest, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -72,7 +72,7 @@ export const updateUser = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   'users/deleteUser',
-  async (userId: number, { dispatch, rejectWithValue }) => {
+  async (userId: number, { dispatch }) => {
     try {
       const response = await usersAPI.delete(`${userId}/`, {
         headers: {

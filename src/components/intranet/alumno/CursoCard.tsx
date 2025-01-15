@@ -3,7 +3,6 @@
 import { fetchEnrollmentByUser } from "@/redux/service/enrollmentService";
 import { setEnrollmentsUser } from "@/redux/slices/enrollmentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { Course } from "@/types/course";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";

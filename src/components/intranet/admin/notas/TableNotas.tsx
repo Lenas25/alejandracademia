@@ -8,7 +8,6 @@ import { fetchCourses } from "@/redux/service/courseService";
 import RowActivities from "./RowActivities";
 import RowStudents from "./RowStudents";
 import { Activity } from "@/types/activity";
-import Image from "next/image";
 import RowCursosHead from "../../RowCursosHead";
 import { fetchActivity } from "@/redux/service/activityService";
 
