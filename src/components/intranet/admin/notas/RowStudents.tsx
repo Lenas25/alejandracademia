@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
 import { Course } from "@/types/course";
 import { Enrollment } from "@/types/enrollment";
-import { Grade, GradeReceive } from "@/types/grade";
+import { GradeReceive } from "@/types/grade";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
