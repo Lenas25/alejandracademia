@@ -5,6 +5,7 @@ import { fetchGrade, updateGrade } from "@/redux/service/gradeService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
 import { Course } from "@/types/course";
+import { Enrollment } from "@/types/enrollment";
 import { Grade, GradeReceive } from "@/types/grade";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -27,7 +28,9 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
   useEffect(() => {
     if (selectedCourse && selectedActivity) {
       dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
-      dispatch(fetchGrade(selectedActivity.id));
+      if (selectedActivity?.id !== undefined) {
+        dispatch(fetchGrade(selectedActivity.id));
+      }
     }
   }, [selectedCourse, selectedActivity, dispatch]);
 
@@ -42,8 +45,6 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
       };
     }),
   };
-
-  console.log(defaultValues.grades);
   
   const {
     register,
@@ -71,10 +72,10 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
     }
   }, [message]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: { grades: { id_activity: number; id_enrollment: number; grade: number; enrollment: Enrollment; }[] }) => {
     const dataSend = {
       id_activity: selectedActivity?.id ?? 0,
-      grades: data.grades.map((gr: Grade) => ({
+      grades: data.grades.map((gr: {id_enrollment:number; grade:number}) => ({
         id_enrollment: Number(gr.id_enrollment) || 0,
         grade: Number(gr.grade) || 0,
       })),
@@ -100,9 +101,9 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
               <div key={gr.id_enrollment}>
                 <div className="flex flex-row justify-between">
                   <p className="flex gap-2 items-center md:w-full">
-                    {gr.enrollment.user.id}
+                    {gr.enrollment.user[0].id}
                     <IconArrowRight />
-                    {gr.enrollment.user.name} {gr.enrollment.user.lastName}
+                    {gr.enrollment.user[0].name} {gr.enrollment.user[0].lastName}
                   </p>
                   <input
                     defaultValue={gr.id_enrollment}
