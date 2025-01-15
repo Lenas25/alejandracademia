@@ -9,7 +9,7 @@ import { Grade, GradeReceive } from "@/types/grade";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 interface RowStudentsProps {
   selectedCourse: Course | null;
@@ -48,7 +48,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
   const {
     register,
     handleSubmit,
-    control, setValue,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues,
