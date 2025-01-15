@@ -1,4 +1,4 @@
-import { CreateUser, User } from "@/types/user";
+import { User } from "@/types/user";
 import { IconTrash } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
 import ModalEditAdd from "./ModalEditAdd";
