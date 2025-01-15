@@ -10,7 +10,6 @@ interface DragAndDropProps {
   enrollments : User[];
   users : User[];
   onEnrollmentChange : (newEnrollment: User[]) => void;
-  onUsersChange : (newUsers: User[]) => void;
 }
 
 function DragAndDrop({ enrollments, users, onEnrollmentChange }: DragAndDropProps) {
