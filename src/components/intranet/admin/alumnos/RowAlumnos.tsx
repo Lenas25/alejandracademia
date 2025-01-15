@@ -8,7 +8,7 @@ import { deleteUser } from "@/redux/service/userService";
 interface RowAlumnosProps {
   user: User;
   handleRadioChange: (user: User) => void;
-  selectedUser: CreateUser | null;
+  selectedUser: User | null;
   setMessage: (message: string) => void;
   isOpenModal: { active: boolean; type: string };
   setOpenModal: (isOpen: { active: boolean; type: string }) => void;
