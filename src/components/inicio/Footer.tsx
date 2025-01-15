@@ -39,7 +39,7 @@ export function Footer() {
           </div>
           <div className="flex gap-10 justify-between xl:pb-10 2xl:w-[80%] 2xl:pl-16">
             <div className="flex flex-col gap-3">
-              <h4 className="text-xl lg:text-3xl xl:text-4xl">Horario -</h4>
+              <h4 className="text-xl lg:text-3xl xl:text-4xl">Horario de Atención-</h4>
               <div className="flex flex-col gap-4 lg:text-xl">
                 <div className="flex flex-col gap-1">
                   <p>Lunes a Viernes</p>
