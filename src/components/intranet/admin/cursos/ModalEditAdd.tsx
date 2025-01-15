@@ -1,10 +1,9 @@
 "use client";
 
-import { v4 as uuidv4 } from "uuid";
 import { IconBooks, IconEdit, IconPlus } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/redux/stores";
+import { useAppDispatch } from "@/redux/stores";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Course, CreateCourse } from "@/types/course";
 import { createCourse, updateCourse } from "@/redux/service/courseService";

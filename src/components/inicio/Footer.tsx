@@ -1,5 +1,4 @@
 import {
-  IconBrandFacebookFilled,
   IconBrandInstagram,
   IconBrandWhatsappFilled,
   IconChevronRight,

@@ -11,5 +11,4 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface CreateUser extends Omit<User,'createdAt' | 'updatedAt'> {
-}
+export type CreateUser = Omit<User,'createdAt' | 'updatedAt'>;

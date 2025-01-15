@@ -1,9 +1,7 @@
 
 
-import { globalStore } from "@/redux/stores";
 import "./globals.css";
 import { Lato } from "next/font/google";
-import { Provider } from "react-redux";
 import ProviderComp from "@/redux/provider";
 
 const lato = Lato({

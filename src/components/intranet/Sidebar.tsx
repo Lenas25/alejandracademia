@@ -1,24 +1,16 @@
 "use client";
 
 import {
-  IconBook,
-  IconClipboardList,
-  IconLayoutDashboardFilled,
-  IconLogout2,
-  IconStarsFilled,
-  IconUsersGroup,
+  IconLogout2
 } from "@tabler/icons-react";
 import Image from "next/image";
-import { useState } from "react";
 import { useRouter } from "next/navigation"; // Cambia esto a next/navigation
 import SidebarLink from "./SidebarLink";
 import { useAppSelector } from "@/redux/stores";
 import { Roles } from "@/types/roles";
 import {
   AdminRoutes,
-  AlumnoRouter,
   AlumnoRoutes,
-  TutorRouter,
   TutorRoutes,
 } from "@/utils/frontRouter";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import CourseInfo from "./CourseInfo";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
@@ -10,29 +10,11 @@ export function Courses() {
   const dispatch = useAppDispatch();
   const courses = useAppSelector((state) => state.course.courses);
   const [indexVisible, setIndexVisible] = useState(-1);
-  const [translate, setTranslate] = useState(0);
-  const [cardWidth, setCardWidth] = useState(200);
 
   useEffect(() => {
     dispatch(fetchCourses());
   }, [dispatch]);
 
-  useEffect(() => {
-    const updateCardWidth = () => {
-      if (window.innerWidth >= 1280) {
-        setCardWidth(450);
-      } else if (window.innerWidth >= 1024) {
-        setCardWidth(350);
-      } else {
-        setCardWidth(250);
-      }
-    };
-
-    window.addEventListener("resize", updateCardWidth);
-    updateCardWidth();
-
-    return () => window.removeEventListener("resize", updateCardWidth);
-  }, []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNextCourse = () => {

@@ -2,7 +2,7 @@ import { CreateUser, User } from "@/types/user";
 import { IconTrash } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
 import ModalEditAdd from "./ModalEditAdd";
-import { useAppDispatch, useAppSelector } from "@/redux/stores";
+import { useAppDispatch } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
 
 interface RowAlumnosProps {

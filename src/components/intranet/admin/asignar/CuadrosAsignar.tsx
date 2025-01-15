@@ -1,7 +1,6 @@
 "use client";
 
 import { Course } from "@/types/course";
-import { IconSearch } from "@tabler/icons-react";
 import DragAndDrop from "./DragAndDrop";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
@@ -33,7 +32,6 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   const userStatus = useAppSelector((state) => state.user.status);
 
   const [enrollmentResult, setEnrollmentResult] = useState<User[]>([]);
-  const [usersResult, setUsersResult] = useState<User[]>([]);
   const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
@@ -56,10 +54,6 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   const handleEnrollmentChange = (newEnrollment: User[]) => {
     setEnrollmentResult(newEnrollment);
   };
-
-  const handleUsersChange = (newUsers: User[]) => {
-    setUsersResult(newUsers);
-  }
 
   const handleSubmit = async () => {
     if (selectedCourse) {
@@ -85,16 +79,6 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
       <div className="flex flex-wrap gap-5 justify-center w-full md:justify-between">
         <h2 className="text-2xl font-semibold">Asignar Estudiantes</h2>
         <div className="h-[2px] bg-black w-full"/>
-        {/* <label className="input input-bordered flex items-center gap-2 bg-white text-base text-black">
-          <input
-            type="text"
-            className="grow"
-            placeholder="Buscar DNI"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <IconSearch />
-        </label> */}
       </div>
         {selectedCourse ? (
           <div className="flex gap-5 justify-between w-full flex-col">
@@ -121,7 +105,6 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
                 enrollments={enrollments}
                 users={users}
                 onEnrollmentChange={handleEnrollmentChange}
-                onUsersChange={handleUsersChange}
               />
             )}
           </div>

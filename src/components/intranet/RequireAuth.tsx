@@ -5,7 +5,6 @@ import { useAppDispatch } from "@/redux/stores";
 import { getMe, isTokenExpired } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { set } from "react-hook-form";
 
 function RequireAuth({
   children,

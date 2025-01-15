@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/redux/stores";
+import { useAppDispatch } from "@/redux/stores";
 import { createUser, updateUser } from "@/redux/service/userService";
 import { PayloadAction } from "@reduxjs/toolkit";
 

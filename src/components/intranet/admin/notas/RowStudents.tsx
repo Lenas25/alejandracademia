@@ -6,11 +6,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
 import { Course } from "@/types/course";
 import { Grade, GradeReceive } from "@/types/grade";
-import { NoteSave } from "@/types/notes";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 
 interface RowStudentsProps {
   selectedCourse: Course | null;
@@ -106,7 +105,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
               <div key={gr.id_enrollment}>
                 <div className="flex flex-row justify-between">
                   <p className="flex gap-2 items-center md:w-full">
-                    {gr.enrollment.user.id}
+                    {gr.enrollment.user?.id}
                     <IconArrowRight />
                     {gr.enrollment.user.name} {gr.enrollment.user.lastName}
                   </p>

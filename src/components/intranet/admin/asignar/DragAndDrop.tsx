@@ -13,7 +13,7 @@ interface DragAndDropProps {
   onUsersChange : (newUsers: User[]) => void;
 }
 
-function DragAndDrop({ enrollments, users, onEnrollmentChange, onUsersChange }: DragAndDropProps) {
+function DragAndDrop({ enrollments, users, onEnrollmentChange }: DragAndDropProps) {
   const [enrollmentBoard, enrollment] = useDragAndDrop<HTMLUListElement, User>(
     enrollments,
     {
@@ -27,10 +27,6 @@ function DragAndDrop({ enrollments, users, onEnrollmentChange, onUsersChange }: 
   useEffect(() => {
     onEnrollmentChange(enrollment);
   }, [enrollment, onEnrollmentChange]);
-
-  useEffect(() => {
-    onUsersChange(usersAll);
-  }, [usersAll,onUsersChange]);
 
   return (
     <div className="flex flex-col gap-5 justify-between w-full md:flex-row ">
