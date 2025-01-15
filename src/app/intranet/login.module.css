@@ -1,0 +1,93 @@
+
+.pink1{
+  position: absolute;
+  top: 4rem;
+  right: 3rem;
+  transition: all 0.5s ease-in-out;
+  animation: scale 1s ease-in-out forwards;
+}
+
+.pink2{
+  position: absolute;
+  top: -2rem;
+  right: 2rem;
+  transition: all 0.5s ease-in-out;
+  animation: scale 1s ease-in-out forwards;
+}
+
+.pink3{
+  position: absolute;
+  display: none;
+  transition: all 0.5s ease-in-out;
+  animation: scale 1s ease-in-out forwards;
+}
+
+.yellow1{
+  position: absolute;
+  top: 1rem;
+  right: 7rem;
+  transition: all 0.5s ease-in-out;
+  animation: scale 1s ease-in-out forwards;
+}
+
+.yellow2{
+  position: absolute;
+  top: 2rem;
+  right: -5rem;
+  transition: all 0.5s ease-in-out;
+  animation: scale 1s ease-in-out forwards;
+}
+
+.waves{
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+
+@keyframes scale {
+  0% {
+    transform: scale(0.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (min-width: 768px) {
+  .pink2{
+    top: 5rem;
+    right: 0;
+    left: 5rem;
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .yellow2{
+    top: 9rem;
+    right: 0;
+    left: -3rem;
+  }
+
+  .pink1{
+    top: 15rem;
+    left: 3rem;
+  }
+
+  .yellow1{
+    top: 5rem;
+    right: 5rem;
+    height: 10rem;
+    width: 10rem;
+  }
+
+  .pink3{
+    display: block;
+    top: 15rem;
+    right: 2rem;
+    height: 7rem;
+    width: 7rem;
+  }
+
+}
