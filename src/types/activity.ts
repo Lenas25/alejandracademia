@@ -1,5 +1,6 @@
 export interface Activity{
-  id : number;
+  id?: number;
   name : string;
   percentage: number;
+  new?: boolean;
 }
