@@ -54,7 +54,8 @@ export const updateCourse = createAsyncThunk(
     'courses/updateCourse',
     async ({ courseId, data }: { courseId: number | undefined, data: Course }, { dispatch }) => {
       try {
-        const { ...rest } = data
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, updatedAt, createdAt, ...rest } = data;
         const response = await coursesAPI.patch(`${courseId}/`, rest, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`

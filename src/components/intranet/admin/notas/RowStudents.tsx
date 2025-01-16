@@ -101,9 +101,9 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
               <div key={gr.id_enrollment}>
                 <div className="flex flex-row justify-between">
                   <p className="flex gap-2 items-center md:w-full">
-                    {gr.enrollment.user[0].id}
+                    {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].id : gr.enrollment.user.id}
                     <IconArrowRight />
-                    {gr.enrollment.user[0].name} {gr.enrollment.user[0].lastName}
+                    {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].name : gr.enrollment.user.name} {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].lastName : gr.enrollment.user.lastName}
                   </p>
                   <input
                     defaultValue={gr.id_enrollment}

@@ -15,7 +15,7 @@ export function Bienvenida() {
   const user = useAppSelector((state) => state.user.userLogin);
 
   return (
-    <div className="rounded-2xl shadow-lg w-full overflow-hidden relative bg-flamingo p-3 flex justify-center gap-6 flex-wrap items-center sm:gap-16 lg:order-1 lg:col-span-2 lg:flex-col lg:p-20 lg:gap-3">
+    <div className="rounded-2xl shadow-lg w-full overflow-hidden relative bg-flamingo p-3 flex justify-center gap-6 flex-wrap items-center sm:gap-16 lg:order-1 lg:col-span-2 lg:p-20 lg:gap-3 lg:justify-between">
       <div className="z-10 flex flex-col gap-2 mb-5 md:mb-0">
         <h3 className="font-semibold text-3xl lg:text-4xl xl:text-5xl">Hola de nuevo,</h3>
         <h1

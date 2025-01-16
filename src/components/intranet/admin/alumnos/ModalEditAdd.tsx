@@ -66,14 +66,13 @@ function ModalEditAdd({
           name: data.name,
           lastName: data.lastName,
           username: data.username,
+          role: Roles[data.role.toUpperCase() as keyof typeof Roles].toLowerCase(),
           ...(data.password && { password: data.password }),
-        };
-        console.log(updatedUser);
+        }
         resultAction = (await dispatch(
           updateUser({ userId: selectedUser?.id, data: updatedUser })
         )) as PayloadAction<{ message: string; data: User }>;
       } else {
-        data.id = Number(data.id);
         resultAction = (await dispatch(createUser(data))) as PayloadAction<{
           message: string;
           data: CreateUser;
@@ -221,7 +220,7 @@ function ModalEditAdd({
                 {...register("phone", {
                   required: "Este campo es requerido",
                   minLength: {
-                    value: 10,
+                    value: 5,
                     message: "Debe tener al menos 10 caracteres",
                   },
                 })}

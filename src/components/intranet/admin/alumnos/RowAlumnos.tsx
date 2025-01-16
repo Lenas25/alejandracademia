@@ -2,7 +2,7 @@ import { User } from "@/types/user";
 import { IconTrash } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
 import ModalEditAdd from "./ModalEditAdd";
-import { useAppDispatch } from "@/redux/stores";
+import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
 
 interface RowAlumnosProps {
@@ -25,6 +25,7 @@ function RowAlumnos({
   setSelectedUser,
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.user?.userLogin);
 
   let classRole = "bg-black";
   switch (user.role) {
@@ -40,9 +41,11 @@ function RowAlumnos({
   }
 
   const handleModalDelete = () => {
+   if(currentUser?.id !== user.id){
     (
       document.getElementById(`delete_${user.id}`) as HTMLDialogElement
     )?.showModal();
+   }
   };
 
   const handleDelete = async () => {

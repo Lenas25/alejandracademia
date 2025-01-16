@@ -38,7 +38,7 @@ export function CursoCard() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-5 flex justify-center flex-col lg:order-3 lg:justify-start lg:pt-[35px]">
+    <div className="bg-white rounded-2xl shadow-lg p-5 flex justify-center flex-col lg:order-3 lg:pt-[35px]">
       <div className="flex justify-between items-center">
         <h3 className="text-xl">Curso Actual</h3>
         <div className="flex gap-3">

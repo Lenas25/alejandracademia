@@ -54,8 +54,6 @@ function ModalEditAdd({
   };
 
   const onSubmit = async (data: Course) => {
-    console.log(data);
-    console.log(data.initialDate)
     try {
       let resultAction: PayloadAction<{
         message: string;

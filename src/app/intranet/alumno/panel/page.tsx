@@ -9,7 +9,7 @@ export const metadata = {
 
 function Panel() {
   return (
-    <div className='grid gap-5 lg:grid-cols-3 lg:grid-rows-2 lg:h-full'>
+    <div className='grid gap-5 lg:grid-cols-3 lg:grid-rows-2'>
       <Calendario/>
       <Bienvenida />
       <CursoCard />

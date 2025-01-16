@@ -1,7 +1,7 @@
 import { Activity } from "./activity";
 
 export interface Course {
-  id: number;
+  id?: number;
   name: string;
   description: string;
   imageUrl: string;
@@ -9,8 +9,8 @@ export interface Course {
   endDate: Date;
   duration: number;
   isActive?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   activities: Activity[];
 }
 

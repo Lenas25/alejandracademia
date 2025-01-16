@@ -6,13 +6,13 @@ export interface Enrollment{
     id: number;
     final_grade: number;
     enrollment_date: Date;
-    user: User[];
+    user: User[] | User;
     course: Course[];
     active: boolean;
 }
 
 export interface CreateEnrollment{
-    users: {id:number}[];
+    users: {id:string}[];
 }
 
 export interface SingleEnrollment{

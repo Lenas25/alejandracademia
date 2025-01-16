@@ -51,7 +51,7 @@ export const createUser = createAsyncThunk(
 
 export const updateUser = createAsyncThunk(
   'users/updateUser',
-  async ({ userId, data }: { userId: number | undefined, data: User }, { dispatch }) => {
+  async ({ userId, data }: { userId: string | undefined, data: User }, { dispatch }) => {
     try {
       const { ...rest } = data
       const response = await usersAPI.patch(`${userId}/`, rest, {
