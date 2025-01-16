@@ -42,7 +42,7 @@ function CourseInfo({
           />
           <IconSend className="absolute top-0 right-0" size={40} />
           </a>
-          <p className="overflow-hidden leading-4 line-clamp-6 text-ellipsis text-[12px] md:text-base md:leading-normal">{course.description}</p>
+          <p className="overflow-hidden leading-4 line-clamp-6 text-ellipsis text-[14px] md:text-base md:leading-normal">{course.description}</p>
           <div className="flex flex-col gap-1 text-left text-sm lg:text-xl">
           <p className="font-semibold">Dia Inicio: {course.initialDate.toString()}</p>
           <p className="font-semibold">Dia Fin: {course.endDate.toString()}</p>
