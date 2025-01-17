@@ -72,7 +72,7 @@ export const updateUser = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   'users/deleteUser',
-  async (userId: number, { dispatch }) => {
+  async (userId: string, { dispatch }) => {
     try {
       const response = await usersAPI.delete(`${userId}/`, {
         headers: {

@@ -6,7 +6,7 @@ function ModalDelete({
   info
 }: {
   handleDelete: () => void;
-  info: number;
+  info: string;
 }) {
   return (
     <dialog id={`delete_${info}`} className="modal">
