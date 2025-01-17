@@ -14,10 +14,11 @@ function CourseInfo({
   setIndexVisible: Dispatch<SetStateAction<number>>;
 }) {
   const handleClick = () => {
+    if (course.id === undefined) return;
     if (indexVisible === course.id) {
-      setIndexVisible(-1); // Cierra el curso si ya está abierto
+      setIndexVisible(-1);
     } else {
-      setIndexVisible(course.id); // Abre el curso
+      setIndexVisible(course.id);
     }
   };
 
