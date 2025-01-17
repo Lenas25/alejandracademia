@@ -74,7 +74,7 @@ export const updateCourse = createAsyncThunk(
 
 export const deleteCourse = createAsyncThunk(
     'courses/deleteCourse',
-    async (courseId: number, { dispatch }) => {
+    async (courseId: number | undefined, { dispatch }) => {
       try {
         const response = await coursesAPI.delete(`${courseId}/`, {
           headers: {
