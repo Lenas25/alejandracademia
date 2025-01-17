@@ -11,7 +11,7 @@ const activityAPI = axios.create({
 
 export const fetchActivity = createAsyncThunk(
   'activity/fetchActivity',
-  async (courseId: number, { rejectWithValue }) => {
+  async (courseId: number | undefined, { rejectWithValue }) => {
     try {
       const response = await activityAPI.get(`/${courseId}`, {
         headers: {
