@@ -37,7 +37,7 @@ export const fetchEnrollment = createAsyncThunk(
 // by user
 export const fetchEnrollmentByUser = createAsyncThunk(
   'enrollments/fetchEnrollmentByUser',
-  async ({ userId }: { userId: number | undefined }, { rejectWithValue }) => {
+  async ({ userId }: { userId: string | undefined }, { rejectWithValue }) => {
     try {
       if (userId) {
         const response = await enrollmentAPI.get(`/${userId}`, {
