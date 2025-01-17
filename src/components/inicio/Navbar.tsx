@@ -11,7 +11,7 @@ export function Navbar() {
         <Image src="/nombreLogo.png" alt="Logo" width={300} height={300} />
       </div>
       <div className="flex flex-wrap items-center gap-2 justify-center md:gap-4 xl:gap-10">
-        <a href="tel:+519254781623" className="font-semibold gap-2 flex justify-center items-center">
+        <a href="tel:+584247247939" className="font-semibold gap-2 flex justify-center items-center">
           <IconPhone className="w-full h-full p-2 rounded-full transition bg-flamingo color-white ease-in-out delay-150 hover:color-black hover:bg-transparent border-2 hover:border-black"/>
           <span className="hidden md:block lg:text-lg">+584247247939</span>
         </a>
