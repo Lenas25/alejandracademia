@@ -22,7 +22,7 @@ export function Footer() {
       <div className="flex flex-col-reverse md:flex-row md:bg-black md:justify-between lg:h-[400px] lg:gap-10 xl:h-[500px]">
         <div className="bg-black text-white py-5 px-6 flex md:flex-2 lg:flex-auto flex-col gap-5 md:pl-10 md:py-12 xl:gap-10 ">
           <div className="flex gap-3 flex-col 2xl:w-[80%] 2xl:pl-16">
-            <h4 className="text-xl lg:text-3xl xl:text-4xl">Ubicación -</h4>
+            <h4 className="text-xl lg:text-3xl xl:text-4xl">Ubicación</h4>
             <div className="flex gap-5 justify-between items-center">
               <div className="flex gap-2 items-center lg:text-xl">
                 <IconMap2 className="lg:size-8 xl:size-10" />
@@ -39,7 +39,7 @@ export function Footer() {
           </div>
           <div className="flex gap-10 justify-between xl:pb-10 2xl:w-[80%] 2xl:pl-16">
             <div className="flex flex-col gap-3">
-              <h4 className="text-xl lg:text-3xl xl:text-4xl">Horario de Atención -</h4>
+              <h4 className="text-xl lg:text-3xl xl:text-4xl">Horario de Atención</h4>
               <div className="flex flex-col gap-4 lg:text-xl">
                 <div className="flex flex-col gap-1">
                   <p>Lunes a Viernes</p>

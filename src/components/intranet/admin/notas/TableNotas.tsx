@@ -13,7 +13,7 @@ import { fetchActivity } from "@/redux/service/activityService";
 
 export function TableNotas() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses);
+  const courses = useAppSelector((state) => state.course.courses).filter(item => item.description !== "PROXIMAMENTE");
   const activities = useAppSelector((state) => state.activity.activities);
   const [translate, setTranslate] = useState(0);
   const [translate2, setTranslate2] = useState(0);

@@ -8,7 +8,7 @@ import RowCursosHead from "../../RowCursosHead";
 
 export function TableAsignar() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses);
+  const courses = useAppSelector((state) => state.course.courses).filter(item => item.description !== "PROXIMAMENTE");
   const [translate, setTranslate] = useState<number>(0);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const handleSelectCourse = (course: Course) => {
