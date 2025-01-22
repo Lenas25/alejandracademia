@@ -20,9 +20,9 @@ interface CuadrosAsignarProps {
 
 function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   const dispatch = useAppDispatch();
-  const enrollments = useAppSelector(
-    (state) => state.enrollment.enrollments
-  ).filter(en => en.active).flatMap((enrollment) => enrollment.user);
+  const enrollments = useAppSelector((state) => state.enrollment.enrollments)
+    .filter((en) => en.active)
+    .flatMap((enrollment) => enrollment.user);
   const users = useAppSelector((state) => state.user.users)
     .filter((user) => user.role === Roles.ALUMNO)
     .filter(
@@ -78,43 +78,51 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
     <div className="flex flex-col gap-5 overflow-y-auto bg-white rounded-lg shadow relative p-6 md:p-10">
       <div className="flex flex-wrap gap-5 justify-center w-full md:justify-between">
         <h2 className="text-2xl font-semibold">Asignar Estudiantes</h2>
-        <div className="h-[2px] bg-black w-full"/>
+        <div className="h-[2px] bg-black w-full" />
       </div>
-        {selectedCourse ? (
-          <div className="flex gap-5 justify-between w-full flex-col">
-            <div className="flex gap-5 justify-between w-full items-center">
-              <h3 className="text-xl font-semibold break-words w-[150px] md:w-full">
-                {selectedCourse.name}
-              </h3>
-              <button
-                type="button"
-                className="btn btn-ghost text-base h-auto bg-yellow"
-                onClick={handleSubmit}>
-                Guardar
-              </button>
-            </div>
-            {message && (
-              <div className="alert alert-danger text-white">
-                {message}
+      {selectedCourse ? (
+        <div className="flex gap-5 justify-between w-full flex-col">
+          {users.length > 0 ? (
+            <>
+              <div className="flex gap-5 justify-between w-full items-center">
+                <h3 className="text-xl font-semibold break-words w-[150px] md:w-full">
+                  {selectedCourse.name}
+                </h3>
+                <button
+                  type="button"
+                  className="btn btn-ghost text-base h-auto bg-yellow"
+                  onClick={handleSubmit}>
+                  Guardar
+                </button>
               </div>
-            )}
-            {enrollmentStatus === "loading" || userStatus === "loading" ? (
-              <p>Cargando...</p>
-            ) : (
-              <DragAndDrop
-                enrollments={enrollments}
-                users={users}
-                onEnrollmentChange={handleEnrollmentChange}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex justify-center items-center">
-            <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
+              {message && (
+                <div className="alert alert-danger text-white">{message}</div>
+              )}
+              {enrollmentStatus === "loading" || userStatus === "loading" ? (
+                <p>Cargando...</p>
+              ) : (
+                <DragAndDrop
+                  enrollments={enrollments}
+                  users={users}
+                  onEnrollmentChange={handleEnrollmentChange}
+                />
+              )}
+            </>
+          ) : (
+            <div className="flex justify-center items-center">
+              <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
+                No hay estudiantes registrados
+              </span>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center">
+          <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
             Seleccione un curso para asignar estudiantes
           </span>
-          </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
