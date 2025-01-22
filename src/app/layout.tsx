@@ -23,7 +23,7 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" data-theme="dark">
       <body className={lato.className}>
         <ProviderComp>{children}</ProviderComp>
       </body>
