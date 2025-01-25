@@ -12,9 +12,6 @@ function TestimonialsInfo({
         &quot;
       </div>
       <div className="flex gap-4 items-center">
-        {/* <div>
-          <Image className="rounded-full size-[50px] object-cover 2xl:size-[70px]" src="/spa8.jpg" alt="spa8" width={500} height={500} />
-        </div> */}
         <span className="font-semibold text-xl 2xl:text-3xl">{testimonial.name}</span>
       </div>
       <div className="absolute top-2 right-2 z-0">

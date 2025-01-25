@@ -79,7 +79,7 @@ export function Footer() {
                 </p>
               </div>
               <div className="w-[50%]">
-                <Image src="/spa8.jpg" alt="spa8" width={500} height={500} 
+                <Image src="/spa8.webp" alt="spa8" width={500} height={500} 
               priority={false} />
               </div>
             </div>

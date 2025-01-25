@@ -59,7 +59,7 @@ export function CursoCard() {
       <div className="flex flex-col items-center gap-5">
         <div className="size-36 rounded-full mt-5 lg:size-48">
           <Image
-            src={courses[currentCourse]?.imageUrl || "/makeup.jpg"}
+            src={courses[currentCourse]?.imageUrl || "/makeup.webp"}
             alt={courses[currentCourse]?.name || "Curso"}
             width={200}
             height={200}
