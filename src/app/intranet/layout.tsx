@@ -1,7 +1,7 @@
 "use client";
 import { Roles } from "@/types/roles";
 import { getMe, isTokenExpired } from "@/utils/api";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Layout({
