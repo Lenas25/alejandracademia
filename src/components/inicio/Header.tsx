@@ -124,7 +124,7 @@ export function Header() {
         </div>
         <div className="flex gap-2 justify-center lg:flex-col lg:justify-start">
           {images.map((image, index) => (
-            <div
+            <button
               key={image.id}
               className={`h-5 w-5 rounded-full cursor-pointer lg:size-7 ${
                 image.id === selectedImagen.id ? "bg-darkpink" : "bg-grey"
