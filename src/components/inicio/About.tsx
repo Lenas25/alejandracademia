@@ -1,5 +1,11 @@
 import Image from "next/image";
 
+const icons = [
+  { src: "/maquilladora.png", alt: "maquilladora" },
+  { src: "/mascara.png", alt: "mascara" },
+  { src: "/tratamiento-capilar.png", alt: "tratamiento-capilar" },
+];
+
 export function About() {
   return (
     <section
@@ -7,10 +13,17 @@ export function About() {
       className="bg-flamingo py-10 px-3 flex gap-5 items-center flex-col-reverse md:px-14 md:py-12 md:flex-row md:gap-10 md:justify-between 2xl:px-32">
       <div className="relative hidden md:flex justify-center items-center lg:flex-1">
         <div className="absolute w-[270px] lg:w-[350px] xl:w-[450px]">
-          <Image src="/spa5.jpg" width={700} height={500} alt="spa3" className="rounded-t-[125px] h-[400px] object-cover lg:rounded-t-[160px] lg:h-[500px] xl:rounded-t-[200px]  xl:h-[700px]" />
+          <Image
+            src="/spa5.jpg"
+            width={700}
+            height={500}
+            alt="spa3"
+            className="rounded-t-[125px] h-[400px] object-cover lg:rounded-t-[160px] lg:h-[500px] xl:rounded-t-[200px]  xl:h-[700px]"
+          />
         </div>
         <div className="w-[300px] lg:w-auto">
-          <Image className="lg:h-[570px] xl:h-[750px]"
+          <Image
+            className="lg:h-[570px] xl:h-[750px]"
             src="/marcoAbout.svg"
             width={700}
             height={700}
@@ -39,59 +52,29 @@ export function About() {
           </p>
         </div>
         <div className="flex gap-5 justify-center">
-          <div className="relative flex justify-center items-center">
-            <div className="absolute w-[50%]">
-              <Image
-                src="/maquilladora.png"
-                width={200}
-                height={200}
-                alt="maquilladora"
-              />
-            </div>
-            <div className="w-[100px] lg:w-full">
-              <Image
-                src="/circleAbout.svg"
-                width={200}
-                height={200}
-                alt="circleAbout"
-              />
-            </div>
-          </div>
-          <div className="relative flex justify-center items-center">
-            <div className="absolute w-[50%]">
-              <Image
-                src="/mascara.png"
-                width={200}
-                height={200}
-                alt="mascara"
-              />
-            </div>
-            <div className="w-[100px] lg:w-full">
-              <Image
-                src="/circleAbout.svg"
-                width={200}
-                height={200}
-                alt="circleAbout"
-              />
-            </div>
-          </div>
-          <div className="relative flex justify-center items-center">
-            <div className="absolute w-[50%]">
-              <Image
-                src="/tratamiento-capilar.png"
-                width={200}
-                height={200}
-                alt="tratamiento-capilar"
-              />
-            </div>
-            <div className="w-[100px] lg:w-full">
-              <Image
-                src="/circleAbout.svg"
-                width={200}
-                height={200}
-                alt="circleAbout"
-              />
-            </div>
+          <div className="flex gap-5 justify-center">
+            {icons.map((icon, index) => (
+              <div
+                key={index}
+                className="relative flex justify-center items-center">
+                <div className="absolute w-[50%]">
+                  <Image
+                    src={icon.src}
+                    width={200}
+                    height={200}
+                    alt={icon.alt}
+                  />
+                </div>
+                <div className="w-[100px] lg:w-full">
+                  <Image
+                    src="/circleAbout.svg"
+                    width={200}
+                    height={200}
+                    alt="circleAbout"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

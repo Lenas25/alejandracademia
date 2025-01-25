@@ -30,6 +30,7 @@ export function Gallery() {
             className="w-full h-full object-cover"
             src="/spa1.jpg"
             alt="spa1"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
           />
@@ -39,6 +40,7 @@ export function Gallery() {
             className="w-full h-full object-cover"
             src="/spa7.webp"
             alt="spa7"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
           />
@@ -48,6 +50,7 @@ export function Gallery() {
             className="w-full h-full object-cover"
             src="/spa3.jpg"
             alt="spa3"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
           />
@@ -57,6 +60,7 @@ export function Gallery() {
             className="w-full h-full object-cover"
             src="/spa5.jpg"
             alt="spa5"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
           />
@@ -66,11 +70,11 @@ export function Gallery() {
             className="w-full h-full object-cover"
             src="/spa8.jpg"
             alt="spa8"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
           />
         </div>
-
         <a
           href="https://www.instagram.com/alejandraacademia?igsh=MXAzd2EycGt5a216Yg=="
           target="_blank"
@@ -81,9 +85,10 @@ export function Gallery() {
             className="w-full h-full object-cover z-0"
             src="/spa2.webp"
             alt="spa2"
+            sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
-            priority
+            loading="lazy"
           />
           <IconCircleDashedPlus className="absolute z-20 text-white size-[6rem]" />
         </a>

@@ -3,6 +3,7 @@
 import { Inspiration } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const inspiration = Inspiration({
   weight: ["400"],
@@ -34,6 +35,11 @@ const images = [
   },
 ];
 
+const fadeVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
+};
+
 export function Header() {
   const [selectedImagen, setSelectedImagen] = useState(images[0]);
   const [fade, setFade] = useState(true);
@@ -43,13 +49,15 @@ export function Header() {
       setFade(false);
       setTimeout(() => {
         setSelectedImagen((prevImage) => {
-          const currentIndex = images.findIndex(image => image.id === prevImage.id);
+          const currentIndex = images.findIndex(
+            (image) => image.id === prevImage.id
+          );
           const nextIndex = (currentIndex + 1) % images.length;
           return images[nextIndex];
         });
         setFade(true);
       }, 500);
-    }, 3000); 
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -79,15 +87,20 @@ export function Header() {
 
       <div className="flex gap-3 flex-col lg:flex-row 2xl:gap-16">
         <div className="flex justify-center relative">
-          <div className={`w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] 2xl:w-[700px] 2xl:h-[700px] transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+          <motion.div
+            className="w-[300px] h-[300px] lg:w-[500px] lg:h-[500px]"
+            initial="hidden"
+            animate={fade ? "visible" : "hidden"}
+            variants={fadeVariants}>
             <Image
-            className="rounded-full w-full h-full object-cover"
+              className="rounded-full w-full h-full object-cover"
               src={selectedImagen.src}
               alt={selectedImagen.alt}
               width={selectedImagen.width}
               height={selectedImagen.height}
+              priority
             />
-          </div>
+          </motion.div>
           <div className="absolute flex gap-2 top-[120px] -right-4 xl:top-[200px] xl:-right-6 2xl:top-[350px] 2xl:-right-[150px] xl:gap-5">
             <div className="w-[50px] h-[100px] xl:w-auto xl:h-auto">
               <Image
@@ -95,6 +108,7 @@ export function Header() {
                 alt="decoracionVector"
                 width={100}
                 height={150}
+                loading="eager"
               />
             </div>
             <div className="w-[50px] h-[100px] xl:w-auto xl:h-auto">
@@ -103,6 +117,7 @@ export function Header() {
                 alt="decoracionVector"
                 width={100}
                 height={150}
+                loading="eager"
               />
             </div>
           </div>
@@ -114,7 +129,9 @@ export function Header() {
               className={`h-5 w-5 rounded-full cursor-pointer lg:size-7 ${
                 image.id === selectedImagen.id ? "bg-darkpink" : "bg-grey"
               }`}
-              onClick={() => setSelectedImagen(images[index])} />
+              aria-label={`Seleccionar imagen ${index + 1}`}
+              onClick={() => setSelectedImagen(images[index])}
+            />
           ))}
         </div>
       </div>

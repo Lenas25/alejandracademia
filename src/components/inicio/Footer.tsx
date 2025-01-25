@@ -31,6 +31,7 @@ export function Footer() {
               <a
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Ver ubicación en Google Maps"
                 href="https://www.google.com/maps/place/Academia+Alejandra/@9.1422473,-71.0791512,15z/data=!4m2!3m1!1s0x0:0xe53fe5574a90da2b?sa=X&ved=1t:2428&hl=es&ictx=111"
                 className="p-2 border-2 border-transparent bg-flamingo text-black rounded-full transition ease-in-out delay-150 hover:border-white hover:text-white hover:bg-transparent">
                 <IconChevronRight className="lg:size-8 xl:size-10" />
@@ -53,11 +54,13 @@ export function Footer() {
             </div>
             <div className="flex flex-col gap-5 justify-end">
               <a
+                aria-label="Enviar mensaje por WhatsApp"
                 href="https://wa.me/584247247939?text=¡Hola!%20Estoy%20interesado/a%20en%20obtener%20más%20información%20sobre%20la%20Academia%20Alejandra.%20¿Podrías%20ayudarme%20con%20los%20detalles%3F%20Gracias%21"
                 className="p-2 text-black bg-white rounded-full transition ease-in-out delay-150 hover:text-white hover:bg-transparent">
                 <IconBrandWhatsappFilled className="lg:size-8 xl:size-10" />
               </a>
               <a
+                aria-label="Visitar perfil de Instagram"
                 href="https://www.instagram.com/alejandraacademia?igsh=MXAzd2EycGt5a216Yg=="
                 className="p-2 text-black bg-white rounded-full transition ease-in-out delay-150 hover:text-white hover:bg-transparent">
                 <IconBrandInstagram className="lg:size-8 xl:size-10" />
@@ -76,7 +79,8 @@ export function Footer() {
                 </p>
               </div>
               <div className="w-[50%]">
-                <Image src="/spa8.jpg" alt="spa8" width={500} height={500} />
+                <Image src="/spa8.jpg" alt="spa8" width={500} height={500} 
+              priority={false} />
               </div>
             </div>
           </div>
@@ -87,6 +91,8 @@ export function Footer() {
               alt="bubble"
               width={900}
               height={900}
+              loading="lazy"
+              priority={false}
             />
           </div>
         </div>

@@ -8,7 +8,7 @@ export function Navbar() {
     <nav className="flex items-center gap-3 justify-between py-6 border-b-grey border-b-2 mx-0 px-3 md:mx-3 md:px-5 xl:px-10">
       <Menu />
       <div className="w-[140px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-        <Image src="/nombreLogo.png" alt="Logo" width={300} height={300} />
+        <Image src="/nombreLogo.png" alt="Logo" width={300} height={300} priority />
       </div>
       <div className="flex flex-wrap items-center gap-2 justify-center md:gap-4 xl:gap-10">
         <a href="tel:+584247247939" className="font-semibold gap-2 flex justify-center items-center">
