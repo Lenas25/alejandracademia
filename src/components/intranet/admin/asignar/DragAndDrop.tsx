@@ -38,8 +38,14 @@ function DragAndDrop({ enrollments, users, onEnrollmentChange }: DragAndDropProp
       </ul>
       <ul ref={usersBoard} className="p-5 h-[250px] flex flex-col gap-2 overflow-y-auto md:w-full">
         {usersAll.map((us) => (
-          <li className="flex gap-2 w-full border-2 border-black rounded-lg p-2" key={us.id}>
-            {us.id} <IconArrowRight /> {us.name} {us.lastName}
+          <li className="flex gap-2 w-full border-2 border-black rounded-lg p-2 md:flex-col text-left" key={us.id}>
+            <span>
+              {us.id}
+            </span>
+            <IconArrowRight className="md:hidden" />
+            <span>
+            {us.name} {us.lastName}
+            </span>
           </li>
         ))}
       </ul>
