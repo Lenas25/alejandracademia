@@ -15,7 +15,7 @@ const images = [
   {
     id: 1,
     src: "/spa2.webp",
-    alt: "spa1",
+    alt: "spa2",
     width: 700,
     height: 700,
   },
@@ -99,7 +99,7 @@ export function Header() {
               alt={selectedImagen.alt}
               width={selectedImagen.width}
               height={selectedImagen.height}
-              priority={selectedImagen.id === 1}
+              priority={selectedImagen.id === 1}  
             />
           </motion.div>
           <div className="absolute flex gap-2 top-[120px] -right-4 xl:top-[200px] xl:-right-6 2xl:top-[350px] 2xl:-right-[150px] xl:gap-5">
