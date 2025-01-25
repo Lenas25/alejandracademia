@@ -25,6 +25,6 @@ export default function Layout({
   }, [router]);
 
   return(
-  { children }
+    <>{ children }</>
   );
 }
