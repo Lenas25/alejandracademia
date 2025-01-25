@@ -40,13 +40,13 @@ function RowActivities({
   return (
    <div className="overflow-hidden w-full">
      <div
-      className="flex gap-5 md:flex-wrap py-3 pr-5 md:flex-col md:h-[270px] transition-transform ease-in-out delay-150 md:max-w-[200px]"
+      className="flex gap-5 py-3 pr-5 md:flex-col md:h-[270px] transition-transform ease-in-out delay-150 md:max-w-[200px] overflow-auto"
       style={{ transform: `translateX(${translate2}px)` }}>
       {activities.map((ac) => (
         <button
           key={ac.id}
           type="button"
-          className={`btn btn-ghost text-base p-5 rounded-lg w-[200px] md:w-auto flex gap-3 justify-between h-auto text-black ${
+          className={`btn btn-ghost text-base p-5 rounded-lg w-[200px] md:w-auto flex gap-3 justify-between h-auto text-black flex-col ${
             selectedActivity?.id === ac.id
               ? "bg-white border-2 border-black"
               : "bg-yellow"
