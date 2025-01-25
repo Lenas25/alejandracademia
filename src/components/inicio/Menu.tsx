@@ -10,7 +10,7 @@ export function Menu() {
     <div>
       <button
         type="button"
-        area-label="Abrir menú"
+        aria-label="Abrir menú"
         onClick={() => setOpen(!open)}
         className="flex gap-2 items-center relative transition-transform duration-300">
           <IconMenu2 className="transform transition-transform duration-300 lg:size-8" />
@@ -24,7 +24,7 @@ export function Menu() {
           <li className="py-2 flex justify-end">
             <button
               type="button"
-              area-label="Cerrar menú"
+              aria-label="Cerrar menú"
               onClick={() => setOpen(!open)}
               className="transition-transform duration-300">
                 <IconX className="transform transition-transform duration-300 lg:size-8" />

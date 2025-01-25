@@ -14,7 +14,7 @@ export function About() {
       <div className="relative hidden md:flex justify-center items-center lg:flex-1">
         <div className="absolute w-[270px] lg:w-[350px] xl:w-[450px]">
           <Image
-            src="/spa5.jpg"
+            src="/spa5.webp"
             width={700}
             height={500}
             alt="spa5"
