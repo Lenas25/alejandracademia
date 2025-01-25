@@ -15,23 +15,17 @@ const images = [
   {
     id: 1,
     src: "/spa2.webp",
-    alt: "spa2",
-    width: 700,
-    height: 700,
+    alt: "spa2"
   },
   {
     id: 2,
     src: "/spa4.webp",
-    alt: "spa2",
-    width: 700,
-    height: 700,
+    alt: "spa2"
   },
   {
     id: 3,
     src: "/spa7.webp",
-    alt: "spa2",
-    width: 700,
-    height: 700,
+    alt: "spa2"
   },
 ];
 
@@ -97,8 +91,8 @@ export function Header() {
               className="rounded-full w-full h-full object-cover"
               src={selectedImagen.src}
               alt={selectedImagen.alt}
-              width={selectedImagen.width}
-              height={selectedImagen.height}
+              width={700}
+              height={700}
               priority={selectedImagen.id === 1}  
             />
           </motion.div>
