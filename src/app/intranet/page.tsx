@@ -3,7 +3,6 @@
 import { LoginForm } from "@/components";
 import Image from "next/image";
 import s from "./login.module.css";
-import { useEffect } from "react";
 
 export const metadata = {
   title: "Intranet | Alejandra Academia",
