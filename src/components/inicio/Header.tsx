@@ -15,17 +15,17 @@ const images = [
   {
     id: 1,
     src: "/spa2.webp",
-    alt: "spa2"
+    alt: "spa2",
   },
   {
     id: 2,
     src: "/spa4.webp",
-    alt: "spa2"
+    alt: "spa2",
   },
   {
     id: 3,
     src: "/spa7.webp",
-    alt: "spa2"
+    alt: "spa2",
   },
 ];
 
@@ -73,8 +73,8 @@ export function Header() {
         </div>
         <div className="flex items-center justify-center w-full">
           <a
-            href="https://wa.me/584247247939?text=¡Hola!%20Estoy%20interesado/a%20en%20obtener%20más%20información%20sobre%20la%20Academia%20Alejandra.%20¿Podrías%20ayudarme%20con%20los%20detalles%3F%20Gracias%21"
-            className="px-10 py-2 bg-black border-4 text-white transition delay-300 ease-in-out font-semibold hover:bg-transparent hover:text-black hover:border-black text-2xl 2xl:text-4xl xl:py-5">
+            href="https://wa.link/bmqlth"
+            className="px-10 py-2 bg-black outline-4 text-white transition delay-300 ease-in-out font-semibold hover:bg-transparent hover:text-black hover:outline-black text-2xl 2xl:text-4xl xl:py-5">
             ¡Inscríbete ahora!
           </a>
         </div>
@@ -93,7 +93,8 @@ export function Header() {
               alt={selectedImagen.alt}
               width={700}
               height={700}
-              priority 
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </motion.div>
           <div className="absolute flex gap-2 top-[120px] -right-4 xl:top-[200px] xl:-right-6 2xl:top-[350px] 2xl:-right-[150px] xl:gap-5">

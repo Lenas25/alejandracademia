@@ -17,8 +17,7 @@ export const metadata = {
     title: "Alejandra Academia | Formación en Estética y Belleza",
     description: "Alejandra Academia ofrece cursos en estética y belleza. Aprende con los mejores en el sector.",
     image: "logoSpa.svg",
-  },
-  viewport: "width=device-width, initial-scale=1",
+  }
 };
 
 
