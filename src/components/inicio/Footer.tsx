@@ -22,7 +22,7 @@ export function Footer() {
       <div className="flex flex-col-reverse md:flex-row md:bg-black md:justify-between lg:h-[400px] lg:gap-10 xl:h-[500px]">
         <div className="bg-black text-white py-5 px-6 flex md:flex-2 lg:flex-auto flex-col gap-5 md:pl-10 md:py-12 xl:gap-10 justify-center xl:justify-normal">
           <div className="flex gap-3 flex-col 2xl:w-[80%] 2xl:pl-16">
-            <h4 className="text-xl lg:text-3xl">Ubicación</h4>
+            <h3 className="text-xl lg:text-3xl">Ubicación</h3>
             <div className="flex gap-5 justify-between items-center">
               <div className="flex gap-2 items-center lg:text-xl">
                 <IconMap2 className="lg:size-8 xl:size-10" />
@@ -72,7 +72,7 @@ export function Footer() {
           <div className="absolute w-full h-full flex justify-end z-10 lg:bottom-10 xl:bottom-14 xl:left-0">
             <div className="flex flex-col justify-center w-full items-center">
               <div className="z-20 text-center flex flex-col justify-center w-full items-center">
-                <h3 className="text-5xl font-semibold 2xl:text-6xl">SIGUENOS</h3>
+                <h4 className="text-5xl font-semibold 2xl:text-6xl">SIGUENOS</h4>
                 <p
                   className={`text-[4rem] text-white 2xl:text-[5rem] ${inspiration.className}`}>
                   @alejandraacademia
