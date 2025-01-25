@@ -93,7 +93,7 @@ export function Header() {
               alt={selectedImagen.alt}
               width={700}
               height={700}
-              priority={selectedImagen.id === 1}  
+              priority 
             />
           </motion.div>
           <div className="absolute flex gap-2 top-[120px] -right-4 xl:top-[200px] xl:-right-6 2xl:top-[350px] 2xl:-right-[150px] xl:gap-5">
