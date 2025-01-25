@@ -1,8 +1,12 @@
-
+"use client";
 
 import { LoginForm } from "@/components";
 import Image from "next/image";
 import s from "./login.module.css";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getMe, isTokenExpired } from "@/utils/api";
+import { Roles } from "@/types/roles";
 
 export const metadata = {
   title: "Intranet | Alejandra Academia",
@@ -11,6 +15,20 @@ export const metadata = {
 };
 
 export default function Login() {
+  const router = useRouter();
+  
+  useEffect( () => {
+    const verificar = async () => {
+      const token = localStorage.getItem("token");
+      if (token && !isTokenExpired(token)) {
+        const user = await getMe(localStorage.getItem("token") as string);
+        const role =  user?.role === Roles.TUTOR ? Roles.ADMIN : user?.role;
+        router.push(`/intranet/${role}`);
+      }
+      router.push("/intranet");
+    }
+    verificar();
+  }, [router]);
 
 
   return (

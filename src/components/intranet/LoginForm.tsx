@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import type { Login } from "@/types/login";
 import { getMe, login } from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Roles } from "@/types/roles";
 
@@ -25,18 +25,6 @@ export function LoginForm() {
     const role = user?.role === Roles.TUTOR ? Roles.ADMIN : user?.role;
     router.push(`/intranet/${role}`);
   };
-
-  useEffect( () => {
-    const verificar = async () => {
-      if (localStorage.getItem("token")) {
-        const user = await getMe(localStorage.getItem("token") as string);
-        const role =  user?.role === Roles.TUTOR ? Roles.ADMIN : user?.role;
-        router.push(`/intranet/${role}`);
-      }
-      router.push("/intranet");
-    }
-    verificar();
-  }, [router]);
 
   return (
     <form
