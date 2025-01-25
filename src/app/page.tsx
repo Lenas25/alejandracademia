@@ -3,7 +3,7 @@ import {About, Courses, Footer, Gallery, Header, Navbar, Testimonials} from '@/c
 export const metadata = {
   title: "Alejandra Academia | Estética y Belleza",
   description: "Alejandra Academia es un espacio especializado en formación en estética y belleza, ofreciendo cursos prácticos y teóricos para todos los niveles.",
-  keywords: "Alejandra Academia, cursos de estética, belleza, formación en estética, academia de belleza, maquillaje, peluquería, técnicas de belleza ",
+  keywords: "Alejandra Academia, cursos de estética, belleza, formación en estética, academia de belleza, maquillaje, peluquería, técnicas de belleza, academias, venezuela, academias de estética, cursos de estética, formación en belleza",
   author: "Alejandra Academia",
   robots: "index, follow",
   og: {
