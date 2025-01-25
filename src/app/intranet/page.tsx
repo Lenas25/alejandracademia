@@ -1,6 +1,9 @@
+
+
 import { LoginForm } from "@/components";
 import Image from "next/image";
 import s from "./login.module.css";
+import { useEffect } from "react";
 
 export const metadata = {
   title: "Intranet | Alejandra Academia",
@@ -9,6 +12,8 @@ export const metadata = {
 };
 
 export default function Login() {
+
+
   return (
     <div className="p-5 sm:p-28 h-screen flex flex-col gap-10 overflow-hidden justify-center">
       <div className="w-full flex md:justify-center">
