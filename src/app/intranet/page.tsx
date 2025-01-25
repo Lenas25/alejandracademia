@@ -13,7 +13,7 @@ export default function Login() {
     <div className="p-5 sm:p-28 h-screen flex flex-col gap-10 overflow-hidden justify-center">
       <div className="w-full flex md:justify-center">
       <Image
-        src="/nombreLogo.png"
+        src="/nombreLogo.webp"
         alt="Alejandra Academia"
         width={200}
         height={200}

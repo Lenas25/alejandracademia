@@ -51,7 +51,7 @@ function CourseInfo({
               className="btn btn-ghost h-auto relative bg-transparent hover:bg-transparent"
               aria-label={`Contactar sobre el curso ${course.name}`}>
               <Image
-                src="/mascara.png"
+                src="/mascara.webp"
                 width={200}
                 height={200}
                 alt={`Imagen del curso ${course.name}`}

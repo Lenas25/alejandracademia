@@ -28,7 +28,7 @@ export function Gallery() {
         <div className="col-span-2 row-span-2">
           <Image
             className="w-full h-full object-cover"
-            src="/spa1.jpg"
+            src="/spa1.webp"
             alt="spa1"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -48,7 +48,7 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa3.jpg"
+            src="/spa3.webp"
             alt="spa3"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -58,7 +58,7 @@ export function Gallery() {
         <div>
           <Image
             className="w-full h-full object-cover"
-            src="/spa5.jpg"
+            src="/spa5.webp"
             alt="spa5"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -68,7 +68,7 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa8.jpg"
+            src="/spa8.webp"
             alt="spa8"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}

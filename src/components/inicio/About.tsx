@@ -1,9 +1,9 @@
 import Image from "next/image";
 
 const icons = [
-  { src: "/maquilladora.png", alt: "maquilladora" },
-  { src: "/mascara.png", alt: "mascara" },
-  { src: "/tratamiento-capilar.png", alt: "tratamiento-capilar" },
+  { src: "/maquilladora.webp", alt: "maquilladora" },
+  { src: "/mascara.webp", alt: "mascara" },
+  { src: "/tratamiento-capilar.webp", alt: "tratamiento-capilar" },
 ];
 
 export function About() {
@@ -17,7 +17,7 @@ export function About() {
             src="/spa5.jpg"
             width={700}
             height={500}
-            alt="spa3"
+            alt="spa5"
             className="rounded-t-[125px] h-[400px] object-cover lg:rounded-t-[160px] lg:h-[500px] xl:rounded-t-[200px]  xl:h-[700px]"
           />
         </div>
