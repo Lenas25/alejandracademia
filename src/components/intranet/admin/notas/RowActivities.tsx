@@ -46,7 +46,7 @@ function RowActivities({
         <button
           key={ac.id}
           type="button"
-          className={`btn btn-ghost text-base p-2 rounded-lg w-[200px] md:w-auto flex gap-3 justify-between h-auto text-black flex-col ${
+          className={`btn btn-ghost text-base p-2 rounded-lg w-[200px] md:w-auto flex gap-3 justify-between h-fit text-black flex-col ${
             selectedActivity?.id === ac.id
               ? "bg-white border-2 border-black"
               : "bg-yellow"
