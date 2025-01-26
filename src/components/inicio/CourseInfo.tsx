@@ -3,7 +3,6 @@ import type { Course } from "@/types/course";
 import { IconSend } from "@tabler/icons-react";
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
-import { motion } from "framer-motion";
 
 const convertToCloudinaryUrl = (url: string) => {
   const parts = url.split('/');

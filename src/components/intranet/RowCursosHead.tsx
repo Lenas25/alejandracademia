@@ -5,7 +5,6 @@ import { Course } from "@/types/course";
 import { Roles } from "@/types/roles";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
-import { useEffect } from "react";
 
 interface RowCursosProps {
   translate: number;

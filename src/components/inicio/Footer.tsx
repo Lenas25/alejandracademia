@@ -8,7 +8,6 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import { Inspiration } from "next/font/google";
-import { motion } from "framer-motion";
 
 const inspiration = Inspiration({
   weight: ["400"],
