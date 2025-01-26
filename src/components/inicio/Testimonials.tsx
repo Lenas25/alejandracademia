@@ -3,6 +3,7 @@
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import TestimonialsInfo from "./TestimonialsInfo";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 const testimonialsExample = [
   {
@@ -22,7 +23,6 @@ const testimonialsExample = [
   },
 ];
 
-
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -39,12 +39,15 @@ export function Testimonials() {
   };
 
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1, transition: { duration: 1 } }}
       id="testimonios"
       className="mb-12 relative py-10 px-3 flex flex-col gap-5 items-center md:px-14 md:py-12 md:flex-row md:gap-10 md:justify-between 2xl:px-32">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/makeup.webp')" }}/>
+        style={{ backgroundImage: "url('/makeup.webp')" }}
+      />
       <div className="absolute inset-0 bg-yellow opacity-75" />
       <div className="flex flex-col gap-10 z-10 lg:flex-1">
         <div className="flex gap-2 justify-center flex-col text-center">
@@ -54,7 +57,12 @@ export function Testimonials() {
             </h2>
           </div>
           <div className="flex justify-center">
-            <div className="h-[2px] bg-black w-[60%] lg:h-[4px]" />
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: "80%" }}
+              transition={{ duration: 2 }}
+              className="h-[2px] bg-black lg:h-[4px]"
+            />
           </div>
         </div>
         <div className="flex items-center justify-center gap-5">
@@ -70,12 +78,15 @@ export function Testimonials() {
           />
         </div>
       </div>
-      <div className="flex justify-center w-full lg:flex-1">
+      <motion.div
+        initial={{ width: 0 }}
+        whileInView={{ width: "100%" }}
+        className="flex justify-center w-full lg:flex-1">
         <TestimonialsInfo
           key={testimonialsExample[currentIndex].id}
           testimonial={testimonialsExample[currentIndex]}
         />
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

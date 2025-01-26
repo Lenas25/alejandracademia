@@ -12,8 +12,10 @@ import { deleteCourse } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
 import { finishEnrollment } from "@/redux/service/enrollmentService";
 import { deleteImage, extractImageId } from "@/utils/api";
+import { User } from "@/types/user";
 
 interface RowCursosProps {
+  users: User[];
   course: Course;
   handleRadioChange: (course: Course) => void;
   selectedCourse: Course | null;
@@ -24,6 +26,7 @@ interface RowCursosProps {
 }
 
 function RowCursos({
+  users,
   course,
   handleRadioChange,
   selectedCourse,
@@ -102,9 +105,12 @@ function RowCursos({
       </td>
       <td>
         <div className="flex items-center gap-3">
-          <div>
-            <div className="font-bold">{course.name}</div>
-          </div>
+            <p>{typeof course.tutor === "string" ? course.tutor : course.tutor?.name || "No existe Tutor"}</p>
+        </div>
+      </td>
+      <td>
+        <div className="flex items-center gap-3">
+            <p className="font-bold">{course.name}</p>
         </div>
       </td>
       <td>
@@ -150,6 +156,7 @@ function RowCursos({
           <ModalDelete handleDelete={handleDelete} info={course.id} />
           {isOpenModal.active && isOpenModal.type === "edit" && (
             <ModalEditAdd
+              users={users}
               selectedCourse={selectedCourse}
               setMessage={setMessage}
               setOpenModal={setOpenModal}

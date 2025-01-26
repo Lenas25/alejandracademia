@@ -33,7 +33,7 @@ function ModalEditAdd({
   setOpenModal,
   isOpenModal,
   modalMessage,
-  setSelectedUser,
+  setSelectedUser
 }: ModalEditAddProps) {
   const {
     register,
@@ -52,6 +52,7 @@ function ModalEditAdd({
         }
       : {},
   });
+
   const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
   const onSubmit = async (data: User) => {
@@ -66,9 +67,11 @@ function ModalEditAdd({
           name: data.name,
           lastName: data.lastName,
           username: data.username,
-          role: Roles[data.role.toUpperCase() as keyof typeof Roles].toLowerCase(),
+          role: Roles[
+            data.role.toUpperCase() as keyof typeof Roles
+          ].toLowerCase(),
           ...(data.password && { password: data.password }),
-        }
+        };
         resultAction = (await dispatch(
           updateUser({ userId: selectedUser?.id, data: updatedUser })
         )) as PayloadAction<{ message: string; data: User }>;
@@ -120,26 +123,28 @@ function ModalEditAdd({
           <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap w-full">
             {isOpenModal.type === "add" && (
               <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconEPassport />
-              <input
-                defaultValue={selectedUser ? selectedUser.id : ""}
-                type="text"
-                className="grow"
-                placeholder="DNI"
-                {...register("id", {
-                  required: "Este campo es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "Debe tener al menos 6 caracteres",
-                  },
-                })}
-              />
-            </label>
+                <IconEPassport />
+                <input
+                  defaultValue={selectedUser ? selectedUser.id : ""}
+                  type="text"
+                  className="grow"
+                  placeholder="DNI"
+                  {...register("id", {
+                    required: "Este campo es requerido",
+                    minLength: {
+                      value: 3,
+                      message: "Debe tener al menos 6 caracteres",
+                    },
+                  })}
+                />
+              </label>
             )}
             <select
               defaultValue={selectedUser ? selectedUser.role : ""}
               className="select select-bordered w-full text-base"
-              {...register("role", { required: "Este campo es requerido" })}>
+              {...register("role", {
+                required: "Este campo es requerido",
+              })}>
               <option disabled value="">
                 Seleccione un Rol
               </option>

@@ -8,6 +8,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { Course, CreateCourse } from "@/types/course";
 import { createCourse, updateCourse } from "@/redux/service/courseService";
 import { deleteImage, extractImageId, uploadImage } from "@/utils/api";
+import { User } from "@/types/user";
 
 interface ModalEditAddProps {
   selectedCourse: Course | null;
@@ -16,9 +17,11 @@ interface ModalEditAddProps {
   setSelectedCourse: (course: Course | null) => void;
   isOpenModal: { active: boolean; type: string };
   modalMessage: { title: string; message: string };
+  users: User[];
 }
 
 function ModalEditAdd({
+  users,
   selectedCourse,
   setMessage,
   setOpenModal,
@@ -32,7 +35,7 @@ function ModalEditAdd({
     control,
     formState: { errors },
   } = useForm<Course>({
-    defaultValues: selectedCourse ? selectedCourse : {},
+    defaultValues: selectedCourse ? selectedCourse: {},
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -59,27 +62,30 @@ function ModalEditAdd({
         message: string;
         data: CreateCourse | Course;
       }>;
-      data.activities = data.activities.map(
-        ({ percentage, ...activity }) => ({
-          ...activity,
-          percentage: Number.parseFloat(Number(percentage).toFixed(2)),
-        })
-      );
-      
+      data.activities = data.activities.map(({ percentage, ...activity }) => ({
+        ...activity,
+        percentage: Number.parseFloat(Number(percentage).toFixed(2)),
+      }));
       data.duration = calculateDurationInMonths(
         new Date(data.initialDate),
         new Date(data.endDate)
       );
+      // biome-ignore lint/performance/noDelete: <explanation>
+      delete data.tutor;
       if (isOpenModal.type === "edit") {
         data.isActive = String(data.isActive) === "true";
-        if(selectedCourse?.imageUrl !== "" && file){
-          const publicId = selectedCourse?.imageUrl ? extractImageId(selectedCourse.imageUrl) : "";
+        if (selectedCourse?.imageUrl !== "" && file) {
+          const publicId = selectedCourse?.imageUrl
+            ? extractImageId(selectedCourse.imageUrl)
+            : "";
           if (publicId) {
             await deleteImage(publicId);
           }
         }
         const response = file ? await uploadImage(file) : "";
-        data.imageUrl = response.imageUrl ? response.imageUrl : selectedCourse?.imageUrl;
+        data.imageUrl = response.imageUrl
+          ? response.imageUrl
+          : selectedCourse?.imageUrl;
         resultAction = (await dispatch(
           updateCourse({ courseId: selectedCourse?.id, data })
         )) as PayloadAction<{ message: string; data: Course }>;
@@ -130,22 +136,40 @@ function ModalEditAdd({
         </div>
         <p className="py-4 text-base">{modalMessage.message}</p>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          {
-            selectedCourse && (
-              <div className="w-full flex justify-center sm:justify-end">
+          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
             <select
-              defaultValue={selectedCourse?.isActive ? "true" : "false"}
-              className="select select-bordered w-full max-w-xs text-base"
-              {...register("isActive", { required: "Este campo es requerido" })}>
+              defaultValue = {selectedCourse?.tutor?.id || "" }
+              className="select select-bordered w-full text-base"
+              {...register("id_tutor", {
+                required: "Este campo es requerido"
+              })}>
               <option disabled value="">
-                Seleccione un Rol
+                Seleccione un Tutor
               </option>
-              <option value="true">Activado</option>
-              <option value="false">Desactivado</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name} {user.lastName}
+                </option>
+              ))}
             </select>
+
+            {selectedCourse && (
+              <div className="w-full flex justify-center sm:justify-end">
+                <select
+                  defaultValue={selectedCourse?.isActive ? "true" : "false"}
+                  className="select select-bordered w-full max-w-xs text-base"
+                  {...register("isActive", {
+                    required: "Este campo es requerido",
+                  })}>
+                  <option disabled value="">
+                    Seleccione un Estado
+                  </option>
+                  <option value="true">Activado</option>
+                  <option value="false">Desactivado</option>
+                </select>
+              </div>
+            )}
           </div>
-            )
-          }
           <input
             type="file"
             className="file-input file-input-bordered w-full"
@@ -156,11 +180,11 @@ function ModalEditAdd({
             }}
           />
           {selectedCourse && selectedCourse?.imageUrl !== "" && (
-              <span className="text-center text-yellow">
-                Ya existe una imagen cargada, puedes subir una nueva para
-                reemplazarla
-              </span>
-            )}
+            <span className="text-center text-yellow">
+              Ya existe una imagen cargada, puedes subir una nueva para
+              reemplazarla
+            </span>
+          )}
           <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
             <label className="input input-bordered flex items-center gap-2 w-full">
               <IconBooks />
@@ -209,8 +233,7 @@ function ModalEditAdd({
                 <span className="label-text text-base">Dia Inicio</span>
               </div>
               <input
-                defaultValue={selectedCourse?.initialDate.toString()
-                }
+                defaultValue={selectedCourse?.initialDate.toString()}
                 type="date"
                 className="grow"
                 {...register("initialDate", {
@@ -223,8 +246,7 @@ function ModalEditAdd({
                 <span className="label-text text-base">Dia Final</span>
               </div>
               <input
-                defaultValue={selectedCourse?.initialDate.toString()
-                }
+                defaultValue={selectedCourse?.initialDate.toString()}
                 type="date"
                 className="grow"
                 {...register("endDate", {

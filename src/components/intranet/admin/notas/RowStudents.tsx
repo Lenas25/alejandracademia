@@ -36,7 +36,9 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
 
   const defaultValues = {
     grades: enrollments.map((enrollment) => {
-      const grade = gradesPerActivity.find((g) => g.id_enrollment === enrollment.id);
+      const grade = gradesPerActivity.find(
+        (g) => g.id_enrollment === enrollment.id
+      );
       return {
         id_activity: selectedActivity?.id ?? 0,
         id_enrollment: enrollment.id,
@@ -45,7 +47,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
       };
     }),
   };
-  
+
   const {
     register,
     handleSubmit,
@@ -72,16 +74,27 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
     }
   }, [message]);
 
-  const onSubmit = async (data: { grades: { id_activity: number; id_enrollment: number; grade: number; enrollment: Enrollment; }[] }) => {
+  const onSubmit = async (data: {
+    grades: {
+      id_activity: number;
+      id_enrollment: number;
+      grade: number;
+      enrollment: Enrollment;
+    }[];
+  }) => {
     const dataSend = {
       id_activity: selectedActivity?.id ?? 0,
-      grades: data.grades.map((gr: {id_enrollment:number; grade:number}) => ({
-        id_enrollment: Number(gr.id_enrollment) || 0,
-        grade: Number(gr.grade) || 0,
-      })),
+      grades: data.grades.map(
+        (gr: { id_enrollment: number; grade: number }) => ({
+          id_enrollment: Number(gr.id_enrollment) || 0,
+          grade: Number(gr.grade) || 0,
+        })
+      ),
     };
-    
-    const resultAction = (await dispatch(updateGrade({courseId:selectedCourse?.id, data: dataSend}))) as PayloadAction<{
+
+    const resultAction = (await dispatch(
+      updateGrade({ courseId: selectedCourse?.id, data: dataSend })
+    )) as PayloadAction<{
       message: string;
       data: GradeReceive[];
     }>;
@@ -91,19 +104,27 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
   return (
     selectedCourse &&
     selectedActivity && (
-      <div className="flex flex-col gap-5 md:h-[350px] md:w-full">
+      <div className="flex flex-col gap-3 md:h-[400px] md:w-full">
+        <h3 className="text-lg font-semibold">{selectedActivity?.name}</h3>
         {message && (
           <div className="alert alert-danger my-5 text-white ">{message}</div>
         )}
-        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto">
-          <div className="flex flex-col gap-3 h-80 overflow-y-auto w-full md:flex-1 md:h-[270px]">
+        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex flex-col h-full justify-between">
+          <div className="flex flex-col gap-3 h-80 overflow-y-auto w-full md:flex-1 md:h-[250px]">
             {defaultValues.grades.map((gr, index) => (
               <div key={gr.id_enrollment}>
                 <div className="flex flex-row justify-between">
                   <p className="flex gap-2 items-center md:w-full">
-                    {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].id : gr.enrollment.user.id}
+                    {Array.isArray(gr.enrollment.user)
+                      ? gr.enrollment.user[0].id
+                      : gr.enrollment.user.id}
                     <IconArrowRight />
-                    {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].name : gr.enrollment.user.name} {Array.isArray(gr.enrollment.user) ? gr.enrollment.user[0].lastName : gr.enrollment.user.lastName}
+                    {Array.isArray(gr.enrollment.user)
+                      ? gr.enrollment.user[0].name
+                      : gr.enrollment.user.name}{" "}
+                    {Array.isArray(gr.enrollment.user)
+                      ? gr.enrollment.user[0].lastName
+                      : gr.enrollment.user.lastName}
                   </p>
                   <input
                     defaultValue={gr.id_enrollment}

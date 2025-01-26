@@ -8,11 +8,13 @@ import { IconBook, IconPencil, IconPlus } from "@tabler/icons-react";
 import { fetchCourses } from "@/redux/service/courseService";
 import ModalEditAdd from "./ModalEditAdd";
 import { Roles } from "@/types/roles";
+import { fetchUsers } from "@/redux/service/userService";
 
 export function TableCursos() {
   const dispatch = useAppDispatch();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
+  const users = useAppSelector((state) => state.user?.users).filter(user => user.role === Roles.TUTOR);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
@@ -22,6 +24,7 @@ export function TableCursos() {
 
   useEffect(() => {
     dispatch(fetchCourses());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   useEffect(() => {
@@ -86,6 +89,7 @@ export function TableCursos() {
               <tr>
                 {userLogin?.role === Roles.ADMIN && <th />}
                 <th>Imagen</th>
+                <th>Tutor</th>
                 <th>Nombre</th>
                 <th>Descripcion</th>
                 <th>Dia Inicio</th>
@@ -98,6 +102,7 @@ export function TableCursos() {
               {courses?.map((course) => (
                 <RowCursos
                   key={course.id}
+                  users={users}
                   course={course}
                   handleRadioChange={handleRadioChange}
                   selectedCourse={selectedCourse}
@@ -111,6 +116,7 @@ export function TableCursos() {
           </table>
           {isOpenModal.type === "add" && (
             <ModalEditAdd
+            users={users}
               selectedCourse={selectedCourse}
               setMessage={setMessage}
               modalMessage={{

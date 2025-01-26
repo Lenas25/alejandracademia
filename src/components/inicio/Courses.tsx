@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import CourseInfo from "./CourseInfo";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { fetchCourses } from "@/redux/service/courseService";
+import { motion } from "framer-motion";
 
 export function Courses() {
   const dispatch = useAppDispatch();
@@ -32,7 +33,9 @@ export function Courses() {
   return (
     <>
       {courses.length > 0 && (
-        <section
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1, transition: { duration: 1 } }}
           id="cursos"
           className="my-10 px-3 flex gap-5 items-center flex-col md:px-14 md:py-12 md:gap-10 md:justify-between 2xl:px-32">
           <div className="flex gap-2 justify-center flex-col text-center">
@@ -42,7 +45,12 @@ export function Courses() {
               </h2>
             </div>
             <div className="flex justify-center">
-              <div className="h-[2px] bg-black w-[80%] lg:h-[4px]" />
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "80%" }}
+                transition={{ duration: 2 }}
+                className="h-[2px] bg-black lg:h-[4px]"
+              />
             </div>
           </div>
           <div className="w-full flex justify-center items-center gap-2 flex-col">
@@ -66,7 +74,7 @@ export function Courses() {
               </button>
             </div>
           </div>
-        </section>
+        </motion.section>
       )}
     </>
   );

@@ -19,7 +19,6 @@ export const fetchCourses = createAsyncThunk(
           'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
       });
-     
       return {message: response.data.message, data: response.data.data};
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

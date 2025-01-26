@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const icons = [
   { src: "/maquilladora.webp", alt: "maquilladora" },
@@ -8,7 +11,9 @@ const icons = [
 
 export function About() {
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1, transition: { duration: 1} }}
       id="about"
       className="bg-flamingo py-10 px-3 flex gap-5 items-center flex-col-reverse md:px-14 md:py-12 md:flex-row md:gap-10 md:justify-between 2xl:px-32">
       <div className="relative hidden md:flex justify-center items-center lg:flex-1">
@@ -40,7 +45,11 @@ export function About() {
               </h2>
             </div>
             <div className="flex justify-center">
-              <div className="h-[2px] bg-black w-[80%] lg:h-[4px]" />
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: "80%" }}
+                transition={{ duration: 2}}
+               className="h-[2px] bg-black lg:h-[4px]" />
             </div>
           </div>
           <p className="text-center text-xl lg:text-3xl">
@@ -65,19 +74,21 @@ export function About() {
                     alt={icon.alt}
                   />
                 </div>
-                <div className="w-[100px] lg:w-full">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  className="w-[100px] lg:w-full">
                   <Image
                     src="/circleAbout.svg"
                     width={200}
                     height={200}
                     alt="circleAbout"
                   />
-                </div>
+                </motion.div>
               </div>
             ))}
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

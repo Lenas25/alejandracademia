@@ -1,3 +1,5 @@
+"use client";
+
 import {
   IconBrandInstagram,
   IconBrandWhatsappFilled,
@@ -6,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import { Inspiration } from "next/font/google";
+import { motion } from "framer-motion";
 
 const inspiration = Inspiration({
   weight: ["400"],
@@ -15,13 +18,11 @@ const inspiration = Inspiration({
 
 export function Footer() {
   return (
-    <footer
-      id="contacto"
-      className=" flex flex-col overflow-y-hidden">
-      <div className=" w-full bg-background z-1 xl:h-[150px]"/>
+    <footer id="contacto" className=" flex flex-col overflow-y-hidden">
+      <div className=" w-full bg-background z-1 xl:h-[50px]" />
       <div className="flex flex-col-reverse md:flex-row md:bg-black md:justify-between lg:h-[400px] lg:gap-10 xl:h-[500px]">
-        <div className="bg-black text-white py-5 px-6 flex md:flex-2 lg:flex-auto flex-col gap-5 md:pl-10 md:py-12 xl:gap-10 justify-center xl:justify-normal">
-          <div className="flex gap-3 flex-col 2xl:w-[80%] 2xl:pl-16">
+        <div className="bg-black text-white p-5 flex md:flex-2 lg:flex-auto flex-col gap-5 md:pl-10 md:py-12 xl:gap-10 justify-center xl:justify-normal">
+          <div className="flex gap-3 flex-col 2xl:w-[80%] 2xl:pl-12">
             <h3 className="text-xl lg:text-3xl">Ubicación</h3>
             <div className="flex gap-5 justify-between items-center">
               <div className="flex gap-2 items-center lg:text-xl">
@@ -38,7 +39,7 @@ export function Footer() {
               </a>
             </div>
           </div>
-          <div className="flex gap-10 justify-between xl:pb-10 2xl:w-[80%] 2xl:pl-16">
+          <div className="flex gap-10 justify-between xl:pb-10 2xl:w-[80%] 2xl:pl-12">
             <div className="flex flex-col gap-3">
               <h4 className="text-xl lg:text-3xl">Horario de Atención</h4>
               <div className="flex flex-col gap-4 lg:text-xl">
@@ -68,25 +69,29 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <div className="relative z-5 flex justify-end md:flex-1 2xl:flex-1">
-          <div className="absolute w-full h-full flex justify-end z-10 lg:bottom-10 xl:bottom-14 xl:left-0">
-            <div className="flex flex-col justify-center w-full items-center">
-              <div className="z-20 text-center flex flex-col justify-center w-full items-center">
-                <h4 className="text-5xl font-semibold 2xl:text-6xl">SIGUENOS</h4>
-                <p
-                  className={`text-[4rem] text-white 2xl:text-[5rem] ${inspiration.className}`}>
-                  @alejandraacademia
-                </p>
-              </div>
-              <div className="w-[50%]">
-                <Image src="/spa8.webp" alt="spa8" width={500} height={500} 
-              priority={false} />
-              </div>
+        <div className="relative z-5 flex justify-end">
+          <div className="relative w-full flex justify-end z-1">
+            <div className="absolute h-full z-10 bottom-0 xl:left-0 flex flex-col justify-center w-full items-center">
+                  <h4 className="text-5xl font-semibold 2xl:text-6xl">
+                    SIGUENOS
+                  </h4>
+                  <p
+                    className={`text-[4rem] text-white 2xl:text-[5rem] ${inspiration.className}`}>
+                    @alejandraacademia
+                  </p>
+                <div className="w-[50%]">
+                  <Image
+                    src="/spa8.webp"
+                    alt="spa8"
+                    width={500}
+                    height={500}
+                    priority={false}
+                  />
+                </div>
             </div>
-          </div>
-          <div className="relative w-full flex justify-end z-1 lg:bottom-[124px] lg:h-[900px] xl:w-[800px] xl:-top-[200px] 2xl:h-[1000px] 2xl:w-[1000px] 2xl:-top-[470px]">
+            <div className=" relative md:w-[500px] xl:w-[800px] 2xl:h-[1500px] 2xl:w-[1000px] 2xl:-top-[470px] top-0">
             <Image
-              className="h-full 2xl:h-[1500px] 2xl:w-[1500px]"
+              className="2xl:w-[1500px] 2xl:h-[1500px]"
               src="/bubbleFooter.svg"
               alt="bubble"
               width={900}
@@ -94,6 +99,7 @@ export function Footer() {
               loading="lazy"
               priority={false}
             />
+            </div>
           </div>
         </div>
       </div>

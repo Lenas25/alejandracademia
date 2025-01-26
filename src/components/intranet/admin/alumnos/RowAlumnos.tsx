@@ -4,6 +4,7 @@ import ModalDelete from "./ModalDelete";
 import ModalEditAdd from "./ModalEditAdd";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
+import { Course } from "@/types/course";
 
 interface RowAlumnosProps {
   user: User;
@@ -13,6 +14,7 @@ interface RowAlumnosProps {
   isOpenModal: { active: boolean; type: string };
   setOpenModal: (isOpen: { active: boolean; type: string }) => void;
   setSelectedUser: (user: User | null) => void;
+  courses: Course[];
 }
 
 function RowAlumnos({
@@ -23,6 +25,7 @@ function RowAlumnos({
   isOpenModal,
   setOpenModal,
   setSelectedUser,
+  courses,
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.user?.userLogin);
@@ -101,6 +104,8 @@ function RowAlumnos({
         <ModalDelete handleDelete={handleDelete} info={user.id} />
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
+          
+          courses={courses}
             selectedUser={selectedUser}
             setMessage={setMessage}
             setOpenModal={setOpenModal}

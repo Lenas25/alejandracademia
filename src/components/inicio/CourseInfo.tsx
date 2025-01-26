@@ -3,6 +3,7 @@ import type { Course } from "@/types/course";
 import { IconSend } from "@tabler/icons-react";
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
+import { motion } from "framer-motion";
 
 const convertToCloudinaryUrl = (url: string) => {
   const parts = url.split('/');
@@ -37,7 +38,8 @@ function CourseInfo({
 
 
   return (
-    <div id={`item${course.id}`} className="carousel-item">
+    <div
+    id={`item${course.id}`} className="carousel-item">
       <div
         className="my-10 w-[300px] h-[400px] md:w-[400px] md:h-[500px] lg:w-[500px] lg:h-[600px] bg-cover bg-center cursor-pointer transition-all duration-500 ease-in-out transform back hover:scale-105 rounded-xl mx-3"
         style={{ backgroundImage: `url(${imageUrl})` }}

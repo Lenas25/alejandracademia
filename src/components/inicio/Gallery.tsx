@@ -1,9 +1,14 @@
+"use client";
+
 import { IconCircleDashedPlus } from "@tabler/icons-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export function Gallery() {
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1, transition: { duration: 1 } }}
       id="galeria"
       className="relative py-10 flex gap-5 items-center flex-col md:px-14 md:py-12 md:gap-10 md:justify-between">
       <div className="absolute z-0 left-0">
@@ -21,7 +26,12 @@ export function Gallery() {
           </h2>
         </div>
         <div className="flex justify-center">
-          <div className="h-[2px] bg-black w-[80%] lg:h-[4px]" />
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "80%" }}
+            transition={{ duration: 2 }}
+            className="h-[2px] bg-black lg:h-[4px]"
+          />
         </div>
       </div>
       <div className="m-5 relative gap-2 z-10 grid grid-rows-[300px_300px_300px] md:grid-rows-[300px_300px_300px] grid-cols-2 md:grid-cols-3">
@@ -90,9 +100,17 @@ export function Gallery() {
             height={700}
             loading="lazy"
           />
-          <IconCircleDashedPlus className="absolute z-20 text-white size-[6rem]" />
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatType: "loop" }}
+            className="absolute z-20"
+            >
+            <IconCircleDashedPlus className="text-white size-[6rem]" />
+          </motion.div>
         </a>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -13,19 +13,19 @@ const inspiration = Inspiration({
 
 const images = [
   {
-    id: 1,
+    id: 0,
     src: "/spa2.webp",
     alt: "spa2",
   },
   {
-    id: 2,
+    id: 1,
     src: "/spa4.webp",
-    alt: "spa2",
+    alt: "spa4",
   },
   {
-    id: 3,
+    id: 2,
     src: "/spa7.webp",
-    alt: "spa2",
+    alt: "spa7",
   },
 ];
 
@@ -43,17 +43,14 @@ export function Header() {
       setFade(false);
       setTimeout(() => {
         setSelectedImagen((prevImage) => {
-          const currentIndex = images.findIndex(
-            (image) => image.id === prevImage.id
-          );
-          const nextIndex = (currentIndex + 1) % images.length;
-          return images[nextIndex];
+          if (prevImage.id === images.length - 1) return images[0];
+          return images[prevImage.id + 1];
         });
         setFade(true);
       }, 500);
     };
 
-    const interval = setInterval(cycleImages, 3000);
+    const interval = setInterval(cycleImages, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -66,10 +63,17 @@ export function Header() {
           Nuestra guía para transformar el mundo de la belleza. Es...
         </p>
         <div className="flex justify-center w-full">
-          <h1
+          <motion.h1
+            initial={{ clipPath: "inset(0 100% 0 0)" }}
+            whileInView={{ clipPath: "inset(0 0% 0 0)" }} 
+            transition={{
+              duration: 0.5, // Duración del efecto
+              ease: "easeInOut", // Efecto de entrada/salida suave
+            }}
             className={`text-center text-darkpink text-[7rem] md:text-[5rem] lg:text-[6rem] xl:text-[10rem] 2xl:text-[10rem] ${inspiration.className}`}>
-            Tu Talento
-          </h1>
+            Tu
+             Talento
+          </motion.h1>
         </div>
         <div className="flex items-center justify-center w-full">
           <a
@@ -119,14 +123,15 @@ export function Header() {
           </div>
         </div>
         <div className="flex gap-2 justify-center lg:flex-col lg:justify-start">
-          {images.map((image, index) => (
+          {images.map((image) => (
             <button
+              type="button"
               key={image.id}
               className={`h-5 w-5 rounded-full cursor-pointer lg:size-7 ${
                 image.id === selectedImagen.id ? "bg-darkpink" : "bg-grey"
               }`}
-              aria-label={`Seleccionar imagen ${index + 1}`}
-              onClick={() => setSelectedImagen(images[index])}
+              aria-label={`Seleccionar imagen ${image.id}`}
+              onClick={() => setSelectedImagen(images[image.id])}
             />
           ))}
         </div>

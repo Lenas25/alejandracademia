@@ -75,7 +75,7 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   };
 
   return (
-    <div className="flex flex-col gap-5 overflow-y-auto bg-white rounded-lg shadow relative p-6 md:p-10">
+    <div className="flex flex-col gap-5 overflow-y-auto bg-white rounded-lg shadow relative p-6">
       <div className="flex flex-wrap gap-5 justify-center w-full md:justify-between">
         <h2 className="text-2xl font-semibold">Asignar Estudiantes</h2>
         <div className="h-[2px] bg-black w-full" />

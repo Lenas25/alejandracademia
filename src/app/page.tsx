@@ -24,7 +24,7 @@ export const metadata = {
 export default function Home() {
 
   return (
-    <>
+    <div className='overflow-x-hidden'>
       <Navbar />
       <Header />
       <About />
@@ -32,6 +32,6 @@ export default function Home() {
       <Gallery />
       <Testimonials />
       <Footer />
-    </>
+    </div>
   );
 }

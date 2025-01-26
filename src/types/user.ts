@@ -1,3 +1,5 @@
+import { Course } from "./course";
+
 export interface User {
   id: string;
   name: string;
@@ -7,6 +9,7 @@ export interface User {
   password: string;
   role: string;
   phone: string;
+  courses: Course[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -38,9 +38,9 @@ function RowActivities({
   }
 
   return (
-   <div className="overflow-hidden w-full">
+   <div className="overflow-hidden w-full"> 
      <div
-      className="flex gap-5 py-3 pr-5 md:flex-col md:h-[270px] transition-transform ease-in-out delay-150 md:max-w-[200px] md:overflow-auto"
+      className="flex gap-5 py-3 pr-5 md:flex-col md:h-[400px] transition-transform ease-in-out delay-150 md:max-w-[350px] md:overflow-auto"
       style={{ transform: `translateX(${translate2}px)` }}>
       {activities.map((ac) => (
         <button
@@ -59,7 +59,6 @@ function RowActivities({
         </button>
       ))}
     </div>
-    <h3 className="text-xl font-semibold">{selectedActivity?.name}</h3>
    </div>
   );
 }

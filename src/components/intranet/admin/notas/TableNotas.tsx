@@ -21,7 +21,7 @@ export function TableNotas() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
-  const width = 250;
+  const width = 200;
 
   const handleLeft = () => {
     if (translate2 < 0) {
@@ -62,7 +62,7 @@ export function TableNotas() {
         courses={courses}
         handleSelectCourse={handleSelectCourse}
       />
-      <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6">
         <div className="flex flex-wrap gap-5 w-full justify-between">
           <h2 className="text-2xl font-semibold">Calificar Notas</h2>
           <div className="flex gap-2 items-center md:hidden">
@@ -81,7 +81,7 @@ export function TableNotas() {
           </div>
         </div>
         {selectedCourse ? (
-          <div className="flex flex-col gap-5 md:flex-row">
+          <div className="flex flex-col gap-6 md:flex-row">
             <RowActivities
               translate2={translate2}
               selectedCourse={selectedCourse}

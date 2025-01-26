@@ -1,8 +1,11 @@
 "use client";
 
+import { useAppSelector } from "@/redux/stores";
 import { Course } from "@/types/course";
+import { Roles } from "@/types/roles";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
+import { useEffect } from "react";
 
 interface RowCursosProps {
   translate: number;
@@ -20,6 +23,7 @@ function RowCursosHead({
   handleSelectCourse,
 }: RowCursosProps) {
   const width = 200;
+  const userLogin = useAppSelector((state) => state.user.userLogin);
 
   const handleLeft = () => {
     if (translate < 0) {
@@ -35,8 +39,10 @@ function RowCursosHead({
     }
   };
 
+  courses = userLogin?.role === Roles.TUTOR ? userLogin.courses : courses;
+
   return (
-    <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-flamingo rounded-lg shadow relative p-6 md:p-10">
+    <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-flamingo rounded-lg shadow relative p-6">
       <div className="flex items-center gap-5 justify-between w-full flex-wrap">
         <h1 className="text-2xl font-semibold text-black">Cursos</h1>
         <div className="flex gap-2 items-center">
@@ -64,7 +70,7 @@ function RowCursosHead({
               <button
                 key={course.id}
                 type="button"
-                className={`btn btn-ghost text-base  p-5 rounded-lg h-auto flex flex-col gap-2 flex-none border-2 hover:border-white hover:text-black w-[200px] ${
+                className={`btn btn-ghost text-base p-3 rounded-lg h-auto flex flex-col gap-2 flex-none border-2 hover:border-white hover:text-black w-[250px] ${
                   selectedCourse?.id === course.id
                     ? "bg-white text-black"
                     : "bg-black text-white"

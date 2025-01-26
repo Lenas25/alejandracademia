@@ -13,7 +13,7 @@ export default function Layout({
 
   return (
     <RequireAuth>
-      <div className="relative p-5 md:p-10 md:min-h-screen">
+      <div className="relative p-5 md:p-7 md:min-h-screen">
         <Sidebar pathname={pathname} />
         <div className="pb-36 md:pb-0 md:pl-[150px]">
         {children}
