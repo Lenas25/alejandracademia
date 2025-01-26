@@ -12,7 +12,6 @@ import { fetchCourses } from "@/redux/service/courseService";
 export function TableAlumnos() {
   const dispatch = useAppDispatch();
   const users = useAppSelector((state) => state.user?.users);
-  const courses = useAppSelector((state) => state.course.courses).filter(item => item.description !== "PROXIMAMENTE" && item.isActive);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
@@ -95,7 +94,6 @@ export function TableAlumnos() {
             <tbody className="md:text-lg">
               {users?.map((user) => (
                 <RowAlumnos
-                  courses={courses}
                   key={user.id}
                   user={user}
                   handleRadioChange={handleRadioChange}
@@ -115,7 +113,6 @@ export function TableAlumnos() {
                 message: "Completar para agregar nuevo usuario",
               }}
               selectedUser={selectedUser}
-              courses={courses}
               setMessage={setMessage}
               isOpenModal={isOpenModal}
               setOpenModal={setOpenModal}
