@@ -211,7 +211,7 @@ function ModalEditAdd({
           <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
             <textarea
               defaultValue={selectedCourse ? selectedCourse.description : ""}
-              className="textarea textarea-bordered w-full text-base"
+              className="textarea textarea-bordered w-full text-base h-32"
               placeholder="Descripcion"
               {...register("description", {
                 required: "Este campo es requerido",
