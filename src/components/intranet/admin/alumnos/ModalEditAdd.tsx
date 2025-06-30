@@ -113,7 +113,7 @@ function ModalEditAdd({
           </button>
         </form>
         <div className="flex items-center gap-5">
-          <h3 className="font-bold text-2xl">{modalMessage.title}</h3>
+          <h3 className="font-semibold text-2xl">{modalMessage.title}</h3>
           <span className="p-2 bg-white text-black rounded-full">
             {isOpenModal.type === "add" ? <IconPlus /> : <IconEdit />}
           </span>
@@ -156,7 +156,7 @@ function ModalEditAdd({
             </select>
           </div>
           {(errors.id || errors.role) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.id?.message || errors.role?.message}
             </span>
           )}
@@ -194,7 +194,7 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.name || errors.lastName) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.name?.message || errors.lastName?.message}
             </span>
           )}
@@ -233,7 +233,7 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.email || errors.phone) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.email?.message || errors.phone?.message}
             </span>
           )}
@@ -265,12 +265,12 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.username || errors.password) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.username?.message || errors.password?.message}
             </span>
           )}
           {error && (
-            <span className="pl-1 font-semibold text-red-400">{error}</span>
+            <span className="pl-1 font-semisemibold text-red-400">{error}</span>
           )}
           <button
             type="submit"

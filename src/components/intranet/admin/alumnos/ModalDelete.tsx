@@ -19,7 +19,7 @@ function ModalDelete({
           </button>
         </form>
         <div className="flex items-center gap-5">
-          <h3 className="font-bold text-2xl">Eliminar</h3>
+          <h3 className="font-semibold text-2xl">Eliminar</h3>
           <IconTrashFilled />
         </div>
         <p className="py-4 text-base">Estas seguro que deseas eliminar el #{info}</p>

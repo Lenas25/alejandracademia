@@ -13,8 +13,8 @@ export function Navbar() {
       <div className="flex flex-wrap items-center gap-2 justify-center md:gap-4 xl:gap-10">
         <a href="tel:+584247247939" 
         aria-label="Llamar a Alejandra Academia"
-        className="font-semibold gap-2 flex justify-center items-center">
-          <IconPhone className="w-full h-full p-2 rounded-full transition bg-flamingo color-white ease-in-out delay-150 hover:color-black hover:bg-transparent border-2 hover:border-black"/>
+        className="font-semisemibold gap-2 flex justify-center items-center">
+          <IconPhone className="w-full h-full p-2 rounded-full transition bg-flamingo text-black ease-in-out delay-150 hover:text-black hover:bg-transparent border-2 hover:border-black"/>
           <span className="hidden md:block lg:text-lg">+584247247939</span>
         </a>
         <Link href="/intranet" 

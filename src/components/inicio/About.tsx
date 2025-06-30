@@ -40,7 +40,7 @@ export function About() {
         <div className="flex gap-10 justify-center flex-col">
           <div className="flex gap-2 justify-center flex-col text-center">
             <div className="flex justify-center">
-              <h2 className="text-center text-6xl font-semibold w-auto md:w-[80%] lg:text-8xl">
+              <h2 className="text-center text-6xl font-semisemibold w-auto md:w-[80%] lg:text-8xl">
                 Sobre Nosotros
               </h2>
             </div>

@@ -11,7 +11,7 @@ export function Gallery() {
       whileInView={{ opacity: 1, transition: { duration: 1 } }}
       id="galeria"
       className="relative py-10 flex gap-5 items-center flex-col md:px-14 md:py-12 md:gap-10 md:justify-between">
-      <div className="absolute z-0 left-0">
+      <div className="absolute z-0 left-0 top-10">
         <Image
           src="/bubbleGallery.svg"
           alt="bubbleGallery"
@@ -21,7 +21,7 @@ export function Gallery() {
       </div>
       <div className="z-10 flex gap-2 justify-center flex-col text-center">
         <div className="flex justify-center">
-          <h2 className="text-center text-6xl font-semibold w-auto lg:text-8xl">
+          <h2 className="text-center text-6xl font-semisemibold w-auto lg:text-8xl">
             Galería
           </h2>
         </div>
@@ -90,7 +90,7 @@ export function Gallery() {
           target="_blank"
           rel="noreferrer"
           className="relative hidden md:flex justify-center items-center">
-          <div className="absolute bg-darkpink backdrop-blur-sm bg-opacity-50 inset-0 z-10" />
+          <div className="absolute bg-black/50 backdrop-blur-sm bg-opacity-50 inset-0 z-10" />
           <Image
             className="w-full h-full object-cover z-0"
             src="/spa2.webp"

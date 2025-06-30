@@ -1,12 +1,12 @@
 "use client";
 
 import "./globals.css";
-import { Lato } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import ProviderComp from "@/redux/provider";
 import { useEffect } from "react";
 
-const lato = Lato({
-  weight: ["400", "700", "900"],
+const montserrat = Montserrat({
+  weight: ["400", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
 });
@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth" data-theme="dark">
-      <body className={lato.className}>
+      <body className={montserrat.className}>
         <ProviderComp>{children}</ProviderComp>
       </body>
     </html>

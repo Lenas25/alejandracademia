@@ -17,7 +17,7 @@ function TestimonialsInfo({
         &quot;
       </div>
       <div className="flex gap-4 items-center">
-        <span className="font-semibold text-xl 2xl:text-3xl">{testimonial.name}</span>
+        <span className="font-semisemibold text-xl 2xl:text-3xl">{testimonial.name}</span>
       </div>
       <div className="absolute top-2 right-2 z-0">
         <Image src="/quote.svg" alt="quote" width={100} height={100} />

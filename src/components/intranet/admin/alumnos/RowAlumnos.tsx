@@ -33,7 +33,7 @@ function RowAlumnos({
       classRole = "bg-black";
       break;
     case "tutor":
-      classRole = "bg-yellow";
+      classRole = "bg-flamingo";
       break;
     case "alumno":
       classRole = "bg-darkpink";
@@ -76,8 +76,8 @@ function RowAlumnos({
       <td>
         <div className="flex items-center gap-3">
           <div>
-            <div className="font-bold">{user.name}</div>
-            <div className="font-bold">{user.lastName}</div>
+            <div className="font-semibold">{user.name}</div>
+            <div className="font-semibold">{user.lastName}</div>
           </div>
         </div>
       </td>
@@ -86,7 +86,7 @@ function RowAlumnos({
       <td>{user.phone}</td>
       <td>
         <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${classRole}`}>{`${user.role
+          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semisemibold text-sm md:text-lg ${classRole}`}>{`${user.role
           .charAt(0)
           .toUpperCase()}${user.role.slice(1)}`}</span>
       </td>

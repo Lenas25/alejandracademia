@@ -77,7 +77,7 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   return (
     <div className="flex flex-col gap-5 overflow-y-auto bg-white rounded-lg shadow relative p-6">
       <div className="flex flex-wrap gap-5 justify-center w-full md:justify-between">
-        <h2 className="text-2xl font-semibold">Asignar Estudiantes</h2>
+        <h2 className="text-2xl font-medium">Asignar Estudiantes</h2>
         <div className="h-[2px] bg-black w-full" />
       </div>
       {selectedCourse ? (
@@ -85,12 +85,12 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
           {users.length > 0 ? (
             <>
               <div className="flex gap-5 justify-between w-full items-center">
-                <h3 className="text-xl font-semibold break-words w-[150px] md:w-full">
+                <h3 className="text-xl font-medium break-words w-[150px] md:w-full">
                   {selectedCourse.name}
                 </h3>
                 <button
                   type="button"
-                  className="btn btn-ghost text-base h-auto bg-yellow"
+                  className="btn btn-ghost text-base h-auto bg-darkpink font-medium"
                   onClick={handleSubmit}>
                   Guardar
                 </button>

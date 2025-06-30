@@ -110,7 +110,7 @@ function RowCursos({
       </td>
       <td>
         <div className="flex items-center gap-3">
-            <p className="font-bold">{course.name}</p>
+            <p className="font-semibold">{course.name}</p>
         </div>
       </td>
       <td>
@@ -122,7 +122,7 @@ function RowCursos({
       <td>{course?.endDate.toString()}</td>
       <td>
         <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${
+          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semisemibold text-sm md:text-lg ${
             course.isActive ? "bg-green-600" : "bg-red-600"
           }`}>
           {course.isActive ? "Activo" : "Inactivo"}

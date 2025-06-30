@@ -59,7 +59,7 @@ export function Header() {
       className="py-5 px-3 flex gap-5 items-center flex-col-reverse md:px-14 md:py-12 md:flex-row md:gap-10 md:justify-between xl:py-[7rem] 2xl:px-32"
       id="inicio">
       <div className="flex flex-col items-center lg:items-start z-0">
-        <p className="text-center text-3xl font-semibold lg:text-4xl xl:text-5xl">
+        <p className="text-center text-3xl font-semisemibold lg:text-4xl xl:text-5xl">
           Nuestra guía para transformar el mundo de la belleza. Es...
         </p>
         <div className="flex justify-center w-full">
@@ -78,7 +78,7 @@ export function Header() {
         <div className="flex items-center justify-center w-full">
           <a
             href="https://wa.link/bmqlth"
-            className="px-10 py-2 bg-black outline-4 text-white transition delay-300 ease-in-out font-semibold hover:bg-transparent hover:text-black hover:outline-black text-2xl 2xl:text-4xl xl:py-5">
+            className="px-10 py-2 bg-black outline-4 text-white transition delay-300 ease-in-out font-semisemibold hover:bg-transparent hover:text-black hover:outline-1 hover:outline-black text-2xl 2xl:text-4xl xl:py-5">
             ¡Inscríbete ahora!
           </a>
         </div>

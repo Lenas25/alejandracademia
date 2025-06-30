@@ -67,7 +67,7 @@ export function CursoCard() {
           />
         </div>
         {courses[currentCourse] ? (
-          <h3 className="text-2xl font-semibold text-center lg:text-4xl">
+          <h3 className="text-2xl font-semisemibold text-center lg:text-4xl">
             {courses[currentCourse]?.name}
           </h3>
         ):(

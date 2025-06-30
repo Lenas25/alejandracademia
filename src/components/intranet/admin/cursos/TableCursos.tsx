@@ -54,14 +54,14 @@ export function TableCursos() {
 
   return (
     <>
-      <div className="flex gap-5 items-center justify-between mb-5 bg-flamingo rounded-lg shadow relative p-6 md:p-10">
+      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
         <div className="flex gap-5 items-center">
-          <h1 className="text-2xl font-semibold text-black">Cursos</h1>
-          <span className="p-2 flex items-center justify-center bg-black text-white font-semibold rounded-full size-10">
+          <h1 className="text-2xl font-medium text-white">Cursos</h1>
+          <span className="p-2 text-xl flex items-center justify-center bg-white text-black font-medium rounded-full size-10">
             {courses?.length || 0}
           </span>
         </div>
-        <IconBook size={30} className="text-black" />
+        <IconBook size={30} className="text-white" />
       </div>
       <div className="overflow-hidden md:h-[75vh] bg-white rounded-lg shadow relative p-6 md:p-10">
         {userLogin?.role === Roles.ADMIN && (
@@ -74,7 +74,7 @@ export function TableCursos() {
             </button>
             <button
               type="button"
-              className="btn-ghost btn bg-yellow text-lg flex-1 h-fit"
+              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
               onClick={handleModalEdit}>
               Editar <IconPencil />
             </button>

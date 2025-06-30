@@ -64,7 +64,7 @@ export function TableNotas() {
       />
       <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6">
         <div className="flex flex-wrap gap-5 w-full justify-between">
-          <h2 className="text-2xl font-semibold">Calificar Notas</h2>
+          <h2 className="text-2xl font-semisemibold">Calificar Notas</h2>
           <div className="flex gap-2 items-center md:hidden">
             <button
               type="button"

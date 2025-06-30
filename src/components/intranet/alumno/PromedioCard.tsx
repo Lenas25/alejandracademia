@@ -17,7 +17,7 @@ export function PromedioCard() {
       </div>
       <div className="relative flex justify-center items-center gap-5 z-0">
         <div className="absolute top-0 translate-x-16 size-28 bg-black text-white rounded-full p-6 flex justify-center items-center">
-          <p className="text-4xl font-semibold">
+          <p className="text-4xl font-semisemibold">
             {enrollmentView?.final_grade || 0.0}
           </p>
         </div>
@@ -33,9 +33,9 @@ export function PromedioCard() {
         </div>
         { enrollmentView?.final_grade &&
           enrollmentView?.final_grade >= 15 ? (
-            <p className="text-green-500 font-semibold text-xl">Aprobado</p>
+            <p className="text-green-500 font-semisemibold text-xl">Aprobado</p>
           ) : (
-            <p className="text-red-500 font-semibold text-xl">Desaprobado</p>
+            <p className="text-red-500 font-semisemibold text-xl">Desaprobado</p>
           )
         }
        </div>

@@ -32,11 +32,11 @@ export function NotasCard() {
               key={grade.id_activity}
               className="flex justify-between items-center">
               <div className="flex gap-5 items-center">
-                <h3 className="text-lg font-semibold">{grade.activity.name}</h3>
+                <h3 className="text-lg font-semisemibold">{grade.activity.name}</h3>
                 <span>{grade.activity.percentage *100}%</span>
               </div>
               <IconArrowRight size={30} />
-              <span className="text-lg bg-darkpink p-2 size-14 rounded-full flex justify-center items-center text-white font-semibold">
+              <span className="text-lg bg-darkpink p-2 size-14 rounded-full flex justify-center items-center text-white font-semisemibold">
                 {grade.grade}
               </span>
             </div>

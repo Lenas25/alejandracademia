@@ -9,14 +9,14 @@ export const metadata = {
   og: {
     title: "Alejandra Academia | Formación en Estética y Belleza",
     description: "Descubre Alejandra Academia, tu espacio ideal para aprender todo sobre estética y belleza. Cursos especializados y expertos en el área.",
-    image: "logoSpa.svg",
+    image: "logoSpa.webp",
     url: "https://www.alejandracademia.com",
   },
   twitter: {
     card: "summary_large_image",
     title: "Alejandra Academia | Formación en Estética y Belleza",
     description: "Alejandra Academia ofrece cursos en estética y belleza. Aprende con los mejores en el sector.",
-    image: "logoSpa.svg",
+    image: "logoSpa.webp",
   }
 };
 
@@ -29,8 +29,8 @@ export default function Home() {
       <Header />
       <About />
       <Courses />
-      <Gallery />
       <Testimonials />
+      <Gallery />
       <Footer />
     </div>
   );

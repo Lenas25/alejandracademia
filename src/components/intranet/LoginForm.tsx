@@ -34,10 +34,10 @@ export function LoginForm() {
         <input
           type="text"
           placeholder="Usuario"
-          className={`p-2 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3  ${
+          className={`p-2 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3 placeholder:text-black  ${
             errors.username
               ? "ring-2 focus:ring-red-700 bg-transparent ring-red-700"
-              : "focus:ring-2 focus:ring-yellow bg-lightpink"
+              : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
           {...register("username", {
             required: "Este campo es obligatorio",
@@ -45,7 +45,7 @@ export function LoginForm() {
           })}
         />
         {errors.username && (
-          <p className="text-red-700 font-semibold pt-2">
+          <p className="text-red-700 font-semisemibold pt-2">
             {errors.username.message}
           </p>
         )}
@@ -54,10 +54,10 @@ export function LoginForm() {
         <input
           type="password"
           placeholder="Contraseña"
-          className={`p-2 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3 ${
+          className={`p-2 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3 placeholder:text-black ${
             errors.password
               ? "ring-2 focus:ring-red-700 bg-transparent ring-red-700"
-              : "focus:ring-2 focus:ring-yellow bg-lightpink"
+              : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
           {...register("password", {
             required: "Este campo es obligatorio",
@@ -65,15 +65,15 @@ export function LoginForm() {
           })}
         />
         {errors.password && (
-          <p className="text-red-700 font-semibold pt-2">
+          <p className="text-red-700 font-semisemibold pt-2">
             {errors.password.message}
           </p>
         )}
-        {error && <p className="text-red-700 font-semibold pt-2">{error}</p>}
+        {error && <p className="text-red-700 font-semisemibold pt-2">{error}</p>}
       </div>
       <button
         type="submit"
-        className="bg-black text-white rounded-lg text-xl font-semibold py-3 lg:mx-auto lg:px-10">
+        className="bg-black text-white rounded-lg text-xl font-semisemibold py-3 lg:mx-auto lg:px-10">
         Iniciar Sesión
       </button>
     </form>

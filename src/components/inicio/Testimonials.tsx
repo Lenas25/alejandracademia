@@ -48,20 +48,20 @@ export function Testimonials() {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/makeup.webp')" }}
       />
-      <div className="absolute inset-0 bg-yellow opacity-75" />
+      <div className="absolute inset-0 bg-black/50 opacity-75" />
       <div className="flex flex-col gap-10 z-10 lg:flex-1">
         <div className="flex gap-2 justify-center flex-col text-center">
           <div className="flex justify-center">
-            <h2 className="text-center text-6xl font-semibold w-auto xl:text-8xl">
+            <h2 className="text-center text-6xl font-semisemibold w-auto xl:text-8xl text-white">
               Testimonios
             </h2>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center ">
             <motion.div
               initial={{ width: 0 }}
               whileInView={{ width: "80%" }}
               transition={{ duration: 2 }}
-              className="h-[2px] bg-black lg:h-[4px]"
+              className="h-[2px] bg-white lg:h-[4px]"
             />
           </div>
         </div>

@@ -71,33 +71,33 @@ export function Footer() {
         <div className="relative z-5 flex justify-end">
           <div className="relative w-full flex justify-end z-1">
             <div className="absolute h-full z-10 bottom-0 xl:left-0 flex flex-col justify-center w-full items-center">
-                  <h4 className="text-5xl font-semibold 2xl:text-6xl">
-                    SIGUENOS
-                  </h4>
-                  <p
-                    className={`text-[4rem] text-white 2xl:text-[5rem] ${inspiration.className}`}>
-                    @alejandraacademia
-                  </p>
-                <div className="w-[50%]">
-                  <Image
-                    src="/spa8.webp"
-                    alt="spa8"
-                    width={500}
-                    height={500}
-                    priority={false}
-                  />
-                </div>
+              <h4 className="text-5xl font-semisemibold 2xl:text-6xl">
+                SIGUENOS
+              </h4>
+              <p
+                className={`text-[4rem] text-white 2xl:text-[5rem] ${inspiration.className}`}>
+                @alejandraacademia
+              </p>
+              <div className="w-[50%]">
+                <Image
+                  src="/spa8.webp"
+                  alt="spa8"
+                  width={500}
+                  height={500}
+                  priority={false}
+                />
+              </div>
             </div>
             <div className=" relative md:w-[500px] xl:w-[800px] 2xl:h-[1500px] 2xl:w-[1000px] 2xl:-top-[470px] top-0">
-            <Image
-              className="2xl:w-[1500px] 2xl:h-[1500px]"
-              src="/bubbleFooter.svg"
-              alt="bubble"
-              width={900}
-              height={900}
-              loading="lazy"
-              priority={false}
-            />
+              <Image
+                className="2xl:w-[1500px] 2xl:h-[1500px]"
+                src="/bubbleFooter.svg"
+                alt="bubble"
+                width={900}
+                height={900}
+                loading="lazy"
+                priority={false}
+              />
             </div>
           </div>
         </div>

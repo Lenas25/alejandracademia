@@ -129,7 +129,7 @@ function ModalEditAdd({
           </button>
         </form>
         <div className="flex items-center gap-5">
-          <h3 className="font-bold text-2xl">{modalMessage.title}</h3>
+          <h3 className="font-semibold text-2xl">{modalMessage.title}</h3>
           <span className="p-2 bg-white text-black rounded-full">
             {isOpenModal.type === "add" ? <IconPlus /> : <IconEdit />}
           </span>
@@ -204,7 +204,7 @@ function ModalEditAdd({
             </label>
           </div>
           {errors.name && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.name?.message}
             </span>
           )}
@@ -223,7 +223,7 @@ function ModalEditAdd({
             />
           </div>
           {errors.description && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.description?.message}
             </span>
           )}
@@ -256,13 +256,13 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.initialDate || errors.endDate) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="pl-1 font-semisemibold text-red-400">
               {errors?.initialDate?.message || errors.endDate?.message}
             </span>
           )}
           <div className="mt-4">
             <div className="flex gap-3 flex-wrap justify-between items-center">
-              <h4 className="font-bold text-xl">Actividades</h4>
+              <h4 className="font-semibold text-xl">Actividades</h4>
               <button
                 type="button"
                 onClick={() => append({ name: "", percentage: 0, new: true })}
@@ -313,7 +313,7 @@ function ModalEditAdd({
             </ul>
           </div>
           {error && (
-            <span className="pl-1 font-semibold text-red-400">{error}</span>
+            <span className="pl-1 font-semisemibold text-red-400">{error}</span>
           )}
           <button
             type="submit"

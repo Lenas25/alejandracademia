@@ -46,7 +46,7 @@ export function Calendario() {
   return (
     <div className="lg:order-2 lg:h-full">
       <div className="flex justify-between items-center gap-5 mb-4">
-        <p className="text-2xl font-semibold">{monthYear}</p>
+        <p className="text-2xl font-semisemibold">{monthYear}</p>
         <div className="flex gap-3">
           <button
             type="button"

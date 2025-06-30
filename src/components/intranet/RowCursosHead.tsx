@@ -41,19 +41,19 @@ function RowCursosHead({
   courses = userLogin?.role === Roles.TUTOR ? userLogin.courses : courses;
 
   return (
-    <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-flamingo rounded-lg shadow relative p-6">
+    <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-black rounded-lg shadow relative p-6">
       <div className="flex items-center gap-5 justify-between w-full flex-wrap">
-        <h1 className="text-2xl font-semibold text-black">Cursos</h1>
+        <h1 className="text-2xl font-semisemibold text-white">Cursos</h1>
         <div className="flex gap-2 items-center">
           <button
             type="button"
-            className="bg-white p-2 rounded-full"
+            className="bg-white p-2 rounded-full hover:bg-darkpink"
             onClick={handleLeft}>
             <IconChevronLeft size={20} className="md:size-7" />
           </button>
           <button
             type="button"
-            className="bg-white p-2 rounded-full"
+            className="bg-white p-2 rounded-full hover:bg-darkpink"
             onClick={handleRight}>
             <IconChevronRight size={20} className="md:size-7" />
           </button>
@@ -69,7 +69,7 @@ function RowCursosHead({
               <button
                 key={course.id}
                 type="button"
-                className={`btn btn-ghost text-base p-3 rounded-lg h-auto flex flex-col gap-2 flex-none border-2 hover:border-white hover:text-black w-[250px] ${
+                className={`btn btn-ghost bg-darkpink text-base p-3 rounded-lg h-auto flex flex-col gap-2 flex-none border-2 hover:border-white hover:text-white w-[250px] ${
                   selectedCourse?.id === course.id
                     ? "bg-white text-black"
                     : "bg-black text-white"
@@ -90,7 +90,7 @@ function RowCursosHead({
                     <span className="loading loading-ring loading-lg" />
                   </div>
                 )}
-                <p className="text-center">{course.name}</p>
+                <p className="text-center font-medium">{course.name}</p>
               </button>
             ))}
         </div>
