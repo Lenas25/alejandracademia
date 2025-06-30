@@ -12,6 +12,8 @@ export interface User {
   courses: Course[];
   createdAt: Date;
   updatedAt: Date;
+  final_grade?: number;
+  
 }
 
 export type CreateUser = Omit<User,'createdAt' | 'updatedAt'>;

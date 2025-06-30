@@ -10,10 +10,15 @@ import RowStudents from "./RowStudents";
 import { Activity } from "@/types/activity";
 import RowCursosHead from "../../RowCursosHead";
 import { fetchActivity } from "@/redux/service/activityService";
+import { TableStudents } from "./TableStudents";
+import { fetchEnrollment } from "@/redux/service/enrollmentService";
+import { fetchGrade } from "@/redux/service/gradeService";
 
 export function TableNotas() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses).filter(item => item.description !== "PROXIMAMENTE");
+  const courses = useAppSelector((state) => state.course.courses).filter(
+    (item) => item.description !== "PROXIMAMENTE"
+  );
   const activities = useAppSelector((state) => state.activity.activities);
   const [translate, setTranslate] = useState(0);
   const [translate2, setTranslate2] = useState(0);
@@ -42,16 +47,27 @@ export function TableNotas() {
     setSelectedCourse(course);
   };
 
-  
-    useEffect(() => {
-      if (selectedCourse) {
-        dispatch(fetchActivity(selectedCourse.id));
-      }
-    }, [dispatch, selectedCourse]);
+  useEffect(() => {
+    if (selectedCourse) {
+      dispatch(fetchActivity(selectedCourse.id));
+    }
+  }, [dispatch, selectedCourse]);
 
   useEffect(() => {
     dispatch(fetchCourses());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedCourse) {
+      dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
+    }
+  }, [selectedCourse, dispatch]);
+
+  useEffect(() => {
+    if (selectedActivity?.id !== undefined) {
+      dispatch(fetchGrade(selectedActivity.id));
+    }
+  }, [selectedActivity, dispatch]);
 
   return (
     <>
@@ -62,6 +78,7 @@ export function TableNotas() {
         courses={courses}
         handleSelectCourse={handleSelectCourse}
       />
+      <TableStudents />
       <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6">
         <div className="flex flex-wrap gap-5 w-full justify-between">
           <h2 className="text-2xl font-semisemibold">Calificar Notas</h2>

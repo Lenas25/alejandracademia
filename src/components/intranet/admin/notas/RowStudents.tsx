@@ -1,7 +1,6 @@
 "use client";
 
-import { fetchEnrollment } from "@/redux/service/enrollmentService";
-import { fetchGrade, updateGrade } from "@/redux/service/gradeService";
+import { updateGrade } from "@/redux/service/gradeService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
 import { Course } from "@/types/course";
@@ -24,15 +23,6 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
   ).filter((gr) => gr.enrollment.active);
   const enrollments = useAppSelector((state) => state.enrollment.enrollments);
   const [message, setMessage] = useState<string>("");
-
-  useEffect(() => {
-    if (selectedCourse && selectedActivity) {
-      dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
-      if (selectedActivity?.id !== undefined) {
-        dispatch(fetchGrade(selectedActivity.id));
-      }
-    }
-  }, [selectedCourse, selectedActivity, dispatch]);
 
   const defaultValues = {
     grades: enrollments.map((enrollment) => {

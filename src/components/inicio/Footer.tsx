@@ -18,7 +18,7 @@ const inspiration = Inspiration({
 export function Footer() {
   return (
     <footer id="contacto" className=" flex flex-col overflow-y-hidden">
-      <div className=" w-full bg-background z-1 xl:h-[50px]" />
+      <div className=" w-full bg-background z-1 2xl:h-[150px]" />
       <div className="flex flex-col-reverse md:flex-row md:bg-black md:justify-between lg:h-[400px] lg:gap-10 xl:h-[500px]">
         <div className="bg-black text-white p-5 flex md:flex-2 lg:flex-auto flex-col gap-5 md:pl-10 md:py-12 xl:gap-10 justify-center xl:justify-normal">
           <div className="flex gap-3 flex-col 2xl:w-[80%] 2xl:pl-12">

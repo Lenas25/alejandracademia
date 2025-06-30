@@ -34,7 +34,6 @@ export const updateGrade = createAsyncThunk(
   'grades/updateGrade',
   async ({ courseId, data }: { courseId: number | undefined; data: AsignGrade }, { dispatch, rejectWithValue }) => {
     try {
-      console.log(data)
       const response = await gradeAPI.patch(`/${courseId}`, data, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
