@@ -10,6 +10,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { IconArrowRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { fetchEnrollment } from "@/redux/service/enrollmentService";
 
 interface RowStudentsProps {
   selectedCourse: Course | null;
@@ -88,6 +89,8 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
       message: string;
       data: GradeReceive[];
     }>;
+    
+    dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
     setMessage((resultAction.payload as { message: string }).message);
   };
 

@@ -53,9 +53,7 @@ function RowActivities({
           }`}
           onClick={() => setSelectedActivity(ac)}>
           <p className="text-center flex-1">{ac.name}</p>
-          <p className="text-center flex-1">{`${(ac.percentage * 100).toFixed(
-            2
-          )}%`}</p>
+          <p className="text-center flex-1">{`${(ac.percentage * 100)}%`}</p>
         </button>
       ))}
     </div>

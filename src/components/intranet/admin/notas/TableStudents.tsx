@@ -4,6 +4,7 @@ import { useAppSelector } from "@/redux/stores";
 
 export function TableStudents() {
   const enrollments = useAppSelector((state) => state.enrollment.enrollments);
+  
   return (
     <>
       <div className="flex flex-col gap-5 bg-white rounded-lg shadow p-6  mb-5">
