@@ -39,7 +39,7 @@ export function Gallery() {
           <Image
             className="w-full h-full object-cover"
             src="/spa1.webp"
-            alt="spa1"
+            alt="Trabajo con uñas"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
@@ -48,8 +48,8 @@ export function Gallery() {
         <div className="row-span-1 col-span-1">
           <Image
             className="w-full h-full object-cover"
-            src="/spa7.webp"
-            alt="spa7"
+            src="/spa3.webp"
+            alt="Alumnas celebrando"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
@@ -58,8 +58,8 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa3.webp"
-            alt="spa3"
+            src="/spa7.webp"
+            alt="Clases de Alejandra Academia"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
@@ -69,7 +69,7 @@ export function Gallery() {
           <Image
             className="w-full h-full object-cover"
             src="/spa5.webp"
-            alt="spa5"
+            alt="Aplicando Mascarilla"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
@@ -78,8 +78,8 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa8.webp"
-            alt="spa8"
+            src="/spa4.webp"
+            alt="Gorra de graduación"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}
@@ -93,8 +93,8 @@ export function Gallery() {
           <div className="absolute bg-black/50 backdrop-blur-sm bg-opacity-50 inset-0 z-10" />
           <Image
             className="w-full h-full object-cover z-0"
-            src="/spa2.webp"
-            alt="spa2"
+            src="/spa8.webp"
+            alt="Grupo de graduación"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
             height={700}

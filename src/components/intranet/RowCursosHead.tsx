@@ -38,7 +38,7 @@ function RowCursosHead({
     }
   };
 
-  courses = userLogin?.role === Roles.TUTOR ? userLogin.courses : courses;
+  courses = userLogin?.role === Roles.TUTOR ? userLogin.courses ?? [] : courses;
 
   return (
     <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-black rounded-lg shadow relative p-6">

@@ -21,7 +21,7 @@ export function CursoCard() {
   }, [enrollmentsPerUser, dispatch, currentCourse]);
 
   useEffect(() => {
-    dispatch(fetchEnrollmentByUser({ userId: userLogin?.id }));
+    dispatch(fetchEnrollmentByUser({ userId: userLogin?.id?.toString() }));
   }, [dispatch, userLogin?.id]);
 
   const handlePrevCourse = () => {
@@ -37,42 +37,54 @@ export function CursoCard() {
     }
   };
 
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-5 flex justify-center flex-col lg:order-3 lg:pt-[35px]">
+    return (
+    <div className="bg-white rounded-2xl shadow-sm p-6 h-full flex flex-col">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl">Curso Actual</h3>
-        <div className="flex gap-3">
+        <h3 className="font-semibold text-gray-800">Curso Actual</h3>
+        <div className="flex gap-2">
           <button
-            type="button"
-            className="p-1 bg-gray-200 rounded-full btn btn-ghost min-h-0 h-auto"
-            onClick={handlePrevCourse}>
-            <IconChevronLeft size={30} />
+            onClick={handlePrevCourse}
+            className="p-1 text-gray-500 hover:text-black"
+            disabled={currentCourse === 0}
+          >
+            <IconChevronLeft size={20} />
           </button>
           <button
-            type="button"
-            className="p-1 bg-gray-200 rounded-full btn btn-ghost min-h-0 h-auto"
-            onClick={handleNextCourse}>
-            <IconChevronRight size={30} />
+            onClick={handleNextCourse}
+            className="p-1 text-gray-500 hover:text-black"
+            disabled={currentCourse === courses.length - 1 || courses.length === 0}
+          >
+            <IconChevronRight size={20} />
           </button>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-5">
-        <div className="size-36 rounded-full mt-5 lg:size-48">
+      <div className="flex-grow flex items-center gap-6 mt-4">
+        <div className="w-24 h-24 rounded-full flex-shrink-0">
           <Image
             src={courses[currentCourse]?.imageUrl || "/makeup.webp"}
             alt={courses[currentCourse]?.name || "Curso"}
-            width={200}
-            height={200}
-            className="object-cover size-full rounded-full"
+            width={100}
+            height={100}
+            className="object-cover w-full h-full rounded-full"
           />
         </div>
-        {courses[currentCourse] ? (
-          <h3 className="text-2xl font-semisemibold text-center lg:text-4xl">
-            {courses[currentCourse]?.name}
-          </h3>
-        ):(
-          <span className="loading loading-dots loading-lg" />
-        )}
+        <div className="flex-grow">
+          {courses[currentCourse] ? (
+            <>
+              <h4 className="text-2xl font-bold text-gray-800 mt-1">
+                {courses[currentCourse]?.name}
+              </h4>
+              <p className="text-gray-600 mt-2">
+                {courses[currentCourse]?.description}
+              </p>
+            </>
+          ) : (
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+              <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -16,3 +16,13 @@ body {
 input:-internal-autofill-selected {
   @apply bg-lightpink text-black !important;
 }
+
+/* Estilos para inputs de búsqueda */
+.input-search {
+  @apply bg-white text-black mb-3 input input-bordered w-full;
+}
+
+/* Estilos para select */
+select {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

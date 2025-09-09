@@ -2,16 +2,14 @@
 
 import { gradeByEnrollment } from "@/redux/service/gradeService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { IconArrowRight, IconStarsFilled } from "@tabler/icons-react";
+import { IconListDetails, IconStarsFilled } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export function NotasCard() {
   const dispatch = useAppDispatch();
-  const enrollmentView = useAppSelector(
-    (state) => state.enrollment.enrollmentView
-  );
-
+  const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
   const gradesUser = useAppSelector((state) => state.grade.gradesUser);
+
 
   useEffect(() => {
     if (enrollmentView) {
@@ -20,31 +18,32 @@ export function NotasCard() {
   }, [dispatch, enrollmentView]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-5 flex flex-col gap-5 lg:order-6 lg:p-8">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl">Notas</h3>
-        <IconStarsFilled size={30} />
+    <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium text-gray-700">Detalle de Notas</h3>
+        <IconListDetails size={24} className="text-gray-400" />
       </div>
-      <div className="flex flex-col gap-5 overflow-y-auto">
-        {gradesUser.length > 0 ? (
+      <div className="flex-grow flex flex-col gap-3 overflow-y-auto pr-2">
+        {status === 'loading' ? (
+          <div className="flex justify-center items-center h-full">
+            <span className="loading loading-spinner text-gray-300"></span>
+          </div>
+        ) : gradesUser.length > 0 ? (
           gradesUser.map((grade) => (
-            <div
-              key={grade.id_activity}
-              className="flex justify-between items-center">
-              <div className="flex gap-5 items-center">
-                <h3 className="text-lg font-semisemibold">{grade.activity.name}</h3>
-                <span>{grade.activity.percentage *100}%</span>
+            <div key={grade.id_activity} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+              <div>
+                <h4 className="font-semibold text-gray-800">{grade.activity.name}</h4>
+                <p className="text-sm text-gray-500">Peso: {grade.activity.percentage * 100}%</p>
               </div>
-              <IconArrowRight size={30} />
-              <span className="text-lg bg-darkpink p-2 size-14 rounded-full flex justify-center items-center text-white font-semisemibold">
+              <div className={`text-lg font-bold text-white w-12 h-12 flex items-center justify-center rounded-full ${grade.grade >= 11 ? 'bg-green-500' : 'bg-red-500'}`}>
                 {grade.grade}
-              </span>
+              </div>
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center gap-5 w-full text-center">
-            <span className="loading loading-dots loading-lg" />
-            <p>Todavia no hay notas registradas sobre el curso</p>
+          <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
+            <IconStarsFilled size={40} className="mb-2" />
+            <p>Aún no hay notas registradas para este curso.</p>
           </div>
         )}
       </div>

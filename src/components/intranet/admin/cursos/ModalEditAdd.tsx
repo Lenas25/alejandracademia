@@ -180,7 +180,7 @@ function ModalEditAdd({
             }}
           />
           {selectedCourse && selectedCourse?.imageUrl !== "" && (
-            <span className="text-center text-yellow">
+            <span className="text-center text-lightpink text-sm">
               Ya existe una imagen cargada, puedes subir una nueva para
               reemplazarla
             </span>
@@ -230,7 +230,7 @@ function ModalEditAdd({
           <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
             <label className="input input-bordered flex items-center gap-2 w-full">
               <div className="label">
-                <span className="label-text text-base">Dia Inicio</span>
+                <span className="label-text text-base">Inicio</span>
               </div>
               <input
                 defaultValue={selectedCourse?.initialDate.toString()}
@@ -243,7 +243,7 @@ function ModalEditAdd({
             </label>
             <label className="input input-bordered flex items-center gap-2 w-full">
               <div className="label">
-                <span className="label-text text-base">Dia Final</span>
+                <span className="label-text text-base">Fin</span>
               </div>
               <input
                 defaultValue={selectedCourse?.initialDate.toString()}
@@ -317,7 +317,7 @@ function ModalEditAdd({
           )}
           <button
             type="submit"
-            className="btn btn-ghost bg-yellow text-black text-base mx-10 my-2">
+            className="btn btn-ghost bg-darkpink hover:bg-darkpink/80 text-white text-base mx-10 my-2">
             Guardar
           </button>
         </form>

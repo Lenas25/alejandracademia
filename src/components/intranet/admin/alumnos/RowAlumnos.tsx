@@ -49,7 +49,7 @@ function RowAlumnos({
   };
 
   const handleDelete = async () => {
-    const resultAction = await dispatch(deleteUser(user.id));
+    const resultAction = await dispatch(deleteUser(user.id.toString()));
     if (deleteUser.fulfilled.match(resultAction)) {
       setMessage(resultAction.payload.message);
     }
@@ -86,9 +86,9 @@ function RowAlumnos({
       <td>{user.phone}</td>
       <td>
         <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semisemibold text-sm md:text-lg ${classRole}`}>{`${user.role
+          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semisemibold text-sm md:text-lg ${classRole}`}>{`${(user.role ?? "")
           .charAt(0)
-          .toUpperCase()}${user.role.slice(1)}`}</span>
+          .toUpperCase()}${(user.role ?? "").slice(1)}`}</span>
       </td>
       <th>
         <button
@@ -98,7 +98,7 @@ function RowAlumnos({
           <IconTrash />
           Eliminar
         </button>
-        <ModalDelete handleDelete={handleDelete} info={user.id} />
+        <ModalDelete handleDelete={handleDelete} info={user.id.toString()} />
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
             selectedUser={selectedUser}

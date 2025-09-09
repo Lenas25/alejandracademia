@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import RowAlumnos from "./RowAlumnos";
 import { User } from "@/types/user";
-import { IconPencil, IconPlus, IconUsers } from "@tabler/icons-react";
+import {
+  IconPencil,
+  IconPlus,
+  IconSearch,
+  IconUsers,
+} from "@tabler/icons-react";
 import ModalEditAdd from "./ModalEditAdd";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { fetchUsers } from "@/redux/service/userService";
 import { fetchCourses } from "@/redux/service/courseService";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export function TableAlumnos() {
   const dispatch = useAppDispatch();
@@ -18,11 +24,24 @@ export function TableAlumnos() {
     type: string;
   }>({ active: false, type: "" });
   const [message, setMessage] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     dispatch(fetchUsers());
     dispatch(fetchCourses());
   }, [dispatch]);
+
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
+    return users.filter((user) =>
+      ["id", "name", "lastName", "email", "phone", "username"].some((field) =>
+        String(user[field as keyof typeof user])
+          .toLowerCase()
+          .includes(debouncedSearch.toLowerCase())
+      )
+    );
+  }, [users, debouncedSearch]);
 
   useEffect(() => {
     if (message) {
@@ -61,20 +80,34 @@ export function TableAlumnos() {
         <IconUsers size={30} className="text-white" />
       </div>
       <div className="overflow-hidden md:h-[75vh] bg-white rounded-lg shadow relative p-6 md:p-10">
-        <div className="flex justify-center items-center gap-5 mb-5 md:justify-end">
-          <button
-            type="button"
-            className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
-            onClick={handleModalAdd}>
-            Agregar <IconPlus />
-          </button>
-          <button
-            type="button"
-            className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit" 
-            onClick={handleModalEdit}>
-            Editar <IconPencil />
-          </button>
+        <div className="flex flex-col gap-5">
+          <div className="flex justify-center items-center gap-5 md:justify-end">
+            <button
+              type="button"
+              className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
+              onClick={handleModalAdd}>
+              Agregar <IconPlus />
+            </button>
+            <button
+              type="button"
+              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
+              onClick={handleModalEdit}>
+              Editar <IconPencil />
+            </button>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar usuario..."
+              className="input-search"
+            />
+            <IconSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
         </div>
+
         {message && (
           <div className="alert alert-danger my-5 text-white">{message}</div>
         )}
@@ -92,7 +125,7 @@ export function TableAlumnos() {
               </tr>
             </thead>
             <tbody className="md:text-lg">
-              {users?.map((user) => (
+              {filteredUsers.map((user) => (
                 <RowAlumnos
                   key={user.id}
                   user={user}

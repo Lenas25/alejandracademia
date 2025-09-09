@@ -4,13 +4,13 @@ import { Roles } from "@/types/roles";
 import { CreateUser, User } from "@/types/user";
 import {
   IconEdit,
-  IconEPassport,
-  IconKeyFilled,
   IconMailFilled,
   IconPhoneFilled,
   IconPlus,
   IconUserCircle,
   IconUserFilled,
+  IconKeyFilled,
+  IconEPassport,
 } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,28 +33,19 @@ function ModalEditAdd({
   setOpenModal,
   isOpenModal,
   modalMessage,
-  setSelectedUser
+  setSelectedUser,
 }: ModalEditAddProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<User>({
-    defaultValues: selectedUser
-      ? {
-          name: selectedUser.name,
-          lastName: selectedUser.lastName,
-          email: selectedUser.email,
-          phone: selectedUser.phone,
-          username: selectedUser.username,
-          password: "",
-          role: selectedUser.role,
-        }
-      : {},
+    defaultValues: selectedUser ? { ...selectedUser, password: "" } : {},
   });
 
   const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
+
   const onSubmit = async (data: User) => {
     try {
       let resultAction: PayloadAction<{
@@ -68,12 +59,15 @@ function ModalEditAdd({
           lastName: data.lastName,
           username: data.username,
           role: Roles[
-            data.role.toUpperCase() as keyof typeof Roles
+            (data.role || Roles.ALUMNO).toUpperCase() as keyof typeof Roles
           ].toLowerCase(),
           ...(data.password && { password: data.password }),
         };
         resultAction = (await dispatch(
-          updateUser({ userId: selectedUser?.id, data: updatedUser })
+          updateUser({
+            userId: selectedUser?.id?.toString(),
+            data: updatedUser,
+          })
         )) as PayloadAction<{ message: string; data: User }>;
       } else {
         resultAction = (await dispatch(createUser(data))) as PayloadAction<{
@@ -96,15 +90,10 @@ function ModalEditAdd({
   };
 
   return (
-    <dialog
-      open={isOpenModal.active}
-      id={
-        isOpenModal.type === "add"
-          ? isOpenModal.type
-          : `edit${selectedUser?.id}`
-      }
-      className="modal backdrop-blur-sm">
-      <div className="modal-box text-white max-w-xl">
+    <dialog open={isOpenModal.active} className="modal backdrop-blur-sm">
+      <div className="modal-box text-white max-w-lg">
+        {" "}
+        {/* Ligeramente más angosto para mejor legibilidad */}
         <form method="dialog" onSubmit={reset}>
           <button
             type="submit"
@@ -112,169 +101,199 @@ function ModalEditAdd({
             ✕
           </button>
         </form>
-        <div className="flex items-center gap-5">
-          <h3 className="font-semibold text-2xl">{modalMessage.title}</h3>
+        <div className="flex items-center gap-4 mb-2">
+          <h3 className="font-bold text-2xl">{modalMessage.title}</h3>
           <span className="p-2 bg-white text-black rounded-full">
-            {isOpenModal.type === "add" ? <IconPlus /> : <IconEdit />}
+            {isOpenModal.type === "add" ? (
+              <IconPlus size={20} />
+            ) : (
+              <IconEdit size={20} />
+            )}
           </span>
         </div>
-        <p className="py-4 text-base">{modalMessage.message}</p>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap w-full">
+        <p className="mb-6 text-gray-400">{modalMessage.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          {/* Contenedor principal para todos los campos del formulario */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* --- CAMPO DNI (SOLO EN MODO AÑADIR) --- */}
             {isOpenModal.type === "add" && (
-              <label className="input input-bordered flex items-center gap-2 w-full">
-                <IconEPassport />
+              <div className="form-control w-full">
+                <label className="input input-bordered flex items-center gap-3">
+                  <IconEPassport size={20} className="text-gray-400 flex-none" />
+                  <input
+                    type="text"
+                    className="grow"
+                    placeholder="DNI"
+                    {...register("id", { required: "El DNI es requerido" })}
+                  />
+                </label>
+                {errors.id && (
+                  <span className="text-error text-xs mt-1 pl-1">
+                    {errors.id.message}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* --- CAMPO ROL --- */}
+            <div
+              className={`form-control w-full ${
+                isOpenModal.type === "edit" ? "sm:col-span-2" : ""
+              }`}>
+              <select
+                defaultValue={selectedUser ? selectedUser.role : ""}
+                className="select select-bordered"
+                {...register("role", { required: "El rol es requerido" })}>
+                <option disabled value="">
+                  Seleccione un Rol
+                </option>
+                {Object.values(Roles).map((role) => (
+                  <option key={role} value={role}>
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </option>
+                ))}
+              </select>
+              {errors.role && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.role.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO NOMBRE --- */}
+            <div className="form-control w-full">
+              <label className="input input-bordered flex items-center gap-3">
+                <IconUserCircle size={20} className="text-gray-400 flex-none" />
                 <input
-                  defaultValue={selectedUser ? selectedUser.id : ""}
                   type="text"
                   className="grow"
-                  placeholder="DNI"
-                  {...register("id", {
-                    required: "Este campo es requerido",
-                    minLength: {
-                      value: 3,
-                      message: "Debe tener al menos 6 caracteres",
+                  placeholder="Nombre"
+                  {...register("name", { required: "El nombre es requerido" })}
+                />
+              </label>
+              {errors.name && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.name.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO APELLIDO --- */}
+            <div className="form-control w-full">
+              <label className="input input-bordered flex items-center gap-3">
+                <input
+                  type="text"
+                  className="grow"
+                  placeholder="Apellido"
+                  {...register("lastName", {
+                    required: "El apellido es requerido",
+                  })}
+                />
+              </label>
+              {errors.lastName && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO EMAIL (OCUPA TODO EL ANCHO) --- */}
+            <div className="form-control w-full sm:col-span-2">
+              <label className="input input-bordered flex items-center gap-3">
+                <IconMailFilled size={20} className="text-gray-400 flex-none" />
+                <input
+                  type="email"
+                  className="grow"
+                  placeholder="Email"
+                  {...register("email", {
+                    required: "El email es requerido",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Formato de email inválido",
                     },
                   })}
                 />
               </label>
-            )}
-            <select
-              defaultValue={selectedUser ? selectedUser.role : ""}
-              className="select select-bordered w-full text-base"
-              {...register("role", {
-                required: "Este campo es requerido",
-              })}>
-              <option disabled value="">
-                Seleccione un Rol
-              </option>
-              {Object.values(Roles).map((role) => (
-                <option key={role} value={role}>
-                  {role.charAt(0).toUpperCase() + role.slice(1)}
-                </option>
-              ))}
-            </select>
+              {errors.email && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.email.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO TELÉFONO --- */}
+            <div className="form-control w-full">
+              <label className="input input-bordered flex items-center gap-3">
+                <IconPhoneFilled size={20} className="text-gray-400 flex-none" />
+                <input
+                  type="tel"
+                  className="grow"
+                  placeholder="Teléfono"
+                  {...register("phone", {
+                    required: "El teléfono es requerido",
+                  })}
+                />
+              </label>
+              {errors.phone && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.phone.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO USERNAME --- */}
+            <div className="form-control w-full">
+              <label className="input input-bordered flex items-center gap-3">
+                <IconUserFilled size={20} className="text-gray-400 flex-none" />
+                <input
+                  type="text"
+                  className="grow"
+                  placeholder="Username"
+                  {...register("username", {
+                    required: "El username es requerido",
+                  })}
+                />
+              </label>
+              {errors.username && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.username.message}
+                </span>
+              )}
+            </div>
+
+            {/* --- CAMPO CONTRASEÑA --- */}
+            <div className="form-control w-full sm:col-span-2">
+              <label className="input input-bordered flex items-center gap-3">
+                <IconKeyFilled size={20} className="text-gray-400 flex-none" />
+                <input
+                  type="password"
+                  className="grow"
+                  placeholder={
+                    isOpenModal.type === "edit"
+                      ? "Nueva contraseña (opcional)"
+                      : "Contraseña"
+                  }
+                  {...register("password", {
+                    required:
+                      isOpenModal.type === "add"
+                        ? "La contraseña es requerida"
+                        : false,
+                  })}
+                />
+              </label>
+              {errors.password && (
+                <span className="text-error text-xs mt-1 pl-1">
+                  {errors.password.message}
+                </span>
+              )}
+            </div>
           </div>
-          {(errors.id || errors.role) && (
-            <span className="pl-1 font-semisemibold text-red-400">
-              {errors?.id?.message || errors.role?.message}
-            </span>
-          )}
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconUserCircle />
-              <input
-                defaultValue={selectedUser ? selectedUser.name : ""}
-                type="text"
-                className="grow"
-                placeholder="Nombre"
-                {...register("name", {
-                  required: "Este campo es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "Debe tener al menos 3 caracteres",
-                  },
-                })}
-              />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <input
-                defaultValue={selectedUser ? selectedUser.lastName : ""}
-                type="text"
-                className="grow"
-                placeholder="Apellido"
-                {...register("lastName", {
-                  required: "Este campo es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "Debe tener al menos 3 caracteres",
-                  },
-                })}
-              />
-            </label>
-          </div>
-          {(errors.name || errors.lastName) && (
-            <span className="pl-1 font-semisemibold text-red-400">
-              {errors?.name?.message || errors.lastName?.message}
-            </span>
-          )}
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconMailFilled />
-              <input
-                defaultValue={selectedUser ? selectedUser.email : ""}
-                type="text"
-                className="grow"
-                placeholder="Email"
-                {...register("email", {
-                  required: "Este campo es requerido",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: "Email inválido",
-                  },
-                })}
-              />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconPhoneFilled />
-              <input
-                defaultValue={selectedUser ? selectedUser.phone : ""}
-                type="text"
-                className="grow"
-                placeholder="Telefono"
-                {...register("phone", {
-                  required: "Este campo es requerido",
-                  minLength: {
-                    value: 5,
-                    message: "Debe tener al menos 10 caracteres",
-                  },
-                })}
-              />
-            </label>
-          </div>
-          {(errors.email || errors.phone) && (
-            <span className="pl-1 font-semisemibold text-red-400">
-              {errors?.email?.message || errors.phone?.message}
-            </span>
-          )}
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconUserFilled />
-              <input
-                defaultValue={selectedUser ? selectedUser.username : ""}
-                type="text"
-                className="grow"
-                placeholder="Username"
-                {...register("username", {
-                  required: "Este campo es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "Debe tener al menos 3 caracteres",
-                  },
-                })}
-              />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <IconKeyFilled />
-              <input
-                type="password"
-                className="grow"
-                placeholder="Password"
-                {...register("password")}
-              />
-            </label>
-          </div>
-          {(errors.username || errors.password) && (
-            <span className="pl-1 font-semisemibold text-red-400">
-              {errors?.username?.message || errors.password?.message}
-            </span>
-          )}
-          {error && (
-            <span className="pl-1 font-semisemibold text-red-400">{error}</span>
-          )}
+
+          {error && <span className="text-error text-center">{error}</span>}
+
           <button
             type="submit"
-            className="btn btn-ghost bg-yellow text-black text-base mx-10 my-2">
+            className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base w-full mt-2">
             Guardar
           </button>
         </form>

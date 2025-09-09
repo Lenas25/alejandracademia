@@ -2,9 +2,9 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import RowCursos from "./RowCursos";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Course } from "@/types/course";
-import { IconBook, IconPencil, IconPlus } from "@tabler/icons-react";
+import { IconBook, IconPencil, IconPlus, IconSearch } from "@tabler/icons-react";
 import { fetchCourses } from "@/redux/service/courseService";
 import ModalEditAdd from "./ModalEditAdd";
 import { Roles } from "@/types/roles";
@@ -14,13 +14,16 @@ export function TableCursos() {
   const dispatch = useAppDispatch();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
-  const users = useAppSelector((state) => state.user?.users).filter(user => user.role === Roles.TUTOR);
+  const users = useAppSelector((state) => state.user?.users).filter(
+    (user) => user.role === Roles.TUTOR
+  );
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
     type: string;
   }>({ active: false, type: "" });
   const [message, setMessage] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -36,6 +39,21 @@ export function TableCursos() {
       return () => clearTimeout(timer);
     }
   }, [message]);
+
+  const filteredCourses = useMemo(() => {
+    return (courses || []).filter((course) => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        course.name.toLowerCase().includes(searchLower) ||
+        course.description.toLowerCase().includes(searchLower) ||
+        (typeof course.tutor === "string"
+          ? (course.tutor as string).toLowerCase().includes(searchLower)
+          : course.tutor && typeof course.tutor === 'object' && 'name' in course.tutor
+            ? course.tutor?.name?.toLowerCase().includes(searchLower)
+            : false)
+      );
+    });
+  }, [courses, searchTerm]);
 
   const handleRadioChange = (course: Course) => {
     setSelectedCourse(course);
@@ -65,23 +83,39 @@ export function TableCursos() {
       </div>
       <div className="overflow-hidden md:h-[75vh] bg-white rounded-lg shadow relative p-6 md:p-10">
         {userLogin?.role === Roles.ADMIN && (
-          <div className="flex flex-wrap justify-center items-center gap-5 mb-5 md:justify-end">
-            <button
-              type="button"
-              className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
-              onClick={handleModalAdd}>
-              Agregar <IconPlus />
-            </button>
-            <button
-              type="button"
-              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
-              onClick={handleModalEdit}>
-              Editar <IconPencil />
-            </button>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap justify-center items-center gap-5 md:justify-end">
+              <button
+                type="button"
+                className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
+                onClick={handleModalAdd}
+              >
+                Agregar <IconPlus />
+              </button>
+              <button
+                type="button"
+                className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
+                onClick={handleModalEdit}
+              >
+                Editar <IconPencil />
+              </button>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar curso..."
+                className="input-search"
+              />
+              <IconSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
           </div>
         )}
+
         {message && (
-          <div className="alert alert-danger my-5 text-white ">{message}</div>
+          <div className="alert alert-danger my-5 text-white">{message}</div>
         )}
         <div className="overflow-x-auto overflow-y-auto size-full">
           <table className="table mb-5">
@@ -99,7 +133,7 @@ export function TableCursos() {
               </tr>
             </thead>
             <tbody className="md:text-lg">
-              {courses?.map((course) => (
+              {filteredCourses.map((course) => (
                 <RowCursos
                   key={course.id}
                   users={users}
@@ -116,7 +150,7 @@ export function TableCursos() {
           </table>
           {isOpenModal.type === "add" && (
             <ModalEditAdd
-            users={users}
+              users={users}
               selectedCourse={selectedCourse}
               setMessage={setMessage}
               modalMessage={{

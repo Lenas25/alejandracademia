@@ -15,17 +15,17 @@ const images = [
   {
     id: 0,
     src: "/spa2.webp",
-    alt: "spa2",
+    alt: "Graduación Spa",
   },
   {
     id: 1,
-    src: "/spa4.webp",
-    alt: "spa4",
+    src: "/spa7.webp",
+    alt: "Enseñando clases de Alejandra Academia",
   },
   {
     id: 2,
-    src: "/spa7.webp",
-    alt: "spa7",
+    src: "/spa4.webp",
+    alt: "Sobrero de Graduación Spa",
   },
 ];
 

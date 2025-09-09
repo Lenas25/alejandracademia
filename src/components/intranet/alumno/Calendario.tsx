@@ -5,30 +5,34 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 const getWeekDays = (date: Date) => {
   const startOfWeek = new Date(date);
-  startOfWeek.setDate(date.getDate() - date.getDay() + 1);
+  const dayOfWeek = date.getDay();
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  startOfWeek.setDate(date.getDate() + diff);
+
   const days = [];
   for (let i = 0; i < 6; i++) {
     const day = new Date(startOfWeek);
     day.setDate(startOfWeek.getDate() + i);
     days.push({
-      day: day.toLocaleDateString("es-ES", { weekday: "short" }),
-      date: day.toLocaleDateString("es-ES", { day: "numeric" }),
+      day: day.toLocaleDateString("es-ES", { weekday: "short" }).replace('.', ''),
+      date: day.getDate().toString(),
+      fullDate: day,
     });
   }
   return days;
 };
 
 const formatMonthYear = (date: Date) => {
-  const formattedDate = date.toLocaleDateString("es-ES", {
-    month: "short",
-    year: "numeric",
-  });
-  const [month, year] = formattedDate.split(" ");
-  return `${month.charAt(0).toUpperCase() + month.slice(1)}, ${year}`;
+  const month = date.toLocaleDateString("es-ES", { month: "short" });
+  const year = date.toLocaleDateString("es-ES", { year: "numeric" });
+
+  const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+  return `${capitalizedMonth}, ${year}`;
 };
 
 export function Calendario() {
   const [currentDate, setCurrentDate] = useState(new Date());
+
   const handlePrevWeek = () => {
     const prevWeek = new Date(currentDate);
     prevWeek.setDate(currentDate.getDate() - 7);
@@ -40,49 +44,46 @@ export function Calendario() {
     nextWeek.setDate(currentDate.getDate() + 7);
     setCurrentDate(nextWeek);
   };
+
+  const handleGoToToday = () => {
+    setCurrentDate(new Date());
+  };
+
   const weekDays = getWeekDays(currentDate);
-  const monthYear = formatMonthYear(currentDate);
+  const today = new Date();
 
   return (
-    <div className="lg:order-2 lg:h-full">
-      <div className="flex justify-between items-center gap-5 mb-4">
-        <p className="text-2xl font-semisemibold">{monthYear}</p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={handlePrevWeek}
-            className="p-2 bg-white rounded-full">
-            <IconChevronLeft />
+    <div className="bg-white rounded-2xl shadow-sm p-6 h-full">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <p className="font-semibold text-gray-800">{formatMonthYear(currentDate)}</p>
+          <button 
+            onClick={handleGoToToday} 
+            className="text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
+          >
+            Hoy
           </button>
-          <button
-            type="button"
-            onClick={handleNextWeek}
-            className="p-2 bg-white rounded-full">
-            <IconChevronRight />
-          </button>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={handlePrevWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronLeft size={20} /></button>
+          <button onClick={handleNextWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronRight size={20} /></button>
         </div>
       </div>
-        <div className="lg:overflow-y-auto lg:h-[21rem]">
-          <div className="w-full grid grid-cols-6 grid-rows-1 gap-2 mt-5 lg:grid-rows-6 lg:grid-cols-1 lg:gap-3">
-            {weekDays.map((day) => {
-              const today = new Date().toLocaleDateString("es-ES", {
-                weekday: "short",
-                day: "numeric",
-              });
-              const isToday = `${day.day} ${day.date}` === today;
-              return (
-                <div
-                  key={day.date}
-                  className={`flex flex-col flex-wrap justify-center items-center rounded-md shadow-lg p-3 w-full ${
-                    isToday ? "bg-black text-white" : "bg-white text-black"
-                  }`}>
-                  <span>{day.day}</span>
-                  <span>{day.date}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+      <div className="grid grid-cols-6 gap-2 text-center">
+        {weekDays.map(({ day, date, fullDate }) => {
+          const isToday = 
+            fullDate.getDate() === today.getDate() &&
+            fullDate.getMonth() === today.getMonth() &&
+            fullDate.getFullYear() === today.getFullYear();
+
+          return (
+            <div key={date} className={`p-2 rounded-lg transition-colors ${isToday ? 'bg-black text-white' : 'bg-gray-50'}`}>
+              <span className={`text-xs uppercase font-bold ${isToday ? 'text-gray-300' : 'text-gray-400'}`}>{day}</span>
+              <p className="font-semibold text-lg">{date}</p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
