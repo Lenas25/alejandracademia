@@ -59,7 +59,7 @@ function RowCursosHead({
           </button>
         </div>
       </div>
-      <div className="overflow-x-hidden w-full">
+      <div className="w-full overflow-x-auto scroll-smooth">
         <div
           className="flex gap-4 transition-transform ease-in-out delay-150"
           style={{ transform: `translateX(${translate}px)` }}>

@@ -81,7 +81,7 @@ export function TableAlumnos() {
       </div>
       <div className="overflow-hidden md:h-[75vh] bg-white rounded-lg shadow relative p-6 md:p-10">
         <div className="flex flex-col gap-5">
-          <div className="flex justify-center items-center gap-5 md:justify-end">
+          <div className="flex justify-center items-center gap-5 md:justify-end flex-wrap">
             <button
               type="button"
               className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
@@ -104,7 +104,7 @@ export function TableAlumnos() {
               placeholder="Buscar usuario..."
               className="input-search"
             />
-            <IconSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <IconSearch className="absolute right-3 top-2 text-gray-400" />
           </div>
         </div>
 

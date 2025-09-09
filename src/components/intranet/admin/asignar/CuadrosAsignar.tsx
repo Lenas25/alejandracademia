@@ -156,8 +156,8 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
           )}
 
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-5">
-              <div className="relative w-full">
+            <div className="flex items-center justify-between gap-5 flex-wrap">
+              <div className="relative flex-1 min-w-[250px]">
                 <input
                   type="text"
                   value={searchTerm}
@@ -165,11 +165,11 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
                   placeholder="Buscar estudiante para agregar..."
                   className="input-search"
                 />
-                <IconSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <IconSearch className="absolute right-3 top-2 text-gray-400" />
               </div>
               <button
                 type="button"
-                className="btn btn-ghost text-base h-auto bg-flamingo font-medium mb-3"
+                className="btn btn-ghost text-base h-auto bg-flamingo font-medium mb-3 w-full md:w-auto"
                 onClick={handleSubmit}>
                 Guardar
               </button>
