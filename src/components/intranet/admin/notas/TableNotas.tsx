@@ -62,7 +62,7 @@ export function TableNotas() {
             {viewMode === "input" ? "Calificar Notas" : "Ver Notas"}
           </h2>
 
-          <div className="btn-group gap-3 flex items-center w-full md:max-w-xs">
+          <div className="btn-group gap-3 flex items-center w-full md:max-w-xs ">
             <button
               className={`btn flex-1 ${
                 viewMode === "input"

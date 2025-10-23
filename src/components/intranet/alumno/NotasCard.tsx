@@ -29,17 +29,24 @@ export function NotasCard() {
             <span className="loading loading-spinner text-gray-300"></span>
           </div>
         ) : gradesUser.length > 0 ? (
-          gradesUser.map((grade) => (
-            <div key={grade.id_activity} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-              <div>
-                <h4 className="font-semibold text-gray-800">{grade.activity.name}</h4>
-                <p className="text-sm text-gray-500">Peso: {grade.activity.percentage * 100}%</p>
+          gradesUser.map((grade) => {
+            const numericGrade = Number(grade.grade);
+            const isApproved = numericGrade >= 11;
+
+            return (
+              <div key={grade.id_activity} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                <div>
+                  <h4 className="font-semibold text-gray-800">{grade.activity.name}</h4>
+                  <p className="text-sm text-gray-500">Peso: {grade.activity.percentage * 100}%</p>
+                </div>
+                <div 
+                  className={`text-lg font-bold text-white w-12 h-12 flex items-center justify-center rounded-full ${isApproved ? 'bg-green-500' : 'bg-red-500'}`}
+                >
+                  {Math.round(numericGrade)} 
+                </div>
               </div>
-              <div className={`text-lg font-bold text-white w-12 h-12 flex items-center justify-center rounded-full ${grade.grade >= 11 ? 'bg-green-500' : 'bg-red-500'}`}>
-                {grade.grade}
-              </div>
-            </div>
-          ))
+            )
+          })
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
             <IconStarsFilled size={40} className="mb-2" />
