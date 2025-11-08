@@ -81,7 +81,7 @@ export function TableCursos() {
         </div>
         <IconBook size={30} className="text-white" />
       </div>
-      <div className="overflow-hidden md:h-[75vh] bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
         {userLogin?.role === Roles.ADMIN && (
           <div className="flex flex-col gap-5">
             <div className="flex flex-wrap justify-center items-center gap-5 md:justify-end">
