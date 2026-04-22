@@ -35,7 +35,18 @@ function ModalEditAdd({
     control,
     formState: { errors },
   } = useForm<Course>({
-    defaultValues: selectedCourse ? selectedCourse: {},
+    defaultValues: selectedCourse
+      ? {
+          id_tutor: selectedCourse.id_tutor,
+          isActive: selectedCourse.isActive,
+          name: selectedCourse.name,
+          description: selectedCourse.description,
+          initialDate: selectedCourse.initialDate,
+          endDate: selectedCourse.endDate,
+          activities: selectedCourse.activities,
+          imageUrl: selectedCourse.imageUrl,
+        }
+      : {},
   });
 
   const { fields, append, remove } = useFieldArray({

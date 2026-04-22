@@ -40,7 +40,18 @@ function ModalEditAdd({
     handleSubmit,
     formState: { errors },
   } = useForm<User>({
-    defaultValues: selectedUser ? { ...selectedUser, password: "" } : {},
+    defaultValues: selectedUser
+      ? {
+          id: selectedUser.id,
+          name: selectedUser.name,
+          lastName: selectedUser.lastName,
+          username: selectedUser.username,
+          email: selectedUser.email,
+          role: selectedUser.role,
+          phone: selectedUser.phone,
+          password: "",
+        }
+      : {},
   });
 
   const dispatch = useAppDispatch();
