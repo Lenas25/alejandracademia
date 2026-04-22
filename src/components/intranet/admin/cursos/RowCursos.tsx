@@ -153,7 +153,7 @@ function RowCursos({
               Terminar Curso
             </button>
           </div>
-          <ModalDelete handleDelete={handleDelete} info={course.id} />
+          <ModalDelete handleDelete={handleDelete} info={course.id} name={course.name} />
           {isOpenModal.active && isOpenModal.type === "edit" && (
             <ModalEditAdd
               users={users}

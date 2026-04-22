@@ -39,6 +39,7 @@ export function LoginForm() {
               ? "ring-2 focus:ring-red-700 bg-transparent ring-red-700"
               : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
+          aria-label="Usuario"
           {...register("username", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },
@@ -59,6 +60,7 @@ export function LoginForm() {
               ? "ring-2 focus:ring-red-700 bg-transparent ring-red-700"
               : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
+          aria-label="Contraseña"
           {...register("password", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },

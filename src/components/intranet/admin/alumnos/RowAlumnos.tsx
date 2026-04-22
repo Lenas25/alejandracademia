@@ -98,7 +98,7 @@ function RowAlumnos({
           <IconTrash />
           Eliminar
         </button>
-        <ModalDelete handleDelete={handleDelete} info={user.id.toString()} />
+        <ModalDelete handleDelete={handleDelete} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
             selectedUser={selectedUser}

@@ -14,6 +14,7 @@ export function TableCursos() {
   const dispatch = useAppDispatch();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
+  const courseStatus = useAppSelector((state) => state.course?.status);
   const users = useAppSelector((state) => state.user?.users).filter(
     (user) => user.role === Roles.TUTOR
   );
@@ -94,8 +95,9 @@ export function TableCursos() {
               </button>
               <button
                 type="button"
-                className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
+                className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit disabled:opacity-40 disabled:cursor-not-allowed"
                 onClick={handleModalEdit}
+                disabled={!selectedCourse}
               >
                 Editar <IconPencil />
               </button>
@@ -133,7 +135,20 @@ export function TableCursos() {
               </tr>
             </thead>
             <tbody className="md:text-lg">
-              {filteredCourses.map((course) => (
+              {courseStatus === 'loading' ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-10">
+                    <span className="loading loading-spinner loading-lg text-darkpink" />
+                  </td>
+                </tr>
+              ) : filteredCourses.length === 0 && courseStatus === 'succeeded' ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-10 text-gray-400">
+                    No hay cursos registrados
+                  </td>
+                </tr>
+              ) : (
+                filteredCourses.map((course) => (
                 <RowCursos
                   key={course.id}
                   users={users}
@@ -145,7 +160,8 @@ export function TableCursos() {
                   setOpenModal={setOpenModal}
                   setSelectedCourse={setSelectedCourse}
                 />
-              ))}
+              ))
+              )}
             </tbody>
           </table>
           {isOpenModal.type === "add" && (

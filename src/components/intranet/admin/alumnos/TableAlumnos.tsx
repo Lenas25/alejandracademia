@@ -18,6 +18,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 export function TableAlumnos() {
   const dispatch = useAppDispatch();
   const users = useAppSelector((state) => state.user?.users);
+  const userStatus = useAppSelector((state) => state.user?.status);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
@@ -90,8 +91,9 @@ export function TableAlumnos() {
             </button>
             <button
               type="button"
-              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit"
-              onClick={handleModalEdit}>
+              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={handleModalEdit}
+              disabled={!selectedUser}>
               Editar <IconPencil />
             </button>
           </div>
@@ -125,7 +127,20 @@ export function TableAlumnos() {
               </tr>
             </thead>
             <tbody className="md:text-lg">
-              {filteredUsers.map((user) => (
+              {userStatus === 'loading' ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-10">
+                    <span className="loading loading-spinner loading-lg text-darkpink" />
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 && userStatus === 'succeeded' ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-10 text-gray-400">
+                    No hay usuarios registrados
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
                 <RowAlumnos
                   key={user.id}
                   user={user}
@@ -136,7 +151,8 @@ export function TableAlumnos() {
                   setOpenModal={setOpenModal}
                   setSelectedUser={setSelectedUser}
                 />
-              ))}
+              ))
+              )}
             </tbody>
           </table>
           {isOpenModal.type === "add" && (

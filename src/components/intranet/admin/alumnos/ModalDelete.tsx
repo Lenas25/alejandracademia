@@ -3,10 +3,12 @@ import React from "react";
 
 function ModalDelete({
   handleDelete,
-  info
+  info,
+  name,
 }: {
   handleDelete: () => void;
   info: string;
+  name?: string;
 }) {
   return (
     <dialog id={`delete_${info}`} className="modal">
@@ -22,13 +24,21 @@ function ModalDelete({
           <h3 className="font-semibold text-2xl">Eliminar</h3>
           <IconTrashFilled />
         </div>
-        <p className="py-4 text-base">Estas seguro que deseas eliminar el #{info}</p>
-        <div className="w-full flex justify-end gap-5">
+        <p className="py-4 text-base">
+          ¿Estás seguro que deseas eliminar a{" "}
+          <strong>{name ?? `#${info}`}</strong>?
+        </p>
+        <div className="w-full flex justify-end gap-3">
+          <form method="dialog">
+            <button type="submit" className="btn btn-sm">
+              Cancelar
+            </button>
+          </form>
           <button
             type="button"
             onClick={handleDelete}
-            className="btn btn-sm btn-primary bg-yellow border-none text-lg">
-            Aceptar
+            className="btn btn-sm btn-error text-white text-lg">
+            Eliminar
           </button>
         </div>
       </div>
