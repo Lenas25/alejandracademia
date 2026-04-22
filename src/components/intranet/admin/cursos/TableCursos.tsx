@@ -119,7 +119,7 @@ export function TableCursos() {
         {message && (
           <div className="alert alert-success my-5 text-white">{message}</div>
         )}
-        <div className="overflow-x-auto overflow-y-auto size-full">
+        <div className="overflow-auto size-full">
           <table className="table mb-5">
             <thead className="text-black md:text-lg">
               <tr>
@@ -151,35 +151,44 @@ export function TableCursos() {
                 filteredCourses.map((course) => (
                 <RowCursos
                   key={course.id}
-                  users={users}
                   course={course}
                   handleRadioChange={handleRadioChange}
                   selectedCourse={selectedCourse}
                   setMessage={setMessage}
-                  isOpenModal={isOpenModal}
-                  setOpenModal={setOpenModal}
-                  setSelectedCourse={setSelectedCourse}
                 />
               ))
               )}
             </tbody>
           </table>
-          {isOpenModal.type === "add" && (
-            <ModalEditAdd
-              users={users}
-              selectedCourse={selectedCourse}
-              setMessage={setMessage}
-              modalMessage={{
-                title: "Agregar Curso",
-                message:
-                  "Completar para agregar nuevo curso con actividades incluidas",
-              }}
-              setSelectedCourse={setSelectedCourse}
-              isOpenModal={isOpenModal}
-              setOpenModal={setOpenModal}
-            />
-          )}
         </div>
+        {isOpenModal.active && isOpenModal.type === "add" && (
+          <ModalEditAdd
+            users={users}
+            selectedCourse={selectedCourse}
+            setMessage={setMessage}
+            modalMessage={{
+              title: "Agregar Curso",
+              message: "Completar para agregar nuevo curso con actividades incluidas",
+            }}
+            setSelectedCourse={setSelectedCourse}
+            isOpenModal={isOpenModal}
+            setOpenModal={setOpenModal}
+          />
+        )}
+        {isOpenModal.active && isOpenModal.type === "edit" && (
+          <ModalEditAdd
+            users={users}
+            selectedCourse={selectedCourse}
+            setMessage={setMessage}
+            modalMessage={{
+              title: "Editar Curso",
+              message: "Completa para actualizar",
+            }}
+            setSelectedCourse={setSelectedCourse}
+            isOpenModal={isOpenModal}
+            setOpenModal={setOpenModal}
+          />
+        )}
       </div>
     </>
   );

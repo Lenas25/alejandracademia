@@ -5,7 +5,6 @@ import {
   IconAlertTriangle,
 } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
-import ModalEditAdd from "./ModalEditAdd";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Course } from "@/types/course";
 import Image from "next/image";
@@ -13,28 +12,19 @@ import { deleteCourse } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
 import { finishEnrollment } from "@/redux/service/enrollmentService";
 import { deleteImage, extractImageId } from "@/utils/api";
-import { User } from "@/types/user";
 
 interface RowCursosProps {
-  users: User[];
   course: Course;
   handleRadioChange: (course: Course) => void;
   selectedCourse: Course | null;
   setMessage: (message: string) => void;
-  isOpenModal: { active: boolean; type: string };
-  setOpenModal: (isOpen: { active: boolean; type: string }) => void;
-  setSelectedCourse: (course: Course | null) => void;
 }
 
 function RowCursos({
-  users,
   course,
   handleRadioChange,
   selectedCourse,
   setMessage,
-  isOpenModal,
-  setOpenModal,
-  setSelectedCourse,
 }: RowCursosProps) {
   const dispatch = useAppDispatch();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
@@ -184,20 +174,6 @@ function RowCursos({
               </div>
             </div>
           </dialog>
-          {isOpenModal.active && isOpenModal.type === "edit" && (
-            <ModalEditAdd
-              users={users}
-              selectedCourse={selectedCourse}
-              setMessage={setMessage}
-              setOpenModal={setOpenModal}
-              isOpenModal={isOpenModal}
-              modalMessage={{
-                title: "Editar Curso",
-                message: "Completa para actualizar",
-              }}
-              setSelectedCourse={setSelectedCourse}
-            />
-          )}
         </th>
       )}
     </tr>

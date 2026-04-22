@@ -147,9 +147,6 @@ export function TableAlumnos() {
                   handleRadioChange={handleRadioChange}
                   selectedUser={selectedUser}
                   setMessage={setMessage}
-                  isOpenModal={isOpenModal}
-                  setOpenModal={setOpenModal}
-                  setSelectedUser={setSelectedUser}
                 />
               ))
               )}

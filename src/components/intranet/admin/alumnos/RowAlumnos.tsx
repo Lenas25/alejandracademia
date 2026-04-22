@@ -9,9 +9,6 @@ interface RowAlumnosProps {
   handleRadioChange: (user: User) => void;
   selectedUser: User | null;
   setMessage: (message: string) => void;
-  isOpenModal: { active: boolean; type: string };
-  setOpenModal: (isOpen: { active: boolean; type: string }) => void;
-  setSelectedUser: (user: User | null) => void;
 }
 
 function RowAlumnos({
@@ -19,9 +16,6 @@ function RowAlumnos({
   handleRadioChange,
   selectedUser,
   setMessage,
-  isOpenModal,
-  setOpenModal,
-  setSelectedUser
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.user?.userLogin);
