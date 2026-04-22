@@ -18,6 +18,7 @@ export function CursoCard() {
   const [currentCourse, setCurrentCourse] = useState<number>(0);
   const gradesUser = useAppSelector((state) => state.grade.gradesUser);
   const activities = useAppSelector((state) => state.activity.activities);
+  const enrollmentStatus = useAppSelector((state) => state.enrollment.status);
 
   useEffect(() => {
     dispatch(setEnrollmentsUser(enrollmentsPerUser[currentCourse]));
@@ -110,16 +111,15 @@ export function CursoCard() {
                 );
               })()}
             </>
-          ) : enrollmentsPerUser.length === 0 ? (
+          ) : enrollmentStatus === 'loading' || enrollmentStatus === 'idle' ? (
+            <div className="space-y-2">
+              <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+              <div className="h-4 bg-gray-100 rounded w-full animate-pulse"></div>
+            </div>
+          ) : (
             <div className="space-y-1">
               <p className="text-gray-500 font-medium">Sin cursos activos</p>
               <p className="text-sm text-gray-400">Cuando te matricules en un curso aparecerá aquí.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">Cargando curso...</p>
-              <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-              <div className="h-4 bg-gray-100 rounded w-full animate-pulse"></div>
             </div>
           )}
         </div>
