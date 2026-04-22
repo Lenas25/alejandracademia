@@ -1,6 +1,7 @@
 "use client";
 
 import { fetchEnrollmentByUser } from "@/redux/service/enrollmentService";
+import { fetchActivity } from "@/redux/service/activityService";
 import { setEnrollmentsUser } from "@/redux/slices/enrollmentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
@@ -16,6 +17,7 @@ export function CursoCard() {
   const courses = enrollmentsPerUser.flatMap((enrollment) => enrollment.course);
   const [currentCourse, setCurrentCourse] = useState<number>(0);
   const gradesUser = useAppSelector((state) => state.grade.gradesUser);
+  const activities = useAppSelector((state) => state.activity.activities);
 
   useEffect(() => {
     dispatch(setEnrollmentsUser(enrollmentsPerUser[currentCourse]));
@@ -24,6 +26,11 @@ export function CursoCard() {
   useEffect(() => {
     dispatch(fetchEnrollmentByUser({ userId: userLogin?.id?.toString() }));
   }, [dispatch, userLogin?.id]);
+
+  useEffect(() => {
+    const courseId = courses[currentCourse]?.id;
+    if (courseId) dispatch(fetchActivity(courseId));
+  }, [dispatch, courses[currentCourse]?.id]);
 
   const handlePrevCourse = () => {
     if (currentCourse > 0) {
@@ -84,7 +91,7 @@ export function CursoCard() {
 
               {/* Barra de progreso de actividades */}
               {(() => {
-                const total = courses[currentCourse]?.activities?.length ?? 0;
+                const total = activities.length;
                 const completadas = gradesUser.length;
                 if (total === 0) return null;
                 const pct = Math.min(Math.round((completadas / total) * 100), 100);
