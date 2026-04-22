@@ -1,7 +1,6 @@
 import { User } from "@/types/user";
 import { IconTrash } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
-import ModalEditAdd from "./ModalEditAdd";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
 
@@ -99,19 +98,6 @@ function RowAlumnos({
           Eliminar
         </button>
         <ModalDelete handleDelete={handleDelete} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
-        {isOpenModal.active && isOpenModal.type === "edit" && (
-          <ModalEditAdd
-            selectedUser={selectedUser}
-            setMessage={setMessage}
-            setOpenModal={setOpenModal}
-            isOpenModal={isOpenModal}
-            modalMessage={{
-              title: "Editar Usuario",
-              message: "Completa para actualizar",
-            }}
-            setSelectedUser={setSelectedUser}
-          />
-        )}
       </th>
     </tr>
   );

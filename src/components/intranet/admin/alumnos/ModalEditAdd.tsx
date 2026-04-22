@@ -12,7 +12,7 @@ import {
   IconKeyFilled,
   IconEPassport,
 } from "@tabler/icons-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/redux/stores";
 import { createUser, updateUser } from "@/redux/service/userService";
@@ -55,12 +55,7 @@ function ModalEditAdd({
   });
 
   const dispatch = useAppDispatch();
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    dialogRef.current?.showModal();
-  }, []);
 
   const onSubmit = async (data: User) => {
     try {
@@ -106,7 +101,7 @@ function ModalEditAdd({
   };
 
   return (
-    <dialog ref={dialogRef} className="modal backdrop-blur-sm">
+    <dialog open={isOpenModal.active} className="modal backdrop-blur-sm">
       <div className="modal-box text-white max-w-lg">
         {" "}
         {/* Ligeramente más angosto para mejor legibilidad */}

@@ -155,20 +155,33 @@ export function TableAlumnos() {
               )}
             </tbody>
           </table>
-          {isOpenModal.type === "add" && (
-            <ModalEditAdd
-              modalMessage={{
-                title: "Agregar Usuario",
-                message: "Completar para agregar nuevo usuario",
-              }}
-              selectedUser={selectedUser}
-              setMessage={setMessage}
-              isOpenModal={isOpenModal}
-              setOpenModal={setOpenModal}
-              setSelectedUser={setSelectedUser}
-            />
-          )}
         </div>
+        {isOpenModal.active && isOpenModal.type === "add" && (
+          <ModalEditAdd
+            modalMessage={{
+              title: "Agregar Usuario",
+              message: "Completar para agregar nuevo usuario",
+            }}
+            selectedUser={selectedUser}
+            setMessage={setMessage}
+            isOpenModal={isOpenModal}
+            setOpenModal={setOpenModal}
+            setSelectedUser={setSelectedUser}
+          />
+        )}
+        {isOpenModal.active && isOpenModal.type === "edit" && (
+          <ModalEditAdd
+            modalMessage={{
+              title: "Editar Usuario",
+              message: "Completa para actualizar",
+            }}
+            selectedUser={selectedUser}
+            setMessage={setMessage}
+            isOpenModal={isOpenModal}
+            setOpenModal={setOpenModal}
+            setSelectedUser={setSelectedUser}
+          />
+        )}
       </div>
     </>
   );
