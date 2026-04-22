@@ -12,8 +12,8 @@ export function PromedioCard() {
   const circumference = 2 * Math.PI * 45; 
   const strokeDashoffset = circumference - (gradePercentage / 100) * circumference;
 
-  const gradeColor = finalGrade >= 15 ? "text-green-500" : finalGrade >= 11 ? "text-yellow-500" : "text-red-500";
-  const strokeColor = finalGrade >= 15 ? "stroke-green-500" : finalGrade >= 11 ? "stroke-yellow-500" : "stroke-red-500";
+  const gradeColor = finalGrade === 0 ? "text-gray-400" : finalGrade >= 15 ? "text-green-500" : finalGrade >= 11 ? "text-yellow-500" : "text-red-500";
+  const strokeColor = finalGrade === 0 ? "stroke-gray-300" : finalGrade >= 15 ? "stroke-green-500" : finalGrade >= 11 ? "stroke-yellow-500" : "stroke-red-500";
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col h-full">

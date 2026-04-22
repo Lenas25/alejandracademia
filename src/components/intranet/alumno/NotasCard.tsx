@@ -49,9 +49,12 @@ export function NotasCard() {
             )
           })
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-            <IconStarsFilled size={40} className="mb-2" />
-            <p>Aún no hay notas registradas para este curso.</p>
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-8">
+            <IconStarsFilled size={40} className="text-gray-200" />
+            <div>
+              <p className="font-medium text-gray-500">Sin notas registradas</p>
+              <p className="text-sm text-gray-400 mt-1">Las notas aparecerán aquí cuando estén disponibles.</p>
+            </div>
           </div>
         )}
       </div>

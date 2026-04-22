@@ -81,10 +81,16 @@ export function CursoCard() {
                 {courses[currentCourse]?.description}
               </p>
             </>
+          ) : enrollmentsPerUser.length === 0 ? (
+            <div className="space-y-1">
+              <p className="text-gray-500 font-medium">Sin cursos activos</p>
+              <p className="text-sm text-gray-400">Cuando te matricules en un curso aparecerá aquí.</p>
+            </div>
           ) : (
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-1/4 animate-pulse"></div>
-              <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+              <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">Cargando curso...</p>
+              <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+              <div className="h-4 bg-gray-100 rounded w-full animate-pulse"></div>
             </div>
           )}
         </div>

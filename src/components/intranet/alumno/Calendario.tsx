@@ -53,7 +53,7 @@ export function Calendario() {
   const today = new Date();
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 h-full">
+    <div className="bg-white rounded-2xl shadow-sm p-6 h-full overflow-hidden">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <p className="font-semibold text-gray-800">{formatMonthYear(currentDate)}</p>
@@ -70,17 +70,17 @@ export function Calendario() {
           <button type="button" onClick={handleNextWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronRight size={20} /></button>
         </div>
       </div>
-      <div className="grid grid-cols-7 gap-2 text-center">
+      <div className="grid grid-cols-7 gap-1 text-center">
         {weekDays.map(({ day, date, fullDate }) => {
-          const isToday = 
+          const isToday =
             fullDate.getDate() === today.getDate() &&
             fullDate.getMonth() === today.getMonth() &&
             fullDate.getFullYear() === today.getFullYear();
 
           return (
-            <div key={date} className={`p-2 rounded-lg transition-colors ${isToday ? 'bg-black text-white' : 'bg-gray-50'}`}>
-              <span className={`text-xs uppercase font-bold ${isToday ? 'text-gray-300' : 'text-gray-400'}`}>{day}</span>
-              <p className="font-semibold text-lg">{date}</p>
+            <div key={date} className={`min-w-0 p-1.5 rounded-lg transition-colors ${isToday ? 'bg-black text-white' : 'bg-gray-50'}`}>
+              <span className={`block text-xs uppercase font-bold truncate ${isToday ? 'text-gray-300' : 'text-gray-400'}`}>{day}</span>
+              <p className="font-semibold text-base leading-snug">{date}</p>
             </div>
           );
         })}
