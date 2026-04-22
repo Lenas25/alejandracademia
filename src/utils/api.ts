@@ -78,7 +78,7 @@ export const login = async (username: string, password: string) => {
 
 export const getMe = async (token: string) => {
   try {
-    const decoded = decodeToken(token) as JwtPayload;
+    const decoded = decodeToken(token) as unknown as JwtPayload;
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}${rutas.users}/${decoded?.id}`, {
       headers: {
         Authorization: `Bearer ${token}`

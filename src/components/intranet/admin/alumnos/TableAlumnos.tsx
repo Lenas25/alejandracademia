@@ -91,7 +91,7 @@ export function TableAlumnos() {
             </button>
             <button
               type="button"
-              className="btn-ghost btn bg-darkpink text-lg flex-1 h-fit disabled:opacity-40 disabled:cursor-not-allowed"
+              className="btn bg-darkpink text-lg flex-1 h-fit disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
               onClick={handleModalEdit}
               disabled={!selectedUser}>
               Editar <IconPencil />
