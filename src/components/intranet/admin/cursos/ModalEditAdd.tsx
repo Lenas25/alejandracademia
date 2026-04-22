@@ -139,14 +139,14 @@ function ModalEditAdd({
             ✕
           </button>
         </form>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4 mb-2">
           <h3 className="font-semibold text-2xl">{modalMessage.title}</h3>
           <span className="p-2 bg-white text-black rounded-full">
             {isOpenModal.type === "add" ? <IconPlus /> : <IconEdit />}
           </span>
         </div>
-        <p className="py-4 text-base">{modalMessage.message}</p>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <p className="mb-6 text-gray-400">{modalMessage.message}</p>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
             <select
               defaultValue = {selectedCourse?.tutor?.id || "" }
@@ -215,7 +215,7 @@ function ModalEditAdd({
             </label>
           </div>
           {errors.name && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="text-error text-xs mt-1 pl-1">
               {errors?.name?.message}
             </span>
           )}
@@ -234,7 +234,7 @@ function ModalEditAdd({
             />
           </div>
           {errors.description && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="text-error text-xs mt-1 pl-1">
               {errors?.description?.message}
             </span>
           )}
@@ -267,7 +267,7 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.initialDate || errors.endDate) && (
-            <span className="pl-1 font-semibold text-red-400">
+            <span className="text-error text-xs mt-1 pl-1">
               {errors?.initialDate?.message || errors.endDate?.message}
             </span>
           )}
@@ -277,7 +277,7 @@ function ModalEditAdd({
               <button
                 type="button"
                 onClick={() => append({ name: "", percentage: 0, new: true })}
-                className="btn btn-sm btn-primary bg-darkpink border-none text-white text-base">
+                className="btn btn-sm bg-darkpink border-none text-white text-base">
                 Agregar
               </button>
             </div>
@@ -324,11 +324,11 @@ function ModalEditAdd({
             </ul>
           </div>
           {error && (
-            <span className="pl-1 font-semibold text-red-400">{error}</span>
+            <span className="text-error text-xs mt-1 pl-1">{error}</span>
           )}
           <button
             type="submit"
-            className="btn btn-ghost bg-darkpink hover:bg-darkpink/80 text-white text-base mx-10 my-2">
+            className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base w-full mt-2">
             Guardar
           </button>
         </form>

@@ -56,7 +56,7 @@ export function TableNotas() {
         courses={courses}
         handleSelectCourse={handleSelectCourse}
       />
-      <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6">
+      <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6 md:p-10">
         <div className="flex flex-col gap-5 w-full md:flex-row md:justify-between items-center">
           <h2 className="text-2xl font-semibold text-center sm:text-left flex-1 max-w-md">
             {viewMode === "input" ? "Calificar Notas" : "Ver Notas"}
@@ -69,6 +69,7 @@ export function TableNotas() {
                   ? "bg-flamingo text-white hover:bg-flamingo"
                   : "bg-white text-black hover:bg-flamingo hover:text-white"
               }`}
+              type="button"
               onClick={() => setViewMode("input")}>
               Calificar
             </button>
@@ -78,6 +79,7 @@ export function TableNotas() {
                   ? "bg-flamingo text-white hover:bg-flamingo"
                   : "bg-white text-black hover:bg-flamingo hover:text-white"
               }`}
+              type="button"
               onClick={() => setViewMode("view")}>
               Notas
             </button>

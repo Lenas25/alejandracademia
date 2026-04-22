@@ -11,7 +11,7 @@ function ModalDelete({
   name?: string;
 }) {
   return (
-    <dialog id={`delete_${info}`} className="modal">
+    <dialog id={`delete_${info}`} className="modal backdrop-blur-sm">
       <div className="modal-box text-white">
         <form method="dialog">
           <button

@@ -57,16 +57,17 @@ export function Calendario() {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <p className="font-semibold text-gray-800">{formatMonthYear(currentDate)}</p>
-          <button 
-            onClick={handleGoToToday} 
+          <button
+            type="button"
+            onClick={handleGoToToday}
             className="text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full transition-colors"
           >
             Hoy
           </button>
         </div>
         <div className="flex gap-2">
-          <button onClick={handlePrevWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronLeft size={20} /></button>
-          <button onClick={handleNextWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronRight size={20} /></button>
+          <button type="button" onClick={handlePrevWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronLeft size={20} /></button>
+          <button type="button" onClick={handleNextWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronRight size={20} /></button>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">

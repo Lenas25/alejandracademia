@@ -158,7 +158,7 @@ function RowCursos({
             </button>
           </div>
           <ModalDelete handleDelete={handleDelete} info={course.id} name={course.name} />
-          <dialog id={`finish_${course.id}`} className="modal">
+          <dialog id={`finish_${course.id}`} className="modal backdrop-blur-sm">
             <div className="modal-box text-white">
               <form method="dialog">
                 <button type="submit" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -192,7 +192,7 @@ function RowCursos({
               setOpenModal={setOpenModal}
               isOpenModal={isOpenModal}
               modalMessage={{
-                title: "Editar Usuario",
+                title: "Editar Curso",
                 message: "Completa para actualizar",
               }}
               setSelectedCourse={setSelectedCourse}

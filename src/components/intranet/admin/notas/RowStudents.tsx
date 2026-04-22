@@ -172,7 +172,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
           <div className="overflow-x-auto">
             <table className="table">
               {/* ... (thead) ... */}
-              <thead>
+              <thead className="text-black md:text-lg">
                 <tr>
                   <th>DNI</th>
                   <th>Nombre</th>

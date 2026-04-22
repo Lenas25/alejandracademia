@@ -44,6 +44,7 @@ export function CursoCard() {
         <h3 className="font-semibold text-gray-800">Curso Actual</h3>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={handlePrevCourse}
             className="p-1 text-gray-500 hover:text-black"
             disabled={currentCourse === 0}
@@ -51,6 +52,7 @@ export function CursoCard() {
             <IconChevronLeft size={20} />
           </button>
           <button
+            type="button"
             onClick={handleNextCourse}
             className="p-1 text-gray-500 hover:text-black"
             disabled={currentCourse === courses.length - 1 || courses.length === 0}

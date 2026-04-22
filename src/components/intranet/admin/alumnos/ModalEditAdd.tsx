@@ -12,7 +12,7 @@ import {
   IconKeyFilled,
   IconEPassport,
 } from "@tabler/icons-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/redux/stores";
 import { createUser, updateUser } from "@/redux/service/userService";
@@ -55,7 +55,12 @@ function ModalEditAdd({
   });
 
   const dispatch = useAppDispatch();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    dialogRef.current?.showModal();
+  }, []);
 
   const onSubmit = async (data: User) => {
     try {
@@ -101,7 +106,7 @@ function ModalEditAdd({
   };
 
   return (
-    <dialog open={isOpenModal.active} className="modal backdrop-blur-sm">
+    <dialog ref={dialogRef} className="modal backdrop-blur-sm">
       <div className="modal-box text-white max-w-lg">
         {" "}
         {/* Ligeramente más angosto para mejor legibilidad */}
@@ -113,7 +118,7 @@ function ModalEditAdd({
           </button>
         </form>
         <div className="flex items-center gap-4 mb-2">
-          <h3 className="font-bold text-2xl">{modalMessage.title}</h3>
+          <h3 className="font-semibold text-2xl">{modalMessage.title}</h3>
           <span className="p-2 bg-white text-black rounded-full">
             {isOpenModal.type === "add" ? (
               <IconPlus size={20} />

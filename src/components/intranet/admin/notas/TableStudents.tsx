@@ -7,7 +7,7 @@ export function TableStudents() {
   
   return (
     <>
-      <div className="flex flex-col gap-5 bg-white rounded-lg shadow p-6  mb-5">
+      <div className="flex flex-col gap-5 bg-white rounded-lg shadow p-6 md:p-10 mb-5">
         <div className="flex flex-wrap gap-5 w-full justify-between">
           <h2 className="text-2xl font-semibold">Estudiantes Inscritos</h2>
           <div className="flex gap-2 items-center">

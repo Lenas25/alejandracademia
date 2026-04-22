@@ -16,7 +16,7 @@ export function PromedioCard() {
   const strokeColor = finalGrade >= 15 ? "stroke-green-500" : finalGrade >= 11 ? "stroke-yellow-500" : "stroke-red-500";
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full">
+    <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium text-gray-700">Promedio General</h3>
         <IconChartDonut3 size={24} className="text-gray-400" />

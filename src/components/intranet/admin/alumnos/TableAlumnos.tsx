@@ -111,7 +111,7 @@ export function TableAlumnos() {
         </div>
 
         {message && (
-          <div className="alert alert-error my-5 text-white">{message}</div>
+          <div className="alert alert-success my-5 text-white">{message}</div>
         )}
         <div className="overflow-auto size-full">
           <table className="table mb-5">
