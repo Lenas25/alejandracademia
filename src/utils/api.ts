@@ -37,7 +37,9 @@ export const uploadImage = async (image: File) => {
   const formData = new FormData();
   formData.append("file", image);
   try {
-    const response = await cloudinaryAPI.post("/upload", formData);
+    const response = await cloudinaryAPI.post("/upload", formData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -47,7 +49,9 @@ export const uploadImage = async (image: File) => {
 
 export const deleteImage = async (publicId: string) => {
   try {
-    const response = await cloudinaryAPI.delete(`/${publicId}`);
+    const response = await cloudinaryAPI.delete(`/${publicId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    });
     return response.data.deleted;
   } catch (error) {
     console.error(error);
