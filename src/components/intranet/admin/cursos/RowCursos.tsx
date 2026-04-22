@@ -2,6 +2,7 @@ import {
   IconDeviceDesktopMinus,
   IconPhotoX,
   IconTrash,
+  IconAlertTriangle,
 } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
 import ModalEditAdd from "./ModalEditAdd";
@@ -59,16 +60,19 @@ function RowCursos({
     )?.close();
   };
 
+  const handleModalFinish = () => {
+    if (!course.isActive) {
+      setMessage("El curso ya está inactivo");
+      return;
+    }
+    (document.getElementById(`finish_${course.id}`) as HTMLDialogElement)?.showModal();
+  };
+
   const handleFinishCourse = async () => {
-    if (course.isActive) {
-      const resultAction = await dispatch(
-        finishEnrollment({ courseId: course.id })
-      );
-      if (finishEnrollment.fulfilled.match(resultAction)) {
-        setMessage(resultAction.payload.message);
-      }
-    } else {
-      setMessage("El curso esta inactivo");
+    (document.getElementById(`finish_${course.id}`) as HTMLDialogElement)?.close();
+    const resultAction = await dispatch(finishEnrollment({ courseId: course.id }));
+    if (finishEnrollment.fulfilled.match(resultAction)) {
+      setMessage(resultAction.payload.message);
     }
   };
 
@@ -148,12 +152,38 @@ function RowCursos({
             <button
               type="button"
               className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg w-full h-auto hover:text-black"
-              onClick={handleFinishCourse}>
+              onClick={handleModalFinish}>
               <IconDeviceDesktopMinus />
               Terminar Curso
             </button>
           </div>
           <ModalDelete handleDelete={handleDelete} info={course.id} name={course.name} />
+          <dialog id={`finish_${course.id}`} className="modal">
+            <div className="modal-box text-white">
+              <form method="dialog">
+                <button type="submit" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              </form>
+              <div className="flex items-center gap-5">
+                <h3 className="font-semibold text-2xl">Terminar Curso</h3>
+                <IconAlertTriangle className="text-yellow" />
+              </div>
+              <p className="py-4 text-base">
+                ¿Estás seguro que deseas terminar <strong>{course.name}</strong>?
+                Esta acción marcará el curso como inactivo y no puede deshacerse.
+              </p>
+              <div className="w-full flex justify-end gap-3">
+                <form method="dialog">
+                  <button type="submit" className="btn btn-sm">Cancelar</button>
+                </form>
+                <button
+                  type="button"
+                  onClick={handleFinishCourse}
+                  className="btn btn-sm btn-warning text-white text-lg">
+                  Terminar
+                </button>
+              </div>
+            </div>
+          </dialog>
           {isOpenModal.active && isOpenModal.type === "edit" && (
             <ModalEditAdd
               users={users}
