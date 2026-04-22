@@ -1,5 +1,4 @@
-import { Bienvenida, Calendario, CursoCard, NotasCard, PromedioCard } from '@/components'
-import React from 'react'
+import { PanelContent } from '@/components/intranet/alumno/PanelContent'
 
 export const metadata = {
   title: "Intranet | Panel",
@@ -9,27 +8,8 @@ export const metadata = {
 function Panel() {
   return (
     <div className='p-4 lg:p-8 min-h-screen'>
-      <div className='max-w-7xl mx-auto space-y-6'>
-        
-        {/* 1. Fila de Bienvenida */}
-        <Bienvenida />
-
-        {/* 2. Fila de Curso y Calendario */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CursoCard />
-          <Calendario />
-        </div>
-
-        {/* 3. Fila de Promedio y Notas */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <PromedioCard />
-          </div>
-          <div className="lg:col-span-2">
-            <NotasCard />
-          </div>
-        </div>
-
+      <div className='max-w-7xl mx-auto'>
+        <PanelContent />
       </div>
     </div>
   )

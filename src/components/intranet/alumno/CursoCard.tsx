@@ -15,6 +15,7 @@ export function CursoCard() {
   const userLogin = useAppSelector((state) => state.user.userLogin);
   const courses = enrollmentsPerUser.flatMap((enrollment) => enrollment.course);
   const [currentCourse, setCurrentCourse] = useState<number>(0);
+  const gradesUser = useAppSelector((state) => state.grade.gradesUser);
 
   useEffect(() => {
     dispatch(setEnrollmentsUser(enrollmentsPerUser[currentCourse]));
@@ -80,6 +81,27 @@ export function CursoCard() {
               <p className="text-gray-600 mt-2">
                 {courses[currentCourse]?.description}
               </p>
+
+              {/* Barra de progreso de actividades */}
+              {(() => {
+                const total = courses[currentCourse]?.activities?.length ?? 0;
+                const completadas = gradesUser.length;
+                if (total === 0) return null;
+                const pct = Math.min(Math.round((completadas / total) * 100), 100);
+                return (
+                  <div className="mt-3">
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        className="bg-darkpink h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {completadas} de {total} actividades completadas
+                    </p>
+                  </div>
+                );
+              })()}
             </>
           ) : enrollmentsPerUser.length === 0 ? (
             <div className="space-y-1">
