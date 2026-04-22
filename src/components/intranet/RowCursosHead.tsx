@@ -43,7 +43,7 @@ function RowCursosHead({
   return (
     <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-black rounded-lg shadow relative p-6">
       <div className="flex items-center gap-5 justify-between w-full flex-wrap">
-        <h1 className="text-2xl font-semisemibold text-white">Cursos</h1>
+        <h1 className="text-2xl font-semibold text-white">Cursos</h1>
         <div className="flex gap-2 items-center">
           <button
             type="button"

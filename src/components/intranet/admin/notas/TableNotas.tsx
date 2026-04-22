@@ -58,7 +58,7 @@ export function TableNotas() {
       />
       <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6">
         <div className="flex flex-col gap-5 w-full md:flex-row md:justify-between items-center">
-          <h2 className="text-2xl font-semisemibold text-center sm:text-left flex-1 max-w-md">
+          <h2 className="text-2xl font-semibold text-center sm:text-left flex-1 max-w-md">
             {viewMode === "input" ? "Calificar Notas" : "Ver Notas"}
           </h2>
 

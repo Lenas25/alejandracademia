@@ -147,7 +147,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
     selectedCourse &&
     selectedActivity && (
       <div className="flex flex-col gap-3">
-        <h3 className="text-lg font-semisemibold">{selectedActivity?.name}</h3>
+        <h3 className="text-lg font-semibold">{selectedActivity?.name}</h3>
         {message && (
           <div
             className={`alert ${

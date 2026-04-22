@@ -86,7 +86,7 @@ function RowAlumnos({
       <td>{user.phone}</td>
       <td>
         <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semisemibold text-sm md:text-lg ${classRole}`}>{`${(user.role ?? "")
+          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${classRole}`}>{`${(user.role ?? "")
           .charAt(0)
           .toUpperCase()}${(user.role ?? "").slice(1)}`}</span>
       </td>

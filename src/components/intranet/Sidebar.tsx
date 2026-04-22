@@ -67,7 +67,7 @@ export function Sidebar({ pathname }: { pathname: string }) {
           <button
             type="button"
             onClick={userLogout}
-            className="relative text-lg p-2 font-semisemibold cursor-pointer rounded-full transition-all delay-150 ease-in-out hover:bg-rose md:p-4 group">
+            className="relative text-lg p-2 font-semibold cursor-pointer rounded-full transition-all delay-150 ease-in-out hover:bg-rose md:p-4 group">
             <IconLogout2 size={30} className="md:size-10" />
             <span className="absolute -top-1/2 left-0 md:left-full ml-2 md:top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 bg-black text-white text-sm rounded px-2 py-1 transition-opacity duration-300">
               Salir

@@ -215,7 +215,7 @@ function ModalEditAdd({
             </label>
           </div>
           {errors.name && (
-            <span className="pl-1 font-semisemibold text-red-400">
+            <span className="pl-1 font-semibold text-red-400">
               {errors?.name?.message}
             </span>
           )}
@@ -234,7 +234,7 @@ function ModalEditAdd({
             />
           </div>
           {errors.description && (
-            <span className="pl-1 font-semisemibold text-red-400">
+            <span className="pl-1 font-semibold text-red-400">
               {errors?.description?.message}
             </span>
           )}
@@ -257,7 +257,7 @@ function ModalEditAdd({
                 <span className="label-text text-base">Fin</span>
               </div>
               <input
-                defaultValue={selectedCourse?.initialDate.toString()}
+                defaultValue={selectedCourse?.endDate?.toString()}
                 type="date"
                 className="grow"
                 {...register("endDate", {
@@ -267,7 +267,7 @@ function ModalEditAdd({
             </label>
           </div>
           {(errors.initialDate || errors.endDate) && (
-            <span className="pl-1 font-semisemibold text-red-400">
+            <span className="pl-1 font-semibold text-red-400">
               {errors?.initialDate?.message || errors.endDate?.message}
             </span>
           )}
@@ -324,7 +324,7 @@ function ModalEditAdd({
             </ul>
           </div>
           {error && (
-            <span className="pl-1 font-semisemibold text-red-400">{error}</span>
+            <span className="pl-1 font-semibold text-red-400">{error}</span>
           )}
           <button
             type="submit"

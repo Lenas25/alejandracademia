@@ -52,7 +52,7 @@ export function Testimonials() {
       <div className="flex flex-col gap-10 z-10 lg:flex-1">
         <div className="flex gap-2 justify-center flex-col text-center">
           <div className="flex justify-center">
-            <h2 className="text-center text-6xl font-semisemibold w-auto xl:text-8xl text-white">
+            <h2 className="text-center text-6xl font-semibold w-auto xl:text-8xl text-white">
               Testimonios
             </h2>
           </div>

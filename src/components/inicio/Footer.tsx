@@ -47,7 +47,7 @@ export function Footer() {
                   <p>8:00 am - 5:00 pm</p>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <p>Sabados</p>
+                  <p>Sábados</p>
                   <p>8:00 am - 5:00 pm</p>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export function Footer() {
         <div className="relative z-5 flex justify-end">
           <div className="relative w-full flex justify-end z-1">
             <div className="absolute h-full z-10 bottom-0 xl:left-0 flex flex-col justify-center w-full items-center">
-              <h4 className="text-5xl font-semisemibold 2xl:text-6xl">
+              <h4 className="text-5xl font-semibold 2xl:text-6xl">
                 SIGUENOS
               </h4>
               <p

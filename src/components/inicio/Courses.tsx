@@ -40,7 +40,7 @@ export function Courses() {
           className="my-10 px-3 flex gap-5 items-center flex-col md:px-14 md:py-12 md:gap-10 md:justify-between 2xl:px-32">
           <div className="flex gap-2 justify-center flex-col text-center">
             <div className="flex justify-center">
-              <h2 className="text-center text-6xl font-semisemibold w-auto md:w-[80%] lg:text-8xl">
+              <h2 className="text-center text-6xl font-semibold w-auto md:w-[80%] lg:text-8xl">
                 Nuestros Cursos
               </h2>
             </div>

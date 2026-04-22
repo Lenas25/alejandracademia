@@ -45,7 +45,7 @@ export function LoginForm() {
           })}
         />
         {errors.username && (
-          <p className="text-red-700 font-semisemibold pt-2">
+          <p className="text-red-700 font-semibold pt-2">
             {errors.username.message}
           </p>
         )}
@@ -65,15 +65,15 @@ export function LoginForm() {
           })}
         />
         {errors.password && (
-          <p className="text-red-700 font-semisemibold pt-2">
+          <p className="text-red-700 font-semibold pt-2">
             {errors.password.message}
           </p>
         )}
-        {error && <p className="text-red-700 font-semisemibold pt-2">{error}</p>}
+        {error && <p className="text-red-700 font-semibold pt-2">{error}</p>}
       </div>
       <button
         type="submit"
-        className="bg-black text-white rounded-lg text-xl font-semisemibold py-3 lg:mx-auto lg:px-10">
+        className="bg-black text-white rounded-lg text-xl font-semibold py-3 lg:mx-auto lg:px-10">
         Iniciar Sesión
       </button>
     </form>

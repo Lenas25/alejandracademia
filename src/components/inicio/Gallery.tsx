@@ -21,7 +21,7 @@ export function Gallery() {
       </div>
       <div className="z-10 flex gap-2 justify-center flex-col text-center">
         <div className="flex justify-center">
-          <h2 className="text-center text-6xl font-semisemibold w-auto lg:text-8xl">
+          <h2 className="text-center text-6xl font-semibold w-auto lg:text-8xl">
             Galería
           </h2>
         </div>

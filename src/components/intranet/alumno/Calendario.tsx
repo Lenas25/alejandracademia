@@ -10,7 +10,7 @@ const getWeekDays = (date: Date) => {
   startOfWeek.setDate(date.getDate() + diff);
 
   const days = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 7; i++) {
     const day = new Date(startOfWeek);
     day.setDate(startOfWeek.getDate() + i);
     days.push({
@@ -69,7 +69,7 @@ export function Calendario() {
           <button onClick={handleNextWeek} className="p-1 text-gray-500 hover:text-black transition-colors"><IconChevronRight size={20} /></button>
         </div>
       </div>
-      <div className="grid grid-cols-6 gap-2 text-center">
+      <div className="grid grid-cols-7 gap-2 text-center">
         {weekDays.map(({ day, date, fullDate }) => {
           const isToday = 
             fullDate.getDate() === today.getDate() &&

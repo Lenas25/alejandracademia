@@ -9,6 +9,7 @@ export function NotasCard() {
   const dispatch = useAppDispatch();
   const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
   const gradesUser = useAppSelector((state) => state.grade.gradesUser);
+  const gradeStatus = useAppSelector((state) => state.grade?.status);
 
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function NotasCard() {
         <IconListDetails size={24} className="text-gray-400" />
       </div>
       <div className="flex-grow flex flex-col gap-3 overflow-y-auto pr-2">
-        {status === 'loading' ? (
+        {gradeStatus === 'loading' ? (
           <div className="flex justify-center items-center h-full">
             <span className="loading loading-spinner text-gray-300"></span>
           </div>

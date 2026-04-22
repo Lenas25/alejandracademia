@@ -26,6 +26,7 @@ export function CursoCard() {
 
   const handlePrevCourse = () => {
     if (currentCourse > 0) {
+      dispatch(setEnrollmentsUser(courses[currentCourse - 1]));
       setCurrentCourse((prev) => prev - 1);
     }
   };

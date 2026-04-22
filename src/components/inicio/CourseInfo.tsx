@@ -69,13 +69,13 @@ function CourseInfo({
               {course.description}
             </p>
             <div className="flex flex-col gap-1 text-left text-sm lg:text-xl">
-              <p className="font-semisemibold">
+              <p className="font-semibold">
                 Dia Inicio: {course.initialDate.toString()}
               </p>
-              <p className="font-semisemibold">
+              <p className="font-semibold">
                 Dia Fin: {course.endDate.toString()}
               </p>
-              <p className="font-semisemibold">
+              <p className="font-semibold">
                 Duracion: {course.duration}{" "}
                 {course.duration === 1 ? "mes" : "meses"}
               </p>
@@ -85,7 +85,7 @@ function CourseInfo({
           <>
             <div className="absolute inset-0 bg-black/50 bg-opacity-50 backdrop-filter backdrop-sepia-0 z-0 rounded-xl" />
             <div className="relative z-20 p-4 size-full rounded-xl shadow-xl flex justify-start items-end text-xl transition-opacity duration-500 ease-in-out">
-              <span className="transition-all duration-500 ease-in-out text-xl font-semisemibold break-words text-white lg:text-3xl">
+              <span className="transition-all duration-500 ease-in-out text-xl font-semibold break-words text-white lg:text-3xl">
                 {course.name}
               </span>
             </div>

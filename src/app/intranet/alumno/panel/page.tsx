@@ -8,7 +8,7 @@ export const metadata = {
 
 function Panel() {
   return (
-    <div className='lg:p-8 min-h-screen'>
+    <div className='p-4 lg:p-8 min-h-screen'>
       <div className='max-w-7xl mx-auto space-y-6'>
         
         {/* 1. Fila de Bienvenida */}
