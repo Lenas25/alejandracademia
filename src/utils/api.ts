@@ -1,6 +1,15 @@
 import axios from "axios";
 import rutas from "./endpoints";
-import jwt from 'jsonwebtoken';
+
+function decodeJwt(token: string): Record<string, unknown> | null {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
+}
 
 interface JwtPayload {
   id: string;
@@ -84,7 +93,7 @@ export const getMe = async (token: string) => {
 
 export const decodeToken = (token: string) => {
   try {
-    const decoded = jwt.decode(token);
+    const decoded = decodeJwt(token);
     return decoded;
   } catch (error) {
     console.error('Error decoding token:', error);
@@ -94,7 +103,7 @@ export const decodeToken = (token: string) => {
 
 export const isTokenExpired = (token: string): boolean => {
   try {
-    const decoded = jwt.decode(token) as { exp: number };
+    const decoded = decodeJwt(token) as { exp: number } | null;
     if (!decoded || !decoded.exp) {
       return true;
     }
