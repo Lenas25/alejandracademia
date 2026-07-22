@@ -169,8 +169,8 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div className="overflow-x-auto">
-            <table className="table">
+          <div className="table-scroll">
+            <table className="table min-w-[420px]">
               {/* ... (thead) ... */}
               <thead className="text-black md:text-lg">
                 <tr>
@@ -183,7 +183,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                 {/* 5. Iterar sobre el array de campos del formulario */}
                 {filteredStudents.map((gr, index) => (
                   <tr key={gr.id_enrollment}>
-                    <td>
+                    <td className="max-w-[110px] truncate">
                       {Array.isArray(gr.enrollment.user)
                         ? gr.enrollment.user[0]?.id
                         : gr.enrollment.user?.id}

@@ -109,8 +109,8 @@ export function TableCursos() {
         {message && (
           <div className="alert alert-success my-5 text-white">{message}</div>
         )}
-        <div className="overflow-auto size-full">
-          <table className="table mb-5">
+        <div className="table-scroll size-full">
+          <table className="table mb-5 min-w-[560px]">
             <thead className="text-black md:text-lg">
               <tr>
                 {userLogin?.role === Roles.ADMIN && <th />}

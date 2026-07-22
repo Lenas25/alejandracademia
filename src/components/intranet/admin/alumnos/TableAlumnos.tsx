@@ -113,16 +113,16 @@ export function TableAlumnos() {
         {message && (
           <div className="alert alert-success my-5 text-white">{message}</div>
         )}
-        <div className="overflow-auto size-full">
-          <table className="table mb-5">
+        <div className="table-scroll size-full">
+          <table className="table mb-5 min-w-[640px]">
             <thead className="text-black md:text-lg">
               <tr>
                 <th />
                 <th>Dni</th>
                 <th>Nombre</th>
-                <th>Usuario</th>
+                <th className="hidden xl:table-cell">Usuario</th>
                 <th>Email</th>
-                <th>Celular</th>
+                <th className="hidden xl:table-cell">Celular</th>
                 <th>Rol</th>
               </tr>
             </thead>

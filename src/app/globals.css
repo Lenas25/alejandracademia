@@ -26,3 +26,29 @@ input:-internal-autofill-selected {
 select {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+/*
+ * Horizontal scroll wrapper for wide tables. Keeps the scrollbar reachable
+ * (never relies on OS overlay auto-hide scrollbars, which made the
+ * "Rol"/actions columns effectively unreachable at laptop widths) and
+ * confines scrolling to the card instead of the page body.
+ */
+.table-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #a16361 #d9d9d9;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+  background: #d9d9d9;
+  border-radius: 999px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background-color: #a16361;
+  border-radius: 999px;
+}

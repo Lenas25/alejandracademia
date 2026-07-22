@@ -184,12 +184,12 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
                 availableUsersToDisplay.map((user) => (
                   <li
                     key={`available-${user.id}`}
-                    className="p-3 hover:bg-gray-100 flex justify-between items-center cursor-pointer"
+                    className="p-3 hover:bg-gray-100 flex justify-between items-center gap-3 cursor-pointer"
                     onClick={() => handleAddUser(user)}>
-                    <span>
+                    <span className="min-w-0 break-words">
                       {user.name} {user.lastName} - {user.id}
                     </span>
-                    <IconUserPlus className="text-gray-600" />
+                    <IconUserPlus className="text-gray-600 shrink-0" />
                   </li>
                 ))
               ) : (
@@ -208,13 +208,13 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
                 {selectedUsers.map((user) => (
                   <li
                     key={`selected-${user.id}`}
-                    className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                    <span>
+                    className="flex justify-between items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                    <span className="min-w-0 break-words">
                       {user.name} {user.lastName} - {user.id}
                     </span>
                     <button
                       onClick={() => handleRemoveUser(String(user.id))}
-                      className="btn btn-ghost btn-sm p-0 min-h-0 h-auto hover:bg-transparent">
+                      className="btn btn-ghost btn-sm p-0 min-h-0 h-auto hover:bg-transparent shrink-0">
                       <IconX className="text-red-500" />
                     </button>
                   </li>

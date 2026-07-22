@@ -65,7 +65,9 @@ function RowAlumnos({
           />
         </label>
       </th>
-      <td>{user.id}</td>
+      <td className="max-w-[80px] truncate" title={String(user.id)}>
+        {user.id}
+      </td>
       <td>
         <div className="flex items-center gap-3">
           <div>
@@ -74,9 +76,11 @@ function RowAlumnos({
           </div>
         </div>
       </td>
-      <td>{user.username}</td>
-      <td>{user.email}</td>
-      <td>{user.phone}</td>
+      <td className="hidden xl:table-cell">{user.username}</td>
+      <td className="max-w-[180px] truncate" title={user.email}>
+        {user.email}
+      </td>
+      <td className="hidden xl:table-cell">{user.phone}</td>
       <td>
         <span
           className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${classRole}`}>{`${(user.role ?? "")
@@ -86,7 +90,7 @@ function RowAlumnos({
       <th>
         <button
           type="button"
-          className="btn btn-ghost btn-xs bg-black text-white p-4 flex items-center justify-center gap-5 flex-nowrap text-sm md:text-lg hover:text-black"
+          className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-black"
           onClick={handleModalDelete}>
           <IconTrash />
           Eliminar
