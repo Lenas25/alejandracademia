@@ -2,7 +2,7 @@ import { IconUsersGroup, IconBook, IconClipboardList, IconStarsFilled, IconLayou
 
 export const AlumnoRoutes = [{
   id: 1,
-  href: "./panel",
+  href: "/intranet/alumno/panel",
   icon: IconLayoutDashboardFilled,
   label: "Panel",
   pathRoute: '/panel'
@@ -10,35 +10,35 @@ export const AlumnoRoutes = [{
 
 export const AdminRoutes = [{
   id: 1,
-  href: "../admin/alumnos",
+  href: "/intranet/admin/alumnos",
   icon: IconUsersGroup,
   label: "Alumnos",
   pathRoute: '/alumnos'
 },
 {
   id: 2,
-  href: "../admin/cursos",
+  href: "/intranet/admin/cursos",
   icon: IconBook,
   label: "Cursos",
   pathRoute: '/cursos'
 },
 {
   id: 3,
-  href: "../admin/secciones",
+  href: "/intranet/admin/secciones",
   icon: IconLayoutGrid,
   label: "Secciones",
   pathRoute: '/secciones'
 },
 {
   id: 4,
-  href: "../admin/asignar",
+  href: "/intranet/admin/asignar",
   icon: IconClipboardList,
   label: "Asignar",
   pathRoute: '/asignar'
 },
 {
   id: 5,
-  href: "../admin/notas",
+  href: "/intranet/admin/notas",
   icon: IconStarsFilled,
   label: "Notas",
   pathRoute: '/notas'
@@ -46,14 +46,14 @@ export const AdminRoutes = [{
 
 export const TutorRoutes = [{
   id: 1,
-  href: "../admin/cursos",
+  href: "/intranet/admin/cursos",
   icon: IconBook,
   label: "Cursos",
   pathRoute: '/cursos'
 },
 {
   id: 2,
-  href: "../admin/notas",
+  href: "/intranet/admin/notas",
   icon: IconStarsFilled,
   label: "Notas",
   pathRoute: '/notas'
