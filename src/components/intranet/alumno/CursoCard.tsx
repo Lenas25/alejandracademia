@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { calculateWeightedAverage } from "@/utils/gradeAverage";
 
 export function CursoCard() {
   const dispatch = useAppDispatch();
@@ -100,6 +101,7 @@ export function CursoCard() {
                 const completadas = gradesUser.length;
                 if (total === 0) return null;
                 const pct = Math.min(Math.round((completadas / total) * 100), 100);
+                const average = calculateWeightedAverage(gradesUser);
                 return (
                   <div className="mt-3">
                     <div className="w-full bg-gray-100 rounded-full h-2">
@@ -108,9 +110,14 @@ export function CursoCard() {
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {completadas} de {total} actividades completadas
-                    </p>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-xs text-gray-500">
+                        {completadas} de {total} actividades completadas
+                      </p>
+                      <p className="text-xs font-semibold text-gray-600">
+                        Promedio: {average === null ? "—" : average.toFixed(1)}
+                      </p>
+                    </div>
                   </div>
                 );
               })()}
