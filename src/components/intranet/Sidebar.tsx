@@ -60,7 +60,7 @@ export function Sidebar({ pathname }: { pathname: string }) {
                 href={route.href}
                 icon={<route.icon size={30} className="md:size-10" />}
                 label={route.label}
-                isActive={path === route.pathRoute}
+                isActive={path === route.pathRoute || path.startsWith(`${route.pathRoute}/`)}
               />
             ))}
           </div>

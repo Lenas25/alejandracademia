@@ -1,4 +1,4 @@
-import { IconUsersGroup, IconBook, IconClipboardList, IconStarsFilled, IconLayoutDashboardFilled } from '@tabler/icons-react';
+import { IconUsersGroup, IconBook, IconClipboardList, IconStarsFilled, IconLayoutDashboardFilled, IconLayoutGrid } from '@tabler/icons-react';
 
 export const AlumnoRoutes = [{
   id: 1,
@@ -24,13 +24,20 @@ export const AdminRoutes = [{
 },
 {
   id: 3,
+  href: "../admin/secciones",
+  icon: IconLayoutGrid,
+  label: "Secciones",
+  pathRoute: '/secciones'
+},
+{
+  id: 4,
   href: "../admin/asignar",
   icon: IconClipboardList,
   label: "Asignar",
   pathRoute: '/asignar'
 },
 {
-  id: 4,
+  id: 5,
   href: "../admin/notas",
   icon: IconStarsFilled,
   label: "Notas",
