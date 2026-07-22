@@ -99,7 +99,7 @@ export function TableNotas() {
               {activities?.length > 0 &&
                 activities.map((activity) => (
                   <option key={activity.id} value={activity.id}>
-                    {activity.name} - {activity.percentage * 100}%
+                    {activity.name} - {activity.percentage}%
                   </option>
                 ))}
             </select>

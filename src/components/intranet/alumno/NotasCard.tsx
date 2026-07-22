@@ -38,7 +38,7 @@ export function NotasCard() {
               <div key={grade.id_activity} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                 <div>
                   <h4 className="font-semibold text-gray-800">{grade.activity.name}</h4>
-                  <p className="text-sm text-gray-500">Peso: {grade.activity.percentage * 100}%</p>
+                  <p className="text-sm text-gray-500">Peso: {grade.activity.percentage}%</p>
                 </div>
                 <div 
                   className={`text-lg font-bold text-white w-12 h-12 flex items-center justify-center rounded-full ${isApproved ? 'bg-green-500' : 'bg-red-500'}`}
