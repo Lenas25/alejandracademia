@@ -17,10 +17,17 @@ function RequireAuth({
 
   useEffect(() => {
     const allowedRoutes = new Map([
-      ["admin", new Set(["/intranet/admin", "/intranet/admin/alumnos", "/intranet/admin/cursos", "/intranet/admin/asignar", "/intranet/admin/notas", "/intranet/alumno/panel"])],
-      ["alumno", new Set(["/intranet/alumno/panel", "/intranet/alumno"])],
-      ["tutor", new Set(["/intranet/admin", "/intranet/admin/cursos", "/intranet/admin/asignar", "/intranet/admin/notas"])],
+      ["admin", ["/intranet/admin", "/intranet/admin/alumnos", "/intranet/admin/cursos", "/intranet/admin/asignar", "/intranet/admin/notas", "/intranet/admin/secciones", "/intranet/alumno/panel"]],
+      ["alumno", ["/intranet/alumno/panel", "/intranet/alumno"]],
+      ["tutor", ["/intranet/admin", "/intranet/admin/cursos", "/intranet/admin/asignar", "/intranet/admin/notas"]],
     ]);
+    const isAllowedPath = (role: string | undefined, currentPath: string) => {
+      const routes = allowedRoutes.get(role ?? "");
+      if (!routes) return false;
+      return routes.some(
+        (route) => currentPath === route || currentPath.startsWith(`${route}/`)
+      );
+    };
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
       if (token && !isTokenExpired(token)) {
@@ -29,7 +36,7 @@ function RequireAuth({
 
         const userRole = user.role;
         const currentPath = window.location.pathname;
-        if (allowedRoutes.get(userRole)?.has(currentPath)) {
+        if (isAllowedPath(userRole, currentPath)) {
           setShowPage(true);
         } else {
           setShowPage(false);
