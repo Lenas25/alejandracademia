@@ -2,14 +2,16 @@
 
 import { IconBooks, IconEdit, IconPlus } from "@tabler/icons-react";
 import React, { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/redux/stores";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Course, CreateCourse } from "@/types/course";
 import { createCourse, updateCourse } from "@/redux/service/courseService";
 import { deleteImage, extractImageId, uploadImage } from "@/utils/api";
-import { User } from "@/types/user";
 
+// Cursos admin manages the catalog `Course` only (name/description/image) —
+// tutor, dates, duration, activities and active/finish state moved to
+// `Section` (see Secciones admin module, PR4).
 interface ModalEditAddProps {
   selectedCourse: Course | null;
   setMessage: (message: string) => void;
@@ -17,11 +19,9 @@ interface ModalEditAddProps {
   setSelectedCourse: (course: Course | null) => void;
   isOpenModal: { active: boolean; type: string };
   modalMessage: { title: string; message: string };
-  users: User[];
 }
 
 function ModalEditAdd({
-  users,
   selectedCourse,
   setMessage,
   setOpenModal,
@@ -32,40 +32,20 @@ function ModalEditAdd({
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<Course>({
     defaultValues: selectedCourse
       ? {
-          id_tutor: selectedCourse.id_tutor,
-          isActive: selectedCourse.isActive,
           name: selectedCourse.name,
           description: selectedCourse.description,
-          initialDate: selectedCourse.initialDate,
-          endDate: selectedCourse.endDate,
-          activities: selectedCourse.activities,
           imageUrl: selectedCourse.imageUrl,
         }
       : {},
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "activities",
-  });
-
   const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
-  const calculateDurationInMonths = (startDate: Date, endDate: Date) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const months =
-      (end.getFullYear() - start.getFullYear()) * 12 +
-      (end.getMonth() - start.getMonth());
-    return months === 0 ? 1 : months;
-  };
 
   const onSubmit = async (data: Course) => {
     try {
@@ -73,18 +53,7 @@ function ModalEditAdd({
         message: string;
         data: CreateCourse | Course;
       }>;
-      data.activities = data.activities.map(({ percentage, ...activity }) => ({
-        ...activity,
-        percentage: Number.parseFloat(Number(percentage).toFixed(2)),
-      }));
-      data.duration = calculateDurationInMonths(
-        new Date(data.initialDate),
-        new Date(data.endDate)
-      );
-      // biome-ignore lint/performance/noDelete: <explanation>
-      delete data.tutor;
       if (isOpenModal.type === "edit") {
-        data.isActive = String(data.isActive) === "true";
         if (selectedCourse?.imageUrl !== "" && file) {
           const publicId = selectedCourse?.imageUrl
             ? extractImageId(selectedCourse.imageUrl)
@@ -102,7 +71,7 @@ function ModalEditAdd({
         )) as PayloadAction<{ message: string; data: Course }>;
       } else {
         const response = file ? await uploadImage(file) : "";
-        data.imageUrl = response.imageUrl ? response.imageUrl : selectedCourse;
+        data.imageUrl = response.imageUrl ? response.imageUrl : "";
         resultAction = (await dispatch(createCourse(data))) as PayloadAction<{
           message: string;
           data: CreateCourse;
@@ -147,40 +116,6 @@ function ModalEditAdd({
         </div>
         <p className="mb-6 text-gray-400">{modalMessage.message}</p>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <select
-              defaultValue = {selectedCourse?.tutor?.id || "" }
-              className="select select-bordered w-full text-base"
-              {...register("id_tutor", {
-                required: "Este campo es requerido"
-              })}>
-              <option disabled value="">
-                Seleccione un Tutor
-              </option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name} {user.lastName}
-                </option>
-              ))}
-            </select>
-
-            {selectedCourse && (
-              <div className="w-full flex justify-center sm:justify-end">
-                <select
-                  defaultValue={selectedCourse?.isActive ? "true" : "false"}
-                  className="select select-bordered w-full max-w-xs text-base"
-                  {...register("isActive", {
-                    required: "Este campo es requerido",
-                  })}>
-                  <option disabled value="">
-                    Seleccione un Estado
-                  </option>
-                  <option value="true">Activado</option>
-                  <option value="false">Desactivado</option>
-                </select>
-              </div>
-            )}
-          </div>
           <input
             type="file"
             className="file-input file-input-bordered w-full"
@@ -238,91 +173,6 @@ function ModalEditAdd({
               {errors?.description?.message}
             </span>
           )}
-          <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <div className="label">
-                <span className="label-text text-base">Inicio</span>
-              </div>
-              <input
-                defaultValue={selectedCourse?.initialDate.toString()}
-                type="date"
-                className="grow"
-                {...register("initialDate", {
-                  required: "Este campo es requerido",
-                })}
-              />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-full">
-              <div className="label">
-                <span className="label-text text-base">Fin</span>
-              </div>
-              <input
-                defaultValue={selectedCourse?.endDate?.toString()}
-                type="date"
-                className="grow"
-                {...register("endDate", {
-                  required: "Este campo es requerido",
-                })}
-              />
-            </label>
-          </div>
-          {(errors.initialDate || errors.endDate) && (
-            <span className="text-error text-xs mt-1 pl-1">
-              {errors?.initialDate?.message || errors.endDate?.message}
-            </span>
-          )}
-          <div className="mt-4">
-            <div className="flex gap-3 flex-wrap justify-between items-center">
-              <h4 className="font-semibold text-xl">Actividades</h4>
-              <button
-                type="button"
-                onClick={() => append({ name: "", percentage: 0, new: true })}
-                className="btn btn-sm bg-darkpink border-none text-white text-base">
-                Agregar
-              </button>
-            </div>
-            <ul className="list-disc list-inside flex gap-2 flex-col mt-4">
-              {fields.map((field, index) => (
-                <li key={field.id} className="flex gap-2 items-end">
-                  <label className="form-control w-full max-w-xs">
-                    <div className="label">
-                      <span className="label-text">Nombre</span>
-                    </div>
-                    <input
-                      type="text"
-                      {...register(`activities.${index}.name`, {
-                        required: "Este campo es requerido",
-                      })}
-                      className="input input-bordered w-full"
-                    />
-                  </label>
-
-                  <label className="form-control w-full max-w-xs">
-                    <div className="label">
-                      <span className="label-text">Porcentaje %</span>
-                    </div>
-                    <input
-                      type="number"
-                      max={1}
-                      min={0}
-                      step={0.01}
-                      placeholder="ej%. 0,10"
-                      {...register(`activities.${index}.percentage`, {
-                        required: "Este campo es requerido",
-                      })}
-                      className="input input-bordered w-24"
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="btn btn-sm btn-error mb-3">
-                    Eliminar
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
           {error && (
             <span className="text-error text-xs mt-1 pl-1">{error}</span>
           )}

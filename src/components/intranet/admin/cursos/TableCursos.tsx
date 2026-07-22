@@ -8,16 +8,12 @@ import { IconBook, IconPencil, IconPlus, IconSearch } from "@tabler/icons-react"
 import { fetchCourses } from "@/redux/service/courseService";
 import ModalEditAdd from "./ModalEditAdd";
 import { Roles } from "@/types/roles";
-import { fetchUsers } from "@/redux/service/userService";
 
 export function TableCursos() {
   const dispatch = useAppDispatch();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
   const courseStatus = useAppSelector((state) => state.course?.status);
-  const users = useAppSelector((state) => state.user?.users).filter(
-    (user) => user.role === Roles.TUTOR
-  );
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
@@ -28,7 +24,6 @@ export function TableCursos() {
 
   useEffect(() => {
     dispatch(fetchCourses());
-    dispatch(fetchUsers());
   }, [dispatch]);
 
   useEffect(() => {
@@ -46,12 +41,7 @@ export function TableCursos() {
       const searchLower = searchTerm.toLowerCase();
       return (
         course.name.toLowerCase().includes(searchLower) ||
-        course.description.toLowerCase().includes(searchLower) ||
-        (typeof course.tutor === "string"
-          ? (course.tutor as string).toLowerCase().includes(searchLower)
-          : course.tutor && typeof course.tutor === 'object' && 'name' in course.tutor
-            ? course.tutor?.name?.toLowerCase().includes(searchLower)
-            : false)
+        course.description.toLowerCase().includes(searchLower)
       );
     });
   }, [courses, searchTerm]);
@@ -125,25 +115,20 @@ export function TableCursos() {
               <tr>
                 {userLogin?.role === Roles.ADMIN && <th />}
                 <th>Imagen</th>
-                <th>Tutor</th>
                 <th>Nombre</th>
                 <th>Descripcion</th>
-                <th>Dia Inicio</th>
-                <th>Dia Final</th>
-                <th>Activo</th>
-                <th>Actividades</th>
               </tr>
             </thead>
             <tbody className="md:text-lg">
               {courseStatus === 'loading' ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10">
+                  <td colSpan={4} className="text-center py-10">
                     <span className="loading loading-spinner loading-lg text-darkpink" />
                   </td>
                 </tr>
               ) : filteredCourses.length === 0 && courseStatus === 'succeeded' ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10 text-gray-400">
+                  <td colSpan={4} className="text-center py-10 text-gray-400">
                     No hay cursos registrados
                   </td>
                 </tr>
@@ -163,12 +148,11 @@ export function TableCursos() {
         </div>
         {isOpenModal.active && isOpenModal.type === "add" && (
           <ModalEditAdd
-            users={users}
             selectedCourse={selectedCourse}
             setMessage={setMessage}
             modalMessage={{
               title: "Agregar Curso",
-              message: "Completar para agregar nuevo curso con actividades incluidas",
+              message: "Completar para agregar nuevo curso",
             }}
             setSelectedCourse={setSelectedCourse}
             isOpenModal={isOpenModal}
@@ -177,7 +161,6 @@ export function TableCursos() {
         )}
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
-            users={users}
             selectedCourse={selectedCourse}
             setMessage={setMessage}
             modalMessage={{

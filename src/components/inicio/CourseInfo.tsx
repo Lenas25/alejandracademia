@@ -68,18 +68,6 @@ function CourseInfo({
             <p className="overflow-hidden leading-4 line-clamp-6 text-ellipsis text-[14px] md:text-base md:leading-normal">
               {course.description}
             </p>
-            <div className="flex flex-col gap-1 text-left text-sm lg:text-xl">
-              <p className="font-semibold">
-                Dia Inicio: {course.initialDate.toString()}
-              </p>
-              <p className="font-semibold">
-                Dia Fin: {course.endDate.toString()}
-              </p>
-              <p className="font-semibold">
-                Duracion: {course.duration}{" "}
-                {course.duration === 1 ? "mes" : "meses"}
-              </p>
-            </div>
           </div>
         ) : (
           <>

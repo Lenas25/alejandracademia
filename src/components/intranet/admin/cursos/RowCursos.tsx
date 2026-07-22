@@ -1,16 +1,10 @@
-import {
-  IconDeviceDesktopMinus,
-  IconPhotoX,
-  IconTrash,
-  IconAlertTriangle,
-} from "@tabler/icons-react";
+import { IconPhotoX, IconTrash } from "@tabler/icons-react";
 import ModalDelete from "./ModalDelete";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Course } from "@/types/course";
 import Image from "next/image";
 import { deleteCourse } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
-import { finishEnrollment } from "@/redux/service/enrollmentService";
 import { deleteImage, extractImageId } from "@/utils/api";
 
 interface RowCursosProps {
@@ -50,22 +44,6 @@ function RowCursos({
     )?.close();
   };
 
-  const handleModalFinish = () => {
-    if (!course.isActive) {
-      setMessage("El curso ya está inactivo");
-      return;
-    }
-    (document.getElementById(`finish_${course.id}`) as HTMLDialogElement)?.showModal();
-  };
-
-  const handleFinishCourse = async () => {
-    (document.getElementById(`finish_${course.id}`) as HTMLDialogElement)?.close();
-    const resultAction = await dispatch(finishEnrollment({ courseId: course.id }));
-    if (finishEnrollment.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message);
-    }
-  };
-
   return (
     <tr>
       {userLogin?.role === Roles.ADMIN && (
@@ -99,11 +77,6 @@ function RowCursos({
       </td>
       <td>
         <div className="flex items-center gap-3">
-            <p>{typeof course.tutor === "string" ? course.tutor : course.tutor?.name || "No existe Tutor"}</p>
-        </div>
-      </td>
-      <td>
-        <div className="flex items-center gap-3">
             <p className="font-semibold">{course.name}</p>
         </div>
       </td>
@@ -111,23 +84,6 @@ function RowCursos({
         <p className="overflow-hidden text-ellipsis line-clamp-3 z-10">
           {course.description}
         </p>
-      </td>
-      <td>{course?.initialDate.toString()}</td>
-      <td>{course?.endDate.toString()}</td>
-      <td>
-        <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${
-            course.isActive ? "bg-green-600" : "bg-red-600"
-          }`}>
-          {course.isActive ? "Activo" : "Inactivo"}
-        </span>
-      </td>
-      <td>
-        <ul className="overflow-y-auto h-20 md:h-32">
-          {course.activities.map((activity) => (
-            <li key={activity.id}>- {activity.name}</li>
-          ))}
-        </ul>
       </td>
       {userLogin?.role === Roles.ADMIN && (
         <th>
@@ -139,41 +95,8 @@ function RowCursos({
               <IconTrash />
               Eliminar
             </button>
-            <button
-              type="button"
-              className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg w-full h-auto hover:text-black"
-              onClick={handleModalFinish}>
-              <IconDeviceDesktopMinus />
-              Terminar Curso
-            </button>
           </div>
           <ModalDelete handleDelete={handleDelete} info={course.id} name={course.name} />
-          <dialog id={`finish_${course.id}`} className="modal backdrop-blur-sm">
-            <div className="modal-box text-white">
-              <form method="dialog">
-                <button type="submit" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-              </form>
-              <div className="flex items-center gap-5">
-                <h3 className="font-semibold text-2xl">Terminar Curso</h3>
-                <IconAlertTriangle className="text-yellow" />
-              </div>
-              <p className="py-4 text-base">
-                ¿Estás seguro que deseas terminar <strong>{course.name}</strong>?
-                Esta acción marcará el curso como inactivo y no puede deshacerse.
-              </p>
-              <div className="w-full flex justify-end gap-3">
-                <form method="dialog">
-                  <button type="submit" className="btn btn-sm">Cancelar</button>
-                </form>
-                <button
-                  type="button"
-                  onClick={handleFinishCourse}
-                  className="btn btn-sm btn-warning text-white text-lg">
-                  Terminar
-                </button>
-              </div>
-            </div>
-          </dialog>
         </th>
       )}
     </tr>

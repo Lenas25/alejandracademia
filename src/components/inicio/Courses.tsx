@@ -9,9 +9,9 @@ import { motion } from "framer-motion";
 
 export function Courses() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses).filter(
-    (course) => course.isActive
-  );
+  // Public catalog: `isActive` was a Section-level concept and no longer
+  // exists on the catalog Course — every catalog entry is shown.
+  const courses = useAppSelector((state) => state.course.courses);
   const [indexVisible, setIndexVisible] = useState(-1);
 
   useEffect(() => {
