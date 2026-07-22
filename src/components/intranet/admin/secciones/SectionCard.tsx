@@ -12,6 +12,20 @@ interface SectionCardProps {
   onDelete: (section: Section) => void;
 }
 
+// Keep in sync with `images.remotePatterns` in next.config.ts. next/image
+// throws (crashing the whole list, not just the card) when it renders a
+// `src` whose host isn't allowlisted there, so any host outside this set
+// must fall back to the placeholder icon instead of reaching <Image>.
+const ALLOWED_IMAGE_HOSTS = new Set(["res.cloudinary.com"]);
+
+function isAllowedImageHost(url: string): boolean {
+  try {
+    return ALLOWED_IMAGE_HOSTS.has(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -45,7 +59,7 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
       className="flex flex-col gap-3 bg-white rounded-lg shadow p-5 cursor-pointer hover:shadow-lg transition-shadow">
       <div className="flex items-center gap-3">
         <div className="size-16 flex justify-center items-center flex-shrink-0">
-          {section.course?.imageUrl ? (
+          {section.course?.imageUrl && isAllowedImageHost(section.course.imageUrl) ? (
             <Image
               src={section.course.imageUrl}
               alt={section.course.name}

@@ -34,7 +34,10 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
   };
 
   return (
-    <dialog id={dialogId} className="modal backdrop-blur-sm">
+    <dialog
+      id={dialogId}
+      className="modal backdrop-blur-sm"
+      onClick={(event) => event.stopPropagation()}>
       <div className="modal-box text-white">
         <form method="dialog">
           <button
