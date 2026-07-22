@@ -233,7 +233,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           <span className="text-error text-xs pl-1">{errors.id_course.message}</span>
         )}
 
-        <label className="input input-bordered flex items-center gap-2 w-full">
+        <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
           <input
             type="text"
             className="grow"
@@ -247,23 +247,23 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         {errors.name && <span className="text-error text-xs pl-1">{errors.name.message}</span>}
 
         <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-          <label className="input input-bordered flex items-center gap-2 w-full">
+          <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
             <div className="label">
-              <span className="label-text text-base">Inicio</span>
+              <span className="label-text text-base text-gray-700">Inicio</span>
             </div>
             <input
               type="date"
-              className="grow"
+              className="grow [color-scheme:light]"
               {...register("initialDate", { required: "Este campo es requerido" })}
             />
           </label>
-          <label className="input input-bordered flex items-center gap-2 w-full">
+          <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
             <div className="label">
-              <span className="label-text text-base">Fin</span>
+              <span className="label-text text-base text-gray-700">Fin</span>
             </div>
             <input
               type="date"
-              className="grow"
+              className="grow [color-scheme:light]"
               {...register("endDate", { required: "Este campo es requerido" })}
             />
           </label>
@@ -274,14 +274,14 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           </span>
         )}
 
-        <label className="input input-bordered flex items-center gap-2 w-full max-w-xs">
+        <label className="input input-bordered flex items-center gap-2 w-full max-w-xs bg-white text-black">
           <div className="label">
-            <span className="label-text text-base">Cuotas</span>
+            <span className="label-text text-base text-gray-700">Cuotas</span>
           </div>
           <input
             type="number"
             min={0}
-            className="grow"
+            className="grow [color-scheme:light]"
             placeholder="Opcional"
             {...register("installmentsCount", { min: { value: 0, message: "Debe ser positivo" } })}
           />
@@ -318,19 +318,19 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
                   <div className="flex gap-2 items-end flex-wrap">
                     <label className="form-control w-full max-w-xs">
                       <div className="label">
-                        <span className="label-text">Nombre</span>
+                        <span className="label-text text-gray-700">Nombre</span>
                       </div>
                       <input
                         type="text"
                         {...register(`activities.${index}.name`, {
                           required: "Este campo es requerido",
                         })}
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full bg-white text-black"
                       />
                     </label>
                     <label className="form-control w-full max-w-[10rem]">
                       <div className="label">
-                        <span className="label-text">Porcentaje %</span>
+                        <span className="label-text text-gray-700">Porcentaje %</span>
                       </div>
                       <input
                         type="number"
@@ -341,7 +341,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
                         {...register(`activities.${index}.percentage`, {
                           required: "Este campo es requerido",
                         })}
-                        className="input input-bordered w-full"
+                        className="input input-bordered w-full bg-white text-black [color-scheme:light]"
                       />
                     </label>
                     <button
@@ -375,7 +375,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           <button
             type="button"
             onClick={onCancel}
-            className="btn text-base flex-1">
+            className="btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-base flex-1">
             Cancelar
           </button>
           <button
