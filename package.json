@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@formkit/drag-and-drop": "^0.2.6",
     "@next/env": "^15.1.2",
     "@reduxjs/toolkit": "^2.5.0",
     "@tabler/icons-react": "^3.24.0",
