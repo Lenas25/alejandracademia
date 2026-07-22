@@ -1,4 +1,4 @@
-import { Course } from "./course";
+import { Section } from "./section";
 
 export interface User {
   id: string | number;
@@ -9,11 +9,11 @@ export interface User {
   password?: string;
   role?: string;
   phone?: string;
-  courses?: Course[];
+  sections?: Section[];
   createdAt?: Date;
   updatedAt?: Date;
   final_grade?: number;
-  
+
 }
 
 export type CreateUser = Omit<User,'createdAt' | 'updatedAt'>;

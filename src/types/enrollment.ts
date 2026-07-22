@@ -1,13 +1,14 @@
-import { Course } from "./course";
+import { Section } from "./section";
 import { User } from "./user";
 
-
+// Enrollment relates to a Section (renamed from the old Course) — mirrors
+// BackSpa `src/enrollment/entities/enrollment.entity.ts`'s `section` field.
 export interface Enrollment{
     id: number;
     final_grade: number;
     enrollment_date: Date;
     user: User[] | User;
-    course: Course[];
+    section: Section[];
     active: boolean;
 }
 
@@ -20,6 +21,6 @@ export interface SingleEnrollment{
     final_grade: number;
     enrollment_date: Date;
     user: User;
-    course: Course;
+    section: Section;
     active: boolean;
 }
