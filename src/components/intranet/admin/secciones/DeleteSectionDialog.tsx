@@ -73,7 +73,7 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
             type="text"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
-            className="input input-bordered w-full text-black"
+            className="input input-bordered w-full bg-white text-black"
             autoComplete="off"
           />
         </label>

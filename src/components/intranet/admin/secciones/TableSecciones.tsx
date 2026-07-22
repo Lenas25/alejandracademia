@@ -112,7 +112,7 @@ export function TableSecciones() {
                 <select
                   value={courseFilter}
                   onChange={(e) => setCourseFilter(e.target.value)}
-                  className="select select-bordered w-full max-w-xs text-black">
+                  className="select select-bordered w-full max-w-xs bg-white text-black">
                   <option value="all">Todos los cursos</option>
                   {courses.map((course) => (
                     <option key={course.id} value={course.id}>

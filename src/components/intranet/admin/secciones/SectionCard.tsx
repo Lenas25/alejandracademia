@@ -87,7 +87,7 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
       <div className="flex items-center justify-between">
         <span
           className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-xs ${
-            section.isActive ? "bg-green-600" : "bg-red-600"
+            section.isActive ? "badge-success" : "badge-error"
           }`}>
           {section.isActive ? "Activa" : "Inactiva"}
         </span>
@@ -95,13 +95,13 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
           <button
             type="button"
             onClick={handleEdit}
-            className="btn btn-ghost btn-xs bg-black text-white hover:text-black">
+            className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
             <IconPencil size={16} />
           </button>
           <button
             type="button"
             onClick={handleDeleteClick}
-            className="btn btn-ghost btn-xs bg-black text-white hover:text-black">
+            className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
             <IconTrash size={16} />
           </button>
         </div>

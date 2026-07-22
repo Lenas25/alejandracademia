@@ -206,7 +206,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
           <select
             defaultValue={selectedSection?.course?.id ? String(selectedSection.course.id) : ""}
-            className="select select-bordered w-full text-base"
+            className="select select-bordered w-full bg-white text-black text-base"
             {...register("id_course", { required: "Este campo es requerido" })}>
             <option disabled value="">
               Seleccione un Curso
@@ -219,7 +219,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           </select>
           <select
             defaultValue={selectedSection?.tutor?.id ? String(selectedSection.tutor.id) : ""}
-            className="select select-bordered w-full text-base"
+            className="select select-bordered w-full bg-white text-black text-base"
             {...register("id_tutor")}>
             <option value="">Sin tutor asignado</option>
             {tutors.map((tutor) => (
@@ -352,7 +352,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
                     </button>
                   </div>
                   {gradeCount != null && gradeCount > 0 && (
-                    <span className="text-xs text-yellow flex items-center gap-1">
+                    <span className="text-xs text-darkpink flex items-center gap-1">
                       <IconAlertTriangle size={14} />
                       Esta actividad tiene {gradeCount} nota(s) registrada(s). Editar o
                       eliminarla también afecta esas notas.
