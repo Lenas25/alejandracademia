@@ -56,12 +56,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
 
     const filteredEnrollments = allEnrollments.filter((en) => {
       if (!en.section || !en.active) return false;
-
-      const section = en.section as Section | Section[];
-      if (Array.isArray(section)) {
-        return section.some((s) => s.id === selectedSection.id);
-      }
-      return section.id === selectedSection.id;
+      return en.section.id === selectedSection.id;
     });
 
     const users = filteredEnrollments

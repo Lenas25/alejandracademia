@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { Section, CreateSection } from "@/types/section";
+import { CreateSection, UpdateSection } from "@/types/section";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -68,13 +68,19 @@ export const createSection = createAsyncThunk(
     }
 );
 
+// `data` MUST already be shaped like `UpdateSectionDto` (see types/section.ts
+// `UpdateSection`) — scalars only (`id_course`, `id_tutor`), never the
+// nested `course`/`tutor` objects or a raw `Activity[]`. The backend's
+// global ValidationPipe runs `forbidNonWhitelisted: true`, so any
+// non-whitelisted property would be rejected with a 400 (fixed per PR3
+// verify-report WARNING — the previous signature accepted a full `Section`
+// entity and stripped only 3 fields, leaving `course`/`tutor`/`activities`
+// relation objects in the PATCH body).
 export const updateSection = createAsyncThunk(
     'sections/updateSection',
-    async ({ sectionId, data }: { sectionId: number | undefined, data: Section }, { dispatch }) => {
+    async ({ sectionId, data }: { sectionId: number | undefined, data: UpdateSection }, { dispatch }) => {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, updatedAt, createdAt, ...rest } = data;
-        const response = await sectionsAPI.patch(`${sectionId}/`, rest, {
+        const response = await sectionsAPI.patch(`${sectionId}/`, data, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
           },
