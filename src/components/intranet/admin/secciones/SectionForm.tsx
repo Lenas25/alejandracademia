@@ -164,6 +164,8 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         );
         if (updateSection.fulfilled.match(resultAction)) {
           onSuccess(resultAction.payload.message);
+        } else if (updateSection.rejected.match(resultAction)) {
+          setValidationError(resultAction.payload ?? "Error al guardar la sección");
         }
       } else {
         const createPayload: CreateSection = {
@@ -179,6 +181,8 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         const resultAction = await dispatch(createSection(createPayload));
         if (createSection.fulfilled.match(resultAction)) {
           onSuccess(resultAction.payload.message);
+        } else if (createSection.rejected.match(resultAction)) {
+          setValidationError(resultAction.payload ?? "Error al guardar la sección");
         }
       }
     } catch (error) {
