@@ -110,17 +110,24 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
       {message && <div className="alert alert-success my-5 text-white">{message}</div>}
 
       <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
-        <div role="tablist" className="tabs tabs-boxed mb-6 w-fit">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              role="tab"
-              className={`tab ${activeTab === tab.key ? "tab-active" : ""}`}
-              onClick={() => setActiveTab(tab.key)}>
-              {tab.label}
-            </button>
-          ))}
+        <div className="mb-6 max-w-full overflow-x-auto">
+          <div role="tablist" className="tabs tabs-boxed w-fit bg-black">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                className={`tab transition-colors ${
+                  activeTab === tab.key
+                    ? "!bg-darkpink !text-white"
+                    : "text-gray-300 hover:!text-white"
+                }`}
+                onClick={() => setActiveTab(tab.key)}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {activeTab === "estudiantes" && <CuadrosAsignar selectedSection={section} />}
