@@ -3,6 +3,7 @@ const rutas = {
   users: '/user',
   enrollment: '/enrollment',
   courses: '/course',
+  sections: '/section',
   grade: '/grade',
   activity: '/activity',
   notification: '/notification',
