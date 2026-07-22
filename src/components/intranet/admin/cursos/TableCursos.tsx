@@ -107,7 +107,9 @@ export function TableCursos() {
         )}
 
         {message && (
-          <div className="alert alert-success my-5 text-white">{message}</div>
+          <div className={`alert my-5 text-white ${message.includes("Error") ? "alert-error" : "alert-success"}`}>
+            {message}
+          </div>
         )}
         <div className="table-scroll size-full">
           <table className="table mb-5 min-w-[560px]">

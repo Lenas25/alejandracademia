@@ -30,14 +30,19 @@ function RowCursos({
 
   const handleDelete = async () => {
     const resultAction = await dispatch(deleteCourse(course.id));
-    if (course?.imageUrl !== "") {
-      const publicId = course?.imageUrl ? extractImageId(course.imageUrl) : "";
-      if (publicId) {
-        await deleteImage(publicId);
-      }
-    }
     if (deleteCourse.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message);
+      const payload = resultAction.payload;
+      if ("error" in payload && payload.error) {
+        setMessage(`Error al eliminar el curso: ${payload.error}`);
+      } else {
+        if (course?.imageUrl !== "") {
+          const publicId = course?.imageUrl ? extractImageId(course.imageUrl) : "";
+          if (publicId) {
+            await deleteImage(publicId);
+          }
+        }
+        setMessage(payload.message);
+      }
     }
     (
       document.getElementById(`delete_${course.id}`) as HTMLDialogElement

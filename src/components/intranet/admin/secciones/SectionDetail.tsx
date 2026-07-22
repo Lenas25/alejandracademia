@@ -46,7 +46,12 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
   const handleDelete = async () => {
     const resultAction = await dispatch(deleteSection(sectionId));
     if (deleteSection.fulfilled.match(resultAction)) {
-      router.push("..");
+      const payload = resultAction.payload;
+      if ("error" in payload && payload.error) {
+        setMessage(`Error al eliminar la sección: ${payload.error}`);
+      } else {
+        router.push("..");
+      }
     }
   };
 
@@ -107,7 +112,11 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         </div>
       </div>
 
-      {message && <div className="alert alert-success my-5 text-white">{message}</div>}
+      {message && (
+        <div className={`alert my-5 text-white ${message.includes("Error") ? "alert-error" : "alert-success"}`}>
+          {message}
+        </div>
+      )}
 
       <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
         <div className="mb-6 max-w-full overflow-x-auto">
