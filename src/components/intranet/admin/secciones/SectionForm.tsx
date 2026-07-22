@@ -126,23 +126,15 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
     Math.round(
       watchedActivities.reduce((total, activity) => total + (Number(activity?.percentage) || 0), 0) * 100,
     ) / 100;
-  const sumIsValid = watchedActivities.length > 0 && percentageSum === 100;
+  // Suma: informational only — no longer blocks submit (requirement change).
+  const sumBadgeClass =
+    percentageSum === 100 ? "badge-success" : percentageSum > 100 ? "badge-warning" : "badge-neutral";
 
   const onSubmit = async (data: SectionFormValues) => {
     setValidationError(null);
 
     if (data.activities.length === 0) {
       setValidationError("Agrega al menos una actividad.");
-      return;
-    }
-
-    const sum =
-      Math.round(data.activities.reduce((total, activity) => total + Number(activity.percentage || 0), 0) * 100) /
-      100;
-    if (sum !== 100) {
-      setValidationError(
-        `La suma de los porcentajes de las actividades debe ser exactamente 100% (actual: ${sum}%).`,
-      );
       return;
     }
 
@@ -293,8 +285,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         <div className="mt-2">
           <div className="flex gap-3 flex-wrap justify-between items-center">
             <h4 className="font-semibold text-xl">Actividades</h4>
-            <span
-              className={`badge badge-lg ${sumIsValid ? "badge-success" : "badge-error"} text-white`}>
+            <span className={`badge badge-lg ${sumBadgeClass} text-white`}>
               Suma: {percentageSum}%
             </span>
             <button
