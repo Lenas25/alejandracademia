@@ -1,9 +1,9 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { useEffect, useState } from "react";
-import { fetchCourses } from "@/redux/service/courseService";
+import { fetchSections } from "@/redux/service/sectionService";
 import { Activity } from "@/types/activity";
 import RowCursosHead from "../../RowCursosHead";
 import { fetchActivity } from "@/redux/service/activityService";
@@ -14,32 +14,30 @@ import RowStudents from "./RowStudents";
 
 export function TableNotas() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses).filter(
-    (item) => item.description !== "PROXIMAMENTE"
-  );
+  const sections = useAppSelector((state) => state.section.sections);
   const activities = useAppSelector((state) => state.activity.activities) || [];
   const [translate, setTranslate] = useState(0);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedSection, setSelectedSection] = useState<Section | null>(null);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
     null
   );
   const [viewMode, setViewMode] = useState<"input" | "view">("input");
 
-  const handleSelectCourse = (course: Course) => {
+  const handleSelectSection = (section: Section) => {
     setSelectedActivity(null);
-    setSelectedCourse(course);
+    setSelectedSection(section);
   };
 
   useEffect(() => {
-    dispatch(fetchCourses());
+    dispatch(fetchSections());
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedCourse?.id) {
-      dispatch(fetchActivity(selectedCourse.id));
-      dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
+    if (selectedSection?.id) {
+      dispatch(fetchActivity(selectedSection.id));
+      dispatch(fetchEnrollment({ courseId: selectedSection.id }));
     }
-  }, [dispatch, selectedCourse?.id]);
+  }, [dispatch, selectedSection?.id]);
 
   useEffect(() => {
     if (selectedActivity?.id && viewMode === "input") {
@@ -52,9 +50,9 @@ export function TableNotas() {
       <RowCursosHead
         translate={translate}
         setTranslate={setTranslate}
-        selectedCourse={selectedCourse}
-        courses={courses}
-        handleSelectCourse={handleSelectCourse}
+        selectedSection={selectedSection}
+        sections={sections}
+        handleSelectSection={handleSelectSection}
       />
       <div className="flex flex-col gap-5 bg-white rounded-lg shadow relative p-6 md:p-10">
         <div className="flex flex-col gap-5 w-full md:flex-row md:justify-between items-center">
@@ -87,7 +85,7 @@ export function TableNotas() {
         </div>
 
         <div className="flex flex-col gap-4 flex-wrap w-full">
-          {selectedCourse && viewMode === "input" && (
+          {selectedSection && viewMode === "input" && (
             <select
               className="select select-bordered bg-white text-black w-full font-sans"
               value={selectedActivity?.id || ""}
@@ -108,7 +106,7 @@ export function TableNotas() {
           )}
         </div>
 
-        {!selectedCourse ? (
+        {!selectedSection ? (
           <div className="flex justify-center items-center">
             <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
               Seleccione un curso para{" "}
@@ -117,7 +115,7 @@ export function TableNotas() {
           </div>
         ) : viewMode === "input" ? (
           <RowStudents
-            selectedCourse={selectedCourse}
+            selectedSection={selectedSection}
             selectedActivity={selectedActivity}
           />
         ) : (

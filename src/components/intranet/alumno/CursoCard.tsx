@@ -14,7 +14,11 @@ export function CursoCard() {
     (state) => state.enrollment.enrollmentsUser
   ).filter((enrollment) => enrollment.active);
   const userLogin = useAppSelector((state) => state.user.userLogin);
-  const courses = enrollmentsPerUser.flatMap((enrollment) => enrollment.course);
+  // Enrollment now relates to a Section (renamed from the old Course).
+  // Activities are still keyed by the Section id (fetchActivity), while the
+  // card's displayed name/image/description come from the parent catalog
+  // Course via the nested Section -> Course relation.
+  const sections = enrollmentsPerUser.flatMap((enrollment) => enrollment.section);
   const [currentCourse, setCurrentCourse] = useState<number>(0);
   const gradesUser = useAppSelector((state) => state.grade.gradesUser);
   const activities = useAppSelector((state) => state.activity.activities);
@@ -29,20 +33,20 @@ export function CursoCard() {
   }, [dispatch, userLogin?.id]);
 
   useEffect(() => {
-    const courseId = courses[currentCourse]?.id;
-    if (courseId) dispatch(fetchActivity(courseId));
-  }, [dispatch, courses[currentCourse]?.id]);
+    const sectionId = sections[currentCourse]?.id;
+    if (sectionId) dispatch(fetchActivity(sectionId));
+  }, [dispatch, sections[currentCourse]?.id]);
 
   const handlePrevCourse = () => {
     if (currentCourse > 0) {
-      dispatch(setEnrollmentsUser(courses[currentCourse - 1]));
+      dispatch(setEnrollmentsUser(sections[currentCourse - 1]));
       setCurrentCourse((prev) => prev - 1);
     }
   };
 
   const handleNextCourse = () => {
-    if (currentCourse < courses.length - 1) {
-      dispatch(setEnrollmentsUser(courses[currentCourse + 1]));
+    if (currentCourse < sections.length - 1) {
+      dispatch(setEnrollmentsUser(sections[currentCourse + 1]));
       setCurrentCourse((prev) => prev + 1);
     }
   };
@@ -64,7 +68,7 @@ export function CursoCard() {
             type="button"
             onClick={handleNextCourse}
             className="p-1 text-gray-500 hover:text-black"
-            disabled={currentCourse === courses.length - 1 || courses.length === 0}
+            disabled={currentCourse === sections.length - 1 || sections.length === 0}
           >
             <IconChevronRight size={20} />
           </button>
@@ -73,21 +77,21 @@ export function CursoCard() {
       <div className="flex-grow flex items-center gap-6 mt-4">
         <div className="w-24 h-24 rounded-full flex-shrink-0">
           <Image
-            src={courses[currentCourse]?.imageUrl || "/makeup.webp"}
-            alt={courses[currentCourse]?.name || "Curso"}
+            src={sections[currentCourse]?.course?.imageUrl || "/makeup.webp"}
+            alt={sections[currentCourse]?.course?.name || "Curso"}
             width={100}
             height={100}
             className="object-cover w-full h-full rounded-full"
           />
         </div>
         <div className="flex-grow">
-          {courses[currentCourse] ? (
+          {sections[currentCourse] ? (
             <>
               <h4 className="text-2xl font-bold text-gray-800 mt-1">
-                {courses[currentCourse]?.name}
+                {sections[currentCourse]?.course?.name}
               </h4>
               <p className="text-gray-600 mt-2">
-                {courses[currentCourse]?.description}
+                {sections[currentCourse]?.course?.description}
               </p>
 
               {/* Barra de progreso de actividades */}

@@ -3,7 +3,7 @@
 import { updateGrade } from "@/redux/service/gradeService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { Enrollment } from "@/types/enrollment";
 import { useEffect, useMemo, useState } from "react"; // Se importa useMemo
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { User } from "@/types/user";
 
 interface RowStudentsProps {
-  selectedCourse: Course | null;
+  selectedSection: Section | null;
   selectedActivity: Activity | null;
 }
 
@@ -26,7 +26,7 @@ type GradeForm = {
   }[];
 };
 
-function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
+function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
   const dispatch = useAppDispatch();
   const allGrades = useAppSelector((state) => state.grade.grades);
   const enrollments = useAppSelector((state) => state.enrollment.enrollments);
@@ -89,12 +89,12 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
       };
 
       await dispatch(
-        updateGrade({ courseId: selectedCourse?.id, data: dataSend })
+        updateGrade({ courseId: selectedSection?.id, data: dataSend })
       );
 
       // La recarga de datos es mejor manejarla con el resultado del thunk
-      if (selectedCourse) {
-        dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
+      if (selectedSection) {
+        dispatch(fetchEnrollment({ courseId: selectedSection.id }));
       }
       setMessage("Notas guardadas correctamente");
       setHasChanges(false);
@@ -144,7 +144,7 @@ function RowStudents({ selectedCourse, selectedActivity }: RowStudentsProps) {
   }, [defaultValues.grades, debouncedSearch]);
 
   return (
-    selectedCourse &&
+    selectedSection &&
     selectedActivity && (
       <div className="flex flex-col gap-3">
         <h3 className="text-lg font-semibold">{selectedActivity?.name}</h3>

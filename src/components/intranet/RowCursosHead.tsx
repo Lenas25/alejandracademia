@@ -1,25 +1,28 @@
 "use client";
 
 import { useAppSelector } from "@/redux/stores";
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { Roles } from "@/types/roles";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import Image from "next/image";
 
+// Shared section-picker header used by Asignar and Notas — operates on
+// Section (renamed from the old Course-with-sections shape), not the
+// catalog Course.
 interface RowCursosProps {
   translate: number;
   setTranslate: React.Dispatch<React.SetStateAction<number>>;
-  selectedCourse: Course | null;
-  courses: Course[];
-  handleSelectCourse: (course: Course) => void;
+  selectedSection: Section | null;
+  sections: Section[];
+  handleSelectSection: (section: Section) => void;
 }
 
 function RowCursosHead({
   translate,
   setTranslate,
-  selectedCourse,
-  courses,
-  handleSelectCourse,
+  selectedSection,
+  sections,
+  handleSelectSection,
 }: RowCursosProps) {
   const width = 200;
   const userLogin = useAppSelector((state) => state.user.userLogin);
@@ -31,14 +34,14 @@ function RowCursosHead({
   };
 
   const handleRight = () => {
-    if (translate > -(courses.length - 1) * width) {
+    if (translate > -(sections.length - 1) * width) {
       setTranslate((prev) => prev - width);
     } else {
       setTranslate(0);
     }
   };
 
-  courses = userLogin?.role === Roles.TUTOR ? userLogin.courses ?? [] : courses;
+  sections = userLogin?.role === Roles.TUTOR ? userLogin.sections ?? [] : sections;
 
   return (
     <div className="overflow-hidden flex gap-5 items-center flex-col justify-between mb-5 bg-black rounded-lg shadow relative p-6">
@@ -63,23 +66,23 @@ function RowCursosHead({
         <div
           className="flex gap-4 transition-transform ease-in-out delay-150"
           style={{ transform: `translateX(${translate}px)` }}>
-          {courses
-            .filter((courses) => courses.isActive)
-            .map((course) => (
+          {sections
+            .filter((section) => section.isActive)
+            .map((section) => (
               <button
-                key={course.id}
+                key={section.id}
                 type="button"
                 className={`btn btn-ghost bg-darkpink text-base p-3 rounded-lg h-auto flex flex-col gap-2 flex-none border-2 hover:border-white hover:text-white w-[250px] ${
-                  selectedCourse?.id === course.id
+                  selectedSection?.id === section.id
                     ? "bg-white text-black"
                     : "bg-black text-white"
                 }`}
-                onClick={() => handleSelectCourse(course)}>
-                {course?.imageUrl ? (
+                onClick={() => handleSelectSection(section)}>
+                {section.course?.imageUrl ? (
                   <div className="w-20 h-20 relative">
                     <Image
-                      src={course.imageUrl}
-                      alt={course.name}
+                      src={section.course.imageUrl}
+                      alt={section.name}
                       layout="fill"
                       objectFit="cover"
                       className="rounded-full"
@@ -90,7 +93,7 @@ function RowCursosHead({
                     <span className="loading loading-ring loading-lg" />
                   </div>
                 )}
-                <p className="text-center font-medium">{course.name}</p>
+                <p className="text-center font-medium">{section.name}</p>
               </button>
             ))}
         </div>

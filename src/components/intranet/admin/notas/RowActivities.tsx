@@ -3,18 +3,18 @@
 import { fetchActivity } from "@/redux/service/activityService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Activity } from "@/types/activity";
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { useEffect } from "react";
 
 interface RowActivitiesProps {
-  selectedCourse: Course | null;
+  selectedSection: Section | null;
   selectedActivity: Activity | null;
   setSelectedActivity: (activity: Activity) => void;
   translate2: number;
 }
 
 function RowActivities({
-  selectedCourse,
+  selectedSection,
   selectedActivity,
   setSelectedActivity,
   translate2,
@@ -24,10 +24,10 @@ function RowActivities({
   const activitiesStatus = useAppSelector((state) => state.activity.status);
 
   useEffect(() => {
-    if (selectedCourse) {
-      dispatch(fetchActivity(selectedCourse.id));
+    if (selectedSection) {
+      dispatch(fetchActivity(selectedSection.id));
     }
-  }, [dispatch, selectedCourse]);
+  }, [dispatch, selectedSection]);
 
   if (activitiesStatus === "loading") {
     return <p>Cargando...</p>;

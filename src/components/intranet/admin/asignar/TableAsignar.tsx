@@ -1,22 +1,25 @@
 "use client";
 import CuadrosAsignar from "./CuadrosAsignar";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { useEffect, useState } from "react";
-import { fetchCourses } from "@/redux/service/courseService";
+import { fetchSections } from "@/redux/service/sectionService";
 import RowCursosHead from "../../RowCursosHead";
 
 export function TableAsignar() {
   const dispatch = useAppDispatch();
-  const courses = useAppSelector((state) => state.course.courses).filter(item => item.description !== "PROXIMAMENTE");
+  // A catalog "coming soon" placeholder never has real Sections created
+  // under it, so no further filtering is needed here (unlike the old
+  // Course-based list, which mixed catalog and section data).
+  const sections = useAppSelector((state) => state.section.sections);
   const [translate, setTranslate] = useState<number>(0);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const handleSelectCourse = (course: Course) => {
-    setSelectedCourse(course);
+  const [selectedSection, setSelectedSection] = useState<Section | null>(null);
+  const handleSelectSection = (section: Section) => {
+    setSelectedSection(section);
   };
 
   useEffect(() => {
-    dispatch(fetchCourses());
+    dispatch(fetchSections());
   }, [dispatch]);
 
   return (
@@ -24,11 +27,11 @@ export function TableAsignar() {
       <RowCursosHead
         translate={translate}
         setTranslate={setTranslate}
-        selectedCourse={selectedCourse}
-        courses={courses}
-        handleSelectCourse={handleSelectCourse}
+        selectedSection={selectedSection}
+        sections={sections}
+        handleSelectSection={handleSelectSection}
       />
-      <CuadrosAsignar selectedCourse={selectedCourse} />
+      <CuadrosAsignar selectedSection={selectedSection} />
     </>
   );
 }

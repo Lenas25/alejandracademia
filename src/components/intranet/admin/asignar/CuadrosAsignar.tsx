@@ -1,6 +1,6 @@
 "use client";
 
-import { Course } from "@/types/course";
+import { Section } from "@/types/section";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
   fetchEnrollment,
@@ -13,10 +13,10 @@ import { User } from "@/types/user";
 import { IconUserPlus, IconX, IconSearch } from "@tabler/icons-react";
 
 interface CuadrosAsignarProps {
-  selectedCourse: Course | null;
+  selectedSection: Section | null;
 }
 
-function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
+function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   const dispatch = useAppDispatch();
 
   const allEnrollments = useAppSelector(
@@ -35,30 +35,33 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedCourse?.id) {
-      dispatch(fetchEnrollment({ courseId: selectedCourse.id }));
+    if (selectedSection?.id) {
+      // enrollmentService's `courseId` param name is unchanged: the
+      // `/enrollment/course/:id` route path was kept as-is, only its
+      // meaning shifted to a section id (see enrollmentService.ts).
+      dispatch(fetchEnrollment({ courseId: selectedSection.id }));
     } else {
       setSelectedUsers([]);
       setEnrolledUsersFromBackend([]);
     }
-  }, [dispatch, selectedCourse?.id]);
+  }, [dispatch, selectedSection?.id]);
 
   const [enrolledUsersFromBackend, setEnrolledUsersFromBackend] = useState<User[]>([]);
 
   useEffect(() => {
-    if (!selectedCourse) {
+    if (!selectedSection) {
       setEnrolledUsersFromBackend([]);
       return;
     }
 
     const filteredEnrollments = allEnrollments.filter((en) => {
-      if (!en.course || !en.active) return false;
+      if (!en.section || !en.active) return false;
 
-      const course = en.course as Course | Course[];
-      if (Array.isArray(course)) {
-        return course.some((c) => c.id === selectedCourse.id);
+      const section = en.section as Section | Section[];
+      if (Array.isArray(section)) {
+        return section.some((s) => s.id === selectedSection.id);
       }
-      return course.id === selectedCourse.id;
+      return section.id === selectedSection.id;
     });
 
     const users = filteredEnrollments
@@ -66,7 +69,7 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
       .filter((user): user is User => user != null && "id" in user);
     
     setEnrolledUsersFromBackend(users);
-  }, [allEnrollments, selectedCourse]);
+  }, [allEnrollments, selectedSection]);
 
   useEffect(() => {
     setSelectedUsers(enrolledUsersFromBackend);
@@ -95,13 +98,15 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
   };
 
   const handleSubmit = async () => {
-    if (selectedCourse) {
+    if (selectedSection) {
       const enrollmentData = {
         users: selectedUsers.map((user) => ({ id: String(user.id) })),
       };
       const resultAction = await dispatch(
-        updateEnrollment({ courseId: selectedCourse.id, data: enrollmentData })
+        updateEnrollment({ courseId: selectedSection.id, data: enrollmentData })
       );
+      // Note: `courseId` here is the enrollmentService thunk's param name,
+      // unchanged for the same reason as fetchEnrollment above.
       if (updateEnrollment.fulfilled.match(resultAction)) {
         setMessage(
           resultAction.payload.message || "Cambios guardados con éxito"
@@ -132,7 +137,7 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
         <div className="h-[2px] bg-black w-full" />
       </div>
 
-      {!selectedCourse ? (
+      {!selectedSection ? (
         <div className="flex justify-center items-center">
           <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
             Seleccione un curso para asignar estudiantes
@@ -143,7 +148,7 @@ function CuadrosAsignar({ selectedCourse }: CuadrosAsignarProps) {
       ) : (
         <div className="flex gap-5 justify-between w-full flex-col">
           <h3 className="text-xl font-medium break-words w-full">
-            {selectedCourse.name}
+            {selectedSection.name}
           </h3>
 
           {message && (

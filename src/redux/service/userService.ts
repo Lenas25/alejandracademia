@@ -54,7 +54,7 @@ export const updateUser = createAsyncThunk(
   async ({ userId, data }: { userId: string | undefined, data: User }, { dispatch }) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, createdAt, updatedAt, courses, ...rest } = data
+      const { id, createdAt, updatedAt, sections, ...rest } = data
       const response = await usersAPI.patch(`${userId}/`, rest, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`
