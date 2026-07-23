@@ -4,6 +4,7 @@ import { useAppSelector } from "@/redux/stores";
 import { useEffect, useState } from "react";
 import { Bienvenida } from "./Bienvenida";
 import { Calendario } from "./Calendario";
+import { CuotasCard } from "./CuotasCard";
 import { CursoCard } from "./CursoCard";
 import { NotasCard } from "./NotasCard";
 import { PromedioCard } from "./PromedioCard";
@@ -72,6 +73,9 @@ export function PanelContent() {
           <NotasCard />
         </div>
       </div>
+
+      {/* Fila 4: Cuotas */}
+      <CuotasCard />
     </div>
   );
 }
