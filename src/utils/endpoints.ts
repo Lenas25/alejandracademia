@@ -8,6 +8,7 @@ const rutas = {
   activity: '/activity',
   notification: '/notification',
   images: '/images',
+  payment: '/payment',
 }
 
 export default rutas;
