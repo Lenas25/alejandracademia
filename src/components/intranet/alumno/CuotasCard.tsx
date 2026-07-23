@@ -15,6 +15,7 @@ export function CuotasCard() {
   const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
   const myInstallments = useAppSelector((state) => state.payment.myInstallments);
   const paymentStatus = useAppSelector((state) => state.payment?.status);
+  const loadErrorMessage = useAppSelector((state) => state.payment?.errorMessage);
 
   useEffect(() => {
     if (enrollmentView) {
@@ -32,6 +33,21 @@ export function CuotasCard() {
         {paymentStatus === 'loading' ? (
           <div className="flex justify-center items-center h-full">
             <span className="loading loading-spinner text-gray-300"></span>
+          </div>
+        ) : paymentStatus === 'failed' ? (
+          // Load-Failure State (verify-report WARNING) — checked before
+          // the "Sin cuotas registradas" empty state so a fetch failure
+          // is never read as "you have no installments".
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-8">
+            <div className="alert alert-error text-white">
+              <span>{loadErrorMessage || "No se pudieron cargar las cuotas"}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => enrollmentView && dispatch(fetchMyInstallments(enrollmentView.id))}
+              className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+              Reintentar
+            </button>
           </div>
         ) : myInstallments.length > 0 ? (
           myInstallments.map((installment) => (
