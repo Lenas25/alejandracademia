@@ -10,6 +10,7 @@ import {
 import { Section } from "@/types/section";
 import { PaymentSectionRow } from "@/types/payment";
 import { IconCash, IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
+import { normalizeLeadingZero } from "@/utils/numberInput";
 
 interface PagosTabProps {
   selectedSection: Section;
@@ -212,7 +213,8 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                                 min="0.01"
                                 step="0.01"
                                 value={formAmount}
-                                onChange={(e) => setFormAmount(e.target.value)}
+                                onFocus={(e) => e.target.select()}
+                                onChange={(e) => setFormAmount(normalizeLeadingZero(e.target.value))}
                                 className="input input-bordered input-sm w-full bg-white text-black"
                               />
                             </label>

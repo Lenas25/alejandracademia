@@ -11,6 +11,7 @@ import { fetchEnrollment } from "@/redux/service/enrollmentService";
 import { IconSearch } from "@tabler/icons-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { User } from "@/types/user";
+import { normalizeLeadingZero } from "@/utils/numberInput";
 
 interface RowStudentsProps {
   selectedSection: Section | null;
@@ -81,11 +82,17 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
     try {
       const dataSend = {
         id_activity: selectedActivity?.id ?? 0,
-        grades: data.grades.map((gr) => ({
-          // Usamos 'data.grades'
-          id_enrollment: Number(gr.id_enrollment),
-          grade: Number(gr.grade),
-        })),
+        grades: data.grades.map((gr) => {
+          const parsedGrade = Number(gr.grade);
+          return {
+            // Usamos 'data.grades'
+            id_enrollment: Number(gr.id_enrollment),
+            // Field may be blank mid-edit (allowed so the user can clear it
+            // without a 0 being forced in); coerce to 0 only now, at submit
+            // time.
+            grade: Number.isFinite(parsedGrade) ? parsedGrade : 0,
+          };
+        }),
       };
 
       await dispatch(
@@ -201,9 +208,18 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                         {...register(`grades.${index}.grade`, {
                           valueAsNumber: true,
                         })}
-                        onChange={(e) =>
-                          handleGradeChange(index, Number(e.target.value))
-                        }
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const normalized = normalizeLeadingZero(raw);
+                          if (normalized !== raw) {
+                            e.target.value = normalized;
+                          }
+                          handleGradeChange(
+                            index,
+                            normalized === "" ? NaN : Number(normalized)
+                          );
+                        }}
                         className="input input-bordered w-full bg-white"
                       />
                     </td>

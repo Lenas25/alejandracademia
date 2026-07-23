@@ -10,6 +10,7 @@ import { fetchCourses } from "@/redux/service/courseService";
 import { fetchUsers } from "@/redux/service/userService";
 import { fetchGrade } from "@/redux/service/gradeService";
 import { Roles } from "@/types/roles";
+import { normalizeLeadingZero } from "@/utils/numberInput";
 
 interface SectionFormProps {
   selectedSection: Section | null;
@@ -118,6 +119,13 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           })),
         }
       : { activities: [] },
+  });
+
+  // Registered once (not inline in JSX) so the wrapped onChange below can
+  // forward to the exact same RHF-bound handler without re-registering the
+  // field (which would silently drop the `min` validation rule).
+  const installmentsCountField = register("installmentsCount", {
+    min: { value: 0, message: "Debe ser positivo" },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "activities" });
@@ -279,7 +287,14 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
             min={0}
             className="grow [color-scheme:light]"
             placeholder="Opcional"
-            {...register("installmentsCount", { min: { value: 0, message: "Debe ser positivo" } })}
+            {...installmentsCountField}
+            onFocus={(e) => e.target.select()}
+            onChange={(e) => {
+              const raw = e.target.value;
+              const normalized = normalizeLeadingZero(raw);
+              if (normalized !== raw) e.target.value = normalized;
+              installmentsCountField.onChange(e);
+            }}
           />
         </label>
         {errors.installmentsCount && (
@@ -308,6 +323,12 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
               // watched form values instead.
               const activityId = watchedActivities[index]?.id;
               const gradeCount = activityId != null ? gradeCounts[activityId] : undefined;
+              // Same "register once, wrap onChange" pattern as
+              // installmentsCountField above — avoids re-registering (and
+              // losing the `required` rule) on every keystroke.
+              const percentageField = register(`activities.${index}.percentage`, {
+                required: "Este campo es requerido",
+              });
               return (
                 <li key={field.id} className="flex flex-col gap-1">
                   <div className="flex gap-2 items-end flex-wrap">
@@ -333,9 +354,14 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
                         min={0}
                         step={0.01}
                         placeholder="ej. 25"
-                        {...register(`activities.${index}.percentage`, {
-                          required: "Este campo es requerido",
-                        })}
+                        {...percentageField}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const normalized = normalizeLeadingZero(raw);
+                          if (normalized !== raw) e.target.value = normalized;
+                          percentageField.onChange(e);
+                        }}
                         className="input input-bordered w-full bg-white text-black [color-scheme:light]"
                       />
                     </label>
