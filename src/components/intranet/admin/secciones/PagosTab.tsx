@@ -32,6 +32,7 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   const dispatch = useAppDispatch();
   const sectionInstallments = useAppSelector((state) => state.payment.sectionInstallments);
   const paymentStatus = useAppSelector((state) => state.payment.status);
+  const loadErrorMessage = useAppSelector((state) => state.payment.errorMessage);
 
   const [message, setMessage] = useState<string>("");
   const [expandedEnrollmentId, setExpandedEnrollmentId] = useState<number | null>(null);
@@ -114,6 +115,27 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       setMessage(`Error: ${resultAction.payload ?? "no se pudo revertir la cuota"}`);
     }
   };
+
+  // Load-Failure State (verify-report WARNING) — checked before the
+  // null-count empty state so a fetch failure is never masked as "this
+  // section has no installments configured". Distinct from
+  // studentGroups.length === 0 (a succeeded fetch that legitimately
+  // returned zero rows).
+  if (paymentStatus === "failed") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+        <div className="alert alert-error text-white max-w-md">
+          <span>{loadErrorMessage || "No se pudieron cargar las cuotas"}</span>
+        </div>
+        <button
+          type="button"
+          onClick={refetch}
+          className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+          Reintentar
+        </button>
+      </div>
+    );
+  }
 
   // Null-Count Empty State (spec: "payment-management" domain).
   if (!selectedSection.installmentsCount) {
