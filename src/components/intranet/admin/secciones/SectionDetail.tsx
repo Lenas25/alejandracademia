@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteSection, fetchSectionById } from "@/redux/service/sectionService";
 import CuadrosAsignar from "@/components/intranet/admin/asignar/CuadrosAsignar";
 import DeleteSectionDialog from "./DeleteSectionDialog";
+import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
 
 type TabKey = "estudiantes" | "pagos" | "asistencia";
@@ -140,9 +141,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         </div>
 
         {activeTab === "estudiantes" && <CuadrosAsignar selectedSection={section} />}
-        {activeTab === "pagos" && (
-          <p className="text-center py-10 text-gray-400">Próximamente</p>
-        )}
+        {activeTab === "pagos" && <PagosTab selectedSection={section} />}
         {activeTab === "asistencia" && (
           <p className="text-center py-10 text-gray-400">Próximamente</p>
         )}
