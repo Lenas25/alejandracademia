@@ -40,9 +40,26 @@ export function ContextStrip() {
   const startDate = formatDate(section?.initialDate);
   const endDate = formatDate(section?.endDate);
 
+  // "Próxima cuota" = the next UNPAID installment ordered by due date.
+  // Unpaid means anything not `cancelado` — i.e. both `pendiente` AND
+  // `atrasado` (an overdue installment must still surface here; the old
+  // `status === "pendiente"` filter silently hid overdue ones once the
+  // `atrasado` state existed). Ordering is by `dueDate` ascending so the
+  // most urgent (soonest-due, or already overdue) comes first; installments
+  // without a due date fall back after dated ones, tie-broken by number.
+  // `dueDate` is a zero-padded "YYYY-MM-DD" string, so string `<` is a
+  // correct chronological comparison (no `new Date()` — same TZ rule).
   const nextInstallment = [...myInstallments]
-    .filter((installment) => installment.status === "pendiente")
-    .sort((a, b) => a.installmentNumber - b.installmentNumber)[0];
+    .filter((installment) => installment.status !== "cancelado")
+    .sort((a, b) => {
+      if (a.dueDate && b.dueDate) {
+        if (a.dueDate !== b.dueDate) return a.dueDate < b.dueDate ? -1 : 1;
+        return a.installmentNumber - b.installmentNumber;
+      }
+      if (a.dueDate) return -1;
+      if (b.dueDate) return 1;
+      return a.installmentNumber - b.installmentNumber;
+    })[0];
 
   return (
     <div className="bg-white rounded-2xl shadow-sm px-4 sm:px-6 py-3 sm:py-4">
@@ -58,13 +75,18 @@ export function ContextStrip() {
         <div className="flex items-center gap-2 min-w-0">
           <IconCoin size={18} className="text-yellow shrink-0" />
           <span className="text-gray-500 shrink-0">Próxima cuota:</span>
-          <span className="font-medium text-gray-800 truncate">
+          <span
+            className={`font-medium truncate ${
+              nextInstallment?.status === "atrasado" ? "text-red-600" : "text-gray-800"
+            }`}>
             {paymentStatus === "loading"
               ? "Cargando..."
               : nextInstallment
                 ? `Cuota ${nextInstallment.installmentNumber}${
                     nextInstallment.amount != null ? ` · S/ ${nextInstallment.amount.toFixed(2)}` : ""
-                  }`
+                  }${
+                    nextInstallment.dueDate ? ` · vence ${formatDate(nextInstallment.dueDate)}` : ""
+                  }${nextInstallment.status === "atrasado" ? " (atrasada)" : ""}`
                 : "Sin cuotas pendientes"}
           </span>
         </div>
