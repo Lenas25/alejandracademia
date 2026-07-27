@@ -16,7 +16,7 @@ export default function Login() {
     <div className="p-5 sm:p-28 h-screen flex flex-col gap-10 overflow-hidden justify-center">
       <div className="w-full flex md:justify-center">
       <Image
-        src="/nombreLogo.webp"
+        src="/brand/nombreLogo.webp"
         alt="Alejandra Academia"
         width={200}
         height={200}
@@ -36,42 +36,42 @@ export default function Login() {
       </div>
       <div className="fixed z-10 inset-0 overflow-hidden">
         <Image
-          src="/circlePink.svg"
+          src="/shapes/circlePink.svg"
           alt="Circle Pink"
           width={100}
           height={100}
           className={s.pink1}
         />
         <Image
-          src="/circlePink.svg"
+          src="/shapes/circlePink.svg"
           alt="Circle Pink"
           width={80}
           height={80}
           className={s.pink2}
         />
         <Image
-          src="/circlePink.svg"
+          src="/shapes/circlePink.svg"
           alt="Circle Pink"
           width={40}
           height={40}
           className={s.pink3}
         />
         <Image
-          src="/circleYellow.svg"
+          src="/shapes/circleYellow.svg"
           alt="Circle Yellow"
           width={50}
           height={50}
           className={s.yellow1}
         />
         <Image
-          src="/circleYellow.svg"
+          src="/shapes/circleYellow.svg"
           alt="Circle Yellow"
           width={120}
           height={120}
           className={s.yellow2}
         />
         <Image
-          src="/waves.svg"
+          src="/shapes/waves.svg"
           alt="Ondas de Login"
           width={900}
           height={900}

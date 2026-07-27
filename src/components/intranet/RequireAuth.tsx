@@ -17,9 +17,9 @@ function RequireAuth({
 
   useEffect(() => {
     const allowedRoutes = new Map([
-      ["admin", ["/intranet/admin", "/intranet/admin/alumnos", "/intranet/admin/cursos", "/intranet/admin/notas", "/intranet/admin/secciones", "/intranet/alumno/panel"]],
+      ["admin", ["/intranet/admin", "/intranet/admin/alumnos", "/intranet/admin/cursos", "/intranet/admin/secciones", "/intranet/admin/constancia", "/intranet/alumno/panel"]],
       ["alumno", ["/intranet/alumno/panel", "/intranet/alumno"]],
-      ["tutor", ["/intranet/admin", "/intranet/admin/cursos", "/intranet/admin/notas"]],
+      ["tutor", ["/intranet/admin", "/intranet/admin/cursos", "/intranet/admin/secciones"]],
     ]);
     const isAllowedPath = (role: string | undefined, currentPath: string) => {
       const routes = allowedRoutes.get(role ?? "");
