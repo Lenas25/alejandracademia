@@ -13,7 +13,7 @@ export function Gallery() {
       className="relative py-10 flex gap-5 items-center flex-col md:px-14 md:py-12 md:gap-10 md:justify-between">
       <div className="absolute z-0 left-0 top-10">
         <Image
-          src="/bubbleGallery.svg"
+          src="/shapes/bubbleGallery.svg"
           alt="bubbleGallery"
           width={900}
           height={900}
@@ -38,7 +38,7 @@ export function Gallery() {
         <div className="col-span-2 row-span-2">
           <Image
             className="w-full h-full object-cover"
-            src="/spa1.webp"
+            src="/photos/spa1.webp"
             alt="Trabajo con uñas"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -48,7 +48,7 @@ export function Gallery() {
         <div className="row-span-1 col-span-1">
           <Image
             className="w-full h-full object-cover"
-            src="/spa3.webp"
+            src="/photos/spa3.webp"
             alt="Alumnas celebrando"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -58,7 +58,7 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa7.webp"
+            src="/photos/spa7.webp"
             alt="Clases de Alejandra Academia"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -68,7 +68,7 @@ export function Gallery() {
         <div>
           <Image
             className="w-full h-full object-cover"
-            src="/spa5.webp"
+            src="/photos/spa5.webp"
             alt="Aplicando Mascarilla"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -78,7 +78,7 @@ export function Gallery() {
         <div className="hidden md:block">
           <Image
             className="w-full h-full object-cover"
-            src="/spa4.webp"
+            src="/photos/spa4.webp"
             alt="Gorra de graduación"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}
@@ -93,7 +93,7 @@ export function Gallery() {
           <div className="absolute bg-black/50 backdrop-blur-sm bg-opacity-50 inset-0 z-10" />
           <Image
             className="w-full h-full object-cover z-0"
-            src="/spa8.webp"
+            src="/photos/spa8.webp"
             alt="Grupo de graduación"
             sizes="(max-width: 768px) 100vw, 50vw"
             width={700}

@@ -46,7 +46,7 @@ export function Testimonials() {
       className="mb-12 relative py-10 px-3 flex flex-col gap-5 items-center md:px-14 md:py-12 md:flex-row md:gap-10 md:justify-between 2xl:px-32">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/makeup.webp')" }}
+        style={{ backgroundImage: "url('/photos/makeup.webp')" }}
       />
       <div className="absolute inset-0 bg-black/50 opacity-75" />
       <div className="flex flex-col gap-10 z-10 lg:flex-1">

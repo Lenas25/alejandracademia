@@ -14,17 +14,17 @@ const inspiration = Inspiration({
 const images = [
   {
     id: 0,
-    src: "/spa2.webp",
+    src: "/photos/spa2.webp",
     alt: "Graduación Spa",
   },
   {
     id: 1,
-    src: "/spa7.webp",
+    src: "/photos/spa7.webp",
     alt: "Enseñando clases de Alejandra Academia",
   },
   {
     id: 2,
-    src: "/spa4.webp",
+    src: "/photos/spa4.webp",
     alt: "Sobrero de Graduación Spa",
   },
 ];
@@ -104,7 +104,7 @@ export function Header() {
           <div className="absolute flex gap-2 top-[120px] -right-4 xl:top-[200px] xl:-right-6 2xl:top-[350px] 2xl:-right-[150px] xl:gap-5">
             <div className="w-[50px] h-[100px] xl:w-auto xl:h-auto">
               <Image
-                src="/headerLeft.svg"
+                src="/shapes/headerLeft.svg"
                 alt="decoracionVector"
                 width={100}
                 height={150}
@@ -113,7 +113,7 @@ export function Header() {
             </div>
             <div className="w-[50px] h-[100px] xl:w-auto xl:h-auto">
               <Image
-                src="/headerRight.svg"
+                src="/shapes/headerRight.svg"
                 alt="decoracionVector"
                 width={100}
                 height={150}

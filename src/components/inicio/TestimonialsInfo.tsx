@@ -20,7 +20,7 @@ function TestimonialsInfo({
         <span className="font-semibold text-xl 2xl:text-3xl">{testimonial.name}</span>
       </div>
       <div className="absolute top-2 right-2 z-0">
-        <Image src="/quote.svg" alt="quote" width={100} height={100} />
+        <Image src="/icons/quote.svg" alt="quote" width={100} height={100} />
       </div>
     </motion.div>
   );

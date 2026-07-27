@@ -4,9 +4,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const icons = [
-  { src: "/maquilladora.webp", alt: "maquilladora" },
-  { src: "/mascara.webp", alt: "mascara" },
-  { src: "/tratamiento-capilar.webp", alt: "tratamiento-capilar" },
+  { src: "/photos/maquilladora.webp", alt: "maquilladora" },
+  { src: "/photos/mascara.webp", alt: "mascara" },
+  { src: "/photos/tratamiento-capilar.webp", alt: "tratamiento-capilar" },
 ];
 
 export function About() {
@@ -19,7 +19,7 @@ export function About() {
       <div className="relative hidden md:flex justify-center items-center lg:flex-1">
         <div className="absolute w-[270px] lg:w-[350px] xl:w-[450px]">
           <Image
-            src="/spa5.webp"
+            src="/photos/spa5.webp"
             width={700}
             height={500}
             alt="spa5"
@@ -29,7 +29,7 @@ export function About() {
         <div className="w-[300px] lg:w-auto">
           <Image
             className="lg:h-[570px] xl:h-[750px]"
-            src="/marcoAbout.svg"
+            src="/shapes/marcoAbout.svg"
             width={700}
             height={700}
             alt="marcoAbout"
@@ -78,7 +78,7 @@ export function About() {
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   className="w-[100px] lg:w-full">
                   <Image
-                    src="/circleAbout.svg"
+                    src="/shapes/circleAbout.svg"
                     width={200}
                     height={200}
                     alt="circleAbout"

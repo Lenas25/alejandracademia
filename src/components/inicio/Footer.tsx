@@ -80,7 +80,7 @@ export function Footer() {
               </p>
               <div className="w-[50%]">
                 <Image
-                  src="/spa8.webp"
+                  src="/photos/spa8.webp"
                   alt="spa8"
                   width={500}
                   height={500}
@@ -91,7 +91,7 @@ export function Footer() {
             <div className=" relative md:w-[500px] xl:w-[800px] 2xl:h-[1500px] 2xl:w-[1000px] 2xl:-top-[470px] top-0">
               <Image
                 className="2xl:w-[1500px] 2xl:h-[1500px]"
-                src="/bubbleFooter.svg"
+                src="/shapes/bubbleFooter.svg"
                 alt="bubble"
                 width={900}
                 height={900}
