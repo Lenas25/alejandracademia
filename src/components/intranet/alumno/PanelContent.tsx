@@ -2,6 +2,7 @@
 
 import { useAppSelector } from "@/redux/stores";
 import { useEffect, useState } from "react";
+import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { AsistenciaCard } from "./AsistenciaCard";
 import { Bienvenida } from "./Bienvenida";
 import { ContextStrip } from "./ContextStrip";
@@ -14,6 +15,13 @@ import { PromedioCard } from "./PromedioCard";
 export function PanelContent() {
   const userLogin = useAppSelector((state) => state.user.userLogin);
   const enrollmentsUser = useAppSelector((state) => state.enrollment.enrollmentsUser);
+  // A finished enrollment has `active === false` (set by the admin's
+  // "Finalizar sección" action). Same flag PromedioCard uses to switch its
+  // caption to the final verdict; here it drives an explicit banner so the
+  // student clearly sees the course has ended (the ring caption alone is
+  // too subtle).
+  const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
+  const isCourseFinished = enrollmentView?.active === false;
   const [isLoading, setIsLoading] = useState(true);
 
   // Cuando userLogin no está disponible aún (Redux no hidratado) mantenemos skeleton.
@@ -67,6 +75,22 @@ export function PanelContent() {
 
       {/* Selector multi-curso — oculto si el alumno tiene solo 1 matrícula */}
       <CourseSelector />
+
+      {/* Aviso claro de curso finalizado — el veredicto del anillo solo no
+          alcanza como señal. */}
+      {isCourseFinished && (
+        <div
+          role="status"
+          className="flex items-center gap-3 rounded-2xl border border-darkpink/30 bg-lightpink px-4 py-3 text-black">
+          <IconCircleCheckFilled className="text-darkpink shrink-0" size={28} />
+          <div>
+            <p className="font-semibold">Este curso ya finalizó</p>
+            <p className="text-sm text-gray-600">
+              Tu nota final y condición (aprobado/desaprobado) están disponibles abajo.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Header del curso seleccionado + Promedio en curso (hero) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
