@@ -17,13 +17,18 @@
     "framer-motion": "^11.18.2",
     "next": "15.3.8",
     "next-cloudinary": "^6.16.0",
+    "pdfmake": "^0.3.11",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-hook-form": "^7.54.1",
-    "react-redux": "^9.2.0"
+    "react-markdown": "^10.1.0",
+    "react-redux": "^9.2.0",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pdfmake": "^0.3.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",

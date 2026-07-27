@@ -9,6 +9,8 @@ const rutas = {
   notification: '/notification',
   images: '/images',
   payment: '/payment',
+  attendance: '/attendance',
+  institutionConfig: '/institution-config',
 }
 
 export default rutas;

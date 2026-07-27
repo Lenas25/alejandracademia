@@ -4,6 +4,7 @@ import { gradeByEnrollment } from "@/redux/service/gradeService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconListDetails, IconStarsFilled } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { PASSING_GRADE } from "@/utils/gradeScale";
 
 export function NotasCard() {
   const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ export function NotasCard() {
         ) : gradesUser.length > 0 ? (
           gradesUser.map((grade) => {
             const numericGrade = Number(grade.grade);
-            const isApproved = numericGrade >= 11;
+            const isApproved = numericGrade >= PASSING_GRADE;
 
             return (
               <div key={grade.id_activity} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">

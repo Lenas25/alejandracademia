@@ -11,6 +11,9 @@ import { enrollmentSliceReducer } from './slices/enrollmentSlice';
 import { activitySliceReducer } from './slices/activitySlice';
 import { gradeSliceReducer } from './slices/gradeSlice';
 import { paymentSliceReducer } from './slices/paymentSlice';
+import { attendanceSliceReducer } from './slices/attendanceSlice';
+import { reportSliceReducer } from './slices/reportSlice';
+import { institutionConfigSliceReducer } from './slices/institutionConfigSlice';
 
 
 export const globalStore = configureStore({
@@ -22,6 +25,9 @@ export const globalStore = configureStore({
       activity: activitySliceReducer,
       grade: gradeSliceReducer,
       payment: paymentSliceReducer,
+      attendance: attendanceSliceReducer,
+      report: reportSliceReducer,
+      institutionConfig: institutionConfigSliceReducer,
     }
 })
 

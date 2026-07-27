@@ -4,6 +4,7 @@ import {
   fetchMyInstallments,
   fetchSectionInstallments,
   payInstallment,
+  setSectionInstallmentDueDate,
   unmarkInstallment,
 } from "../service/paymentService";
 
@@ -59,6 +60,9 @@ const paymentSlice = createSlice({
       state.message = action.payload.message;
     });
     builder.addCase(unmarkInstallment.fulfilled, (state, action) => {
+      state.message = action.payload.message;
+    });
+    builder.addCase(setSectionInstallmentDueDate.fulfilled, (state, action) => {
       state.message = action.payload.message;
     });
   }

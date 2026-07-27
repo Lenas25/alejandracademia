@@ -250,14 +250,18 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         </label>
         {errors.name && <span className="text-error text-xs pl-1">{errors.name.message}</span>}
 
-        <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
+        <div className="flex flex-col sm:flex-row justify-between gap-3">
           <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
             <div className="label">
               <span className="label-text text-base text-gray-700">Inicio</span>
             </div>
+            {/* `min-w-0` overrides the native date input's intrinsic
+                min-content width — without it, a `grow` flex child can
+                refuse to shrink below that browser default and force the
+                row (and page) wider than the viewport. */}
             <input
               type="date"
-              className="grow [color-scheme:light]"
+              className="grow min-w-0 [color-scheme:light]"
               {...register("initialDate", { required: "Este campo es requerido" })}
             />
           </label>
@@ -267,7 +271,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
             </div>
             <input
               type="date"
-              className="grow [color-scheme:light]"
+              className="grow min-w-0 [color-scheme:light]"
               {...register("endDate", { required: "Este campo es requerido" })}
             />
           </label>
@@ -402,7 +406,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           <button
             type="submit"
             disabled={saving}
-            className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base flex-1">
+            className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base flex-1 disabled:bg-darkpink disabled:text-white disabled:opacity-70">
             {saving ? "Guardando..." : "Guardar"}
           </button>
         </div>

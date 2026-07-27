@@ -11,6 +11,7 @@ import { fetchUsers } from "@/redux/service/userService";
 import { Roles } from "@/types/roles";
 import { User } from "@/types/user";
 import { IconUserPlus, IconX, IconSearch } from "@tabler/icons-react";
+import TabHeader from "@/components/intranet/admin/secciones/TabHeader";
 
 interface CuadrosAsignarProps {
   selectedSection: Section | null;
@@ -20,7 +21,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   const dispatch = useAppDispatch();
 
   const allEnrollments = useAppSelector(
-    (state) => state.enrollment.enrollments
+    (state) => state.enrollment.enrollments,
   );
   const allUsers = useAppSelector((state) => state.user.users);
   const enrollmentStatus = useAppSelector((state) => state.enrollment.status);
@@ -46,7 +47,9 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
     }
   }, [dispatch, selectedSection?.id]);
 
-  const [enrolledUsersFromBackend, setEnrolledUsersFromBackend] = useState<User[]>([]);
+  const [enrolledUsersFromBackend, setEnrolledUsersFromBackend] = useState<
+    User[]
+  >([]);
 
   useEffect(() => {
     if (!selectedSection) {
@@ -62,7 +65,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
     const users = filteredEnrollments
       .flatMap((en) => en.user)
       .filter((user): user is User => user != null && "id" in user);
-    
+
     setEnrolledUsersFromBackend(users);
   }, [allEnrollments, selectedSection]);
 
@@ -85,10 +88,16 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   };
 
   const handleRemoveUser = (userIdToRemove: string) => {
-    const userToRemove = selectedUsers.find(user => user.id === userIdToRemove);
+    const userToRemove = selectedUsers.find(
+      (user) => user.id === userIdToRemove,
+    );
     if (userToRemove) {
-      setSelectedUsers((prev) => prev.filter((user) => user.id !== userIdToRemove));
-      setEnrolledUsersFromBackend((prev) => prev.filter((user) => user.id !== userIdToRemove));
+      setSelectedUsers((prev) =>
+        prev.filter((user) => user.id !== userIdToRemove),
+      );
+      setEnrolledUsersFromBackend((prev) =>
+        prev.filter((user) => user.id !== userIdToRemove),
+      );
     }
   };
 
@@ -98,13 +107,16 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
         users: selectedUsers.map((user) => ({ id: String(user.id) })),
       };
       const resultAction = await dispatch(
-        updateEnrollment({ courseId: selectedSection.id, data: enrollmentData })
+        updateEnrollment({
+          courseId: selectedSection.id,
+          data: enrollmentData,
+        }),
       );
       // Note: `courseId` here is the enrollmentService thunk's param name,
       // unchanged for the same reason as fetchEnrollment above.
       if (updateEnrollment.fulfilled.match(resultAction)) {
         setMessage(
-          resultAction.payload.message || "Cambios guardados con éxito"
+          resultAction.payload.message || "Cambios guardados con éxito",
         );
       }
     }
@@ -114,7 +126,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
     return allUsers.filter((user) => {
       const isStudent = user.role === Roles.ALUMNO;
       const isNotEnrolled = !enrolledUsersFromBackend.some(
-        (enrolled) => enrolled.id === user.id
+        (enrolled) => enrolled.id === user.id,
       );
       const matchesSearch =
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -126,100 +138,109 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   }, [allUsers, enrolledUsersFromBackend, searchTerm]);
 
   return (
-    <div className="flex flex-col gap-5 overflow-y-auto bg-white rounded-lg shadow relative p-6">
-      <div className="flex flex-wrap gap-5 justify-center w-full md:justify-between">
-        <h2 className="text-2xl font-medium">Asignar Estudiantes</h2>
-        <div className="h-[2px] bg-black w-full" />
-      </div>
+    <div className="flex flex-col gap-5">
+      <TabHeader title="Asignar Estudiantes">
+        {selectedSection && (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="btn btn-sm bg-darkpink text-white border-none hover:bg-black"
+          >
+            Guardar
+          </button>
+        )}
+      </TabHeader>
 
       {!selectedSection ? (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center py-10">
           <span className="badge badge-outline h-auto text-base py-2 px-4 text-center">
             Seleccione un curso para asignar estudiantes
           </span>
         </div>
       ) : enrollmentStatus === "loading" || userStatus === "loading" ? (
-        <p>Cargando...</p>
+        <div className="flex justify-center py-10">
+          <span className="loading loading-spinner loading-lg text-darkpink" />
+        </div>
       ) : (
-        <div className="flex gap-5 justify-between w-full flex-col">
-          <h3 className="text-xl font-medium break-words w-full">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-500 break-words">
             {selectedSection.name}
-          </h3>
+          </p>
 
           {message && (
             <div
               className={`alert ${
                 message.includes("Error") ? "alert-error" : "alert-success"
-              } text-white`}>
+              } text-white`}
+            >
               {message}
             </div>
           )}
 
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar estudiante..."
+              className="input input-bordered w-full bg-white text-black"
+            />
+            <IconSearch className="absolute right-3 top-2 text-gray-400" />
+          </div>
+
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-5 flex-wrap">
-              <div className="relative flex-1 min-w-[250px]">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar estudiante para agregar..."
-                  className="input-search"
-                />
-                <IconSearch className="absolute right-3 top-2 text-gray-400" />
+            {/* Lista de usuarios DISPONIBLES para agregar */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-500">
+                Estudiantes disponibles
+              </span>
+              <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
+                {availableUsersToDisplay.length > 0 ? (
+                  availableUsersToDisplay.map((user) => (
+                    <div
+                      key={`available-${user.id}`}
+                      role="button"
+                      tabIndex={0}
+                      className="border border-grey rounded-lg p-3 bg-white hover:bg-lightpink/40 transition-colors flex justify-between items-center gap-3 cursor-pointer"
+                      onClick={() => handleAddUser(user)}
+                    >
+                      <span className="min-w-0 break-words text-black">
+                        {user.name} {user.lastName} - {user.id}
+                      </span>
+                      <IconUserPlus className="text-gray-600 shrink-0" />
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center py-10 text-gray-400">
+                    No hay estudiantes que coincidan.
+                  </p>
+                )}
               </div>
-              <button
-                type="button"
-                className="btn btn-ghost text-base h-auto bg-flamingo font-medium mb-3 w-full md:w-auto"
-                onClick={handleSubmit}>
-                Guardar
-              </button>
             </div>
 
-            {/* Lista de usuarios DISPONIBLES para agregar */}
-            <h4 className="text-lg font-medium mb-2">
-              Estudiantes disponibles
-            </h4>
-            <ul className="max-h-60 overflow-y-auto border rounded-lg divide-y">
-              {availableUsersToDisplay.length > 0 ? (
-                availableUsersToDisplay.map((user) => (
-                  <li
-                    key={`available-${user.id}`}
-                    className="p-3 hover:bg-gray-100 flex justify-between items-center gap-3 cursor-pointer"
-                    onClick={() => handleAddUser(user)}>
-                    <span className="min-w-0 break-words">
-                      {user.name} {user.lastName} - {user.id}
-                    </span>
-                    <IconUserPlus className="text-gray-600 shrink-0" />
-                  </li>
-                ))
-              ) : (
-                <li className="p-3 text-gray-500">
-                  No hay estudiantes que coincidan.
-                </li>
-              )}
-            </ul>
-
             {/* Lista de usuarios SELECCIONADOS */}
-            <div className="mt-4">
-              <h4 className="text-lg font-medium mb-2">
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-500">
                 Estudiantes asignados ({selectedUsers.length})
-              </h4>
-              <ul className="space-y-2">
+              </span>
+              <div className="flex flex-col gap-2">
                 {selectedUsers.map((user) => (
-                  <li
+                  <div
                     key={`selected-${user.id}`}
-                    className="flex justify-between items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                    <span className="min-w-0 break-words">
+                    className="border border-grey rounded-lg p-3 bg-white hover:bg-lightpink/40 transition-colors flex justify-between items-center gap-3"
+                  >
+                    <span className="min-w-0 break-words text-black">
                       {user.name} {user.lastName} - {user.id}
                     </span>
                     <button
                       onClick={() => handleRemoveUser(String(user.id))}
-                      className="btn btn-ghost btn-sm p-0 min-h-0 h-auto hover:bg-transparent shrink-0">
-                      <IconX className="text-red-500" />
+                      className="btn btn-ghost btn-sm p-0 min-h-0 h-auto hover:bg-transparent shrink-0"
+                    >
+                      <IconX className="text-red-500" size={18} />
                     </button>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>

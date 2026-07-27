@@ -1,6 +1,6 @@
 import rutas from "@/utils/endpoints";
 import { extractErrorMessage } from "@/utils/extractErrorMessage";
-import { Payment, PaymentSectionRow, RegisterPaymentPayload } from "@/types/payment";
+import { Payment, PaymentSectionRow, RegisterPaymentPayload, SetSectionInstallmentDueDatePayload } from "@/types/payment";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -100,6 +100,39 @@ export const unmarkInstallment = createAsyncThunk<
           'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
       });
+      return { message: response.data.message, data: response.data.data };
+    } catch (error) {
+      return rejectWithValue(extractErrorMessage(error));
+    }
+  }
+);
+
+// Admin Section-Level Due-Date Assignment (spec: "payment-management"
+// domain, sdd/pagos due-date slice). Admin-only: sets or clears the due
+// date for one installment NUMBER across every student in the section —
+// this is a section-level setting, not a per-student one (product change:
+// due dates are set once per cuota per section, not inside each student's
+// row). `status` is never sent — the backend re-derives it
+// (`pendiente`/`cancelado`/`atrasado`) from `paidDate` + the new `dueDate`
+// in `toView()`. Returns the full updated section row list so the caller
+// can refetch/refresh every affected student's row + badge.
+export const setSectionInstallmentDueDate = createAsyncThunk<
+  { message: string; data: PaymentSectionRow[] },
+  SetSectionInstallmentDueDatePayload,
+  { rejectValue: string }
+>(
+  'payments/setSectionInstallmentDueDate',
+  async ({ sectionId, installmentNumber, dueDate }, { rejectWithValue }) => {
+    try {
+      const response = await paymentAPI.patch(
+        `/section/${sectionId}/installment/${installmentNumber}/due-date`,
+        { dueDate },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          },
+        }
+      );
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
       return rejectWithValue(extractErrorMessage(error));

@@ -5,12 +5,26 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
   fetchSectionInstallments,
   payInstallment,
+  setSectionInstallmentDueDate,
   unmarkInstallment,
 } from "@/redux/service/paymentService";
 import { Section } from "@/types/section";
 import { PaymentSectionRow } from "@/types/payment";
-import { IconCash, IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
+import { IconCash, IconChevronDown, IconChevronUp, IconSearch, IconX } from "@tabler/icons-react";
 import { normalizeLeadingZero } from "@/utils/numberInput";
+import { useDebounce } from "@/hooks/useDebounce";
+import { PaymentStatusBadge } from "@/components/shared/PaymentStatusBadge";
+import TabHeader from "./TabHeader";
+
+// Display-only "YYYY-MM-DD" -> "DD/MM/YYYY" formatter (string split, never
+// `new Date(...)` — see src/types/payment.ts comment on the
+// timezone-corruption bugfix). Mirrors the local helper already used in
+// AsistenciaTab.tsx / AsistenciaCard.tsx.
+function formatDateDisplay(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-");
+  if (!year || !month || !day) return dateStr;
+  return `${day}/${month}/${year}`;
+}
 
 interface PagosTabProps {
   selectedSection: Section;
@@ -28,7 +42,11 @@ interface StudentGroup {
 // per-student accordion — no wide table, so it stacks cleanly at 390px
 // (standing responsive rule). Inline Registrar/Editar/Desmarcar forms per
 // installment, refetch-on-mutation, alert-error/alert-success feedback with
-// the real backend reason via extractErrorMessage (thunk layer).
+// the real backend reason via extractErrorMessage (thunk layer). Due dates
+// are a per-section-per-cuota setting (product change) — set once per
+// installment number in the "Vencimientos por cuota" panel above the
+// student list; the per-student rows only display the due date + status
+// badge read-only.
 function PagosTab({ selectedSection }: PagosTabProps) {
   const dispatch = useAppDispatch();
   const sectionInstallments = useAppSelector((state) => state.payment.sectionInstallments);
@@ -40,6 +58,8 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   const [editingInstallmentId, setEditingInstallmentId] = useState<number | null>(null);
   const [formAmount, setFormAmount] = useState<string>("");
   const [formDate, setFormDate] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     if (selectedSection?.id) {
@@ -70,6 +90,31 @@ function PagosTab({ selectedSection }: PagosTabProps) {
     }
     return Array.from(groups.values());
   }, [sectionInstallments]);
+
+  // Section-level "Vencimientos por cuota" editor data (product change:
+  // due date is a per-section-per-installment-number setting, not a
+  // per-student one). Distinct installment numbers, sorted ascending, each
+  // prefilled from any row sharing that number — the backend contract
+  // guarantees every student's row for a given installment number carries
+  // the same `dueDate`.
+  const cuotaDueDates = useMemo(() => {
+    const map = new Map<number, string | null>();
+    for (const row of sectionInstallments) {
+      if (!map.has(row.installmentNumber)) {
+        map.set(row.installmentNumber, row.dueDate);
+      }
+    }
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([installmentNumber, dueDate]) => ({ installmentNumber, dueDate }));
+  }, [sectionInstallments]);
+
+  const filteredGroups = useMemo(() => {
+    const term = debouncedSearch.toLowerCase();
+    return studentGroups.filter((group) =>
+      group.studentName.toLowerCase().includes(term)
+    );
+  }, [studentGroups, debouncedSearch]);
 
   const startEdit = (installment: PaymentSectionRow) => {
     setEditingInstallmentId(installment.id);
@@ -117,6 +162,25 @@ function PagosTab({ selectedSection }: PagosTabProps) {
     }
   };
 
+  // Admin sets/clears a cuota's due date at the SECTION level (product
+  // change: applies to every student's installment N in this section, not
+  // a single student's row — client business rule, sdd/pagos due-date
+  // slice). `<input type="date">` already yields "YYYY-MM-DD" (or "" when
+  // cleared), passed straight to the thunk.
+  const handleCuotaDueDateChange = async (installmentNumber: number, value: string) => {
+    if (!selectedSection?.id) return;
+    const dueDate = value === "" ? null : value;
+    const resultAction = await dispatch(
+      setSectionInstallmentDueDate({ sectionId: selectedSection.id, installmentNumber, dueDate })
+    );
+    if (setSectionInstallmentDueDate.fulfilled.match(resultAction)) {
+      setMessage(resultAction.payload.message || "Fecha de vencimiento actualizada");
+      refetch();
+    } else {
+      setMessage(`Error: ${resultAction.payload ?? "no se pudo actualizar la fecha de vencimiento"}`);
+    }
+  };
+
   // Load-Failure State (verify-report WARNING) — checked before the
   // null-count empty state so a fetch failure is never masked as "this
   // section has no installments configured". Distinct from
@@ -124,16 +188,19 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   // returned zero rows).
   if (paymentStatus === "failed") {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
-        <div className="alert alert-error text-white max-w-md">
-          <span>{loadErrorMessage || "No se pudieron cargar las cuotas"}</span>
+      <div className="flex flex-col gap-5">
+        <TabHeader title="Pagos" />
+        <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+          <div className="alert alert-error text-white max-w-md">
+            <span>{loadErrorMessage || "No se pudieron cargar las cuotas"}</span>
+          </div>
+          <button
+            type="button"
+            onClick={refetch}
+            className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+            Reintentar
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={refetch}
-          className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
-          Reintentar
-        </button>
       </div>
     );
   }
@@ -141,20 +208,59 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   // Null-Count Empty State (spec: "payment-management" domain).
   if (!selectedSection.installmentsCount) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-        <p className="font-medium text-gray-500">Esta sección no tiene cuotas configuradas</p>
-        <p className="text-sm text-gray-400">
-          Edita la sección y define la cantidad de cuotas para habilitar los pagos.
-        </p>
+      <div className="flex flex-col gap-5">
+        <TabHeader title="Pagos" />
+        <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+          <p className="font-medium text-gray-500">Esta sección no tiene cuotas configuradas</p>
+          <p className="text-sm text-gray-400">
+            Edita la sección y define la cantidad de cuotas para habilitar los pagos.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
+      <TabHeader title="Pagos" />
+
       {message && (
         <div className={`alert ${message.includes("Error") ? "alert-error" : "alert-success"} text-white`}>
           {message}
+        </div>
+      )}
+
+      {cuotaDueDates.length > 0 && (
+        <div className="rounded-lg border border-grey bg-white p-3 flex flex-col gap-3">
+          <h3 className="font-medium text-black">Vencimientos por cuota</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {cuotaDueDates.map(({ installmentNumber, dueDate }) => (
+              <label
+                key={installmentNumber}
+                className="flex items-center justify-between gap-2 rounded-md border border-grey bg-white px-3 py-2">
+                <span className="text-sm font-medium text-black shrink-0">Cuota {installmentNumber}</span>
+                <input
+                  type="date"
+                  value={dueDate ?? ""}
+                  onChange={(e) => handleCuotaDueDateChange(installmentNumber, e.target.value)}
+                  className="input input-bordered input-sm min-w-0 flex-1 bg-white text-black [color-scheme:light]"
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {studentGroups.length > 0 && (
+        <div className="relative">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar estudiante..."
+            className="input input-bordered w-full bg-white text-black"
+          />
+          <IconSearch className="absolute right-3 top-2 text-gray-400" />
         </div>
       )}
 
@@ -164,22 +270,36 @@ function PagosTab({ selectedSection }: PagosTabProps) {
         </div>
       ) : studentGroups.length === 0 ? (
         <p className="text-center py-10 text-gray-400">No hay estudiantes matriculados en esta sección</p>
+      ) : filteredGroups.length === 0 ? (
+        <p className="text-center py-10 text-gray-400">No se encontraron estudiantes</p>
       ) : (
         <div className="flex flex-col gap-3">
-          {studentGroups.map((group) => {
+          {filteredGroups.map((group) => {
             const paidCount = group.installments.filter((i) => i.status === "cancelado").length;
+            const allPaid = group.installments.length > 0 && paidCount === group.installments.length;
             const isExpanded = expandedEnrollmentId === group.enrollmentId;
             return (
-              <div key={group.enrollmentId} className="border rounded-lg overflow-hidden">
+              <div key={group.enrollmentId} className="border border-grey rounded-lg overflow-hidden bg-white">
                 <button
                   type="button"
                   onClick={() => setExpandedEnrollmentId(isExpanded ? null : group.enrollmentId)}
-                  className="w-full flex items-center justify-between gap-3 p-3 bg-gray-50 hover:bg-gray-100 text-left">
-                  <span className="font-medium text-gray-800 min-w-0 break-words">{group.studentName}</span>
-                  <div className="flex items-center gap-2 shrink-0">
+                  className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 bg-white hover:bg-lightpink/40 transition-colors text-left">
+                  {/* Stacked on mobile (name row, then badges row) so a long
+                      name never gets squeezed against the `shrink-0` badges
+                      group down to a near-zero width — that squeeze was
+                      rendering names one letter per line. `truncate` (needs
+                      `min-w-0` on a flex child) caps a single very long name
+                      instead of letting it wrap. */}
+                  <span className="font-medium text-black min-w-0 truncate">{group.studentName}</span>
+                  <div className="flex items-center gap-2 flex-wrap sm:justify-end shrink-0">
                     <span className="badge badge-outline">
                       {paidCount}/{group.installments.length} pagadas
                     </span>
+                    {allPaid && (
+                      <span className="badge badge-sm gap-1 font-medium border bg-emerald-50 text-emerald-700 border-emerald-300 whitespace-nowrap">
+                        Pagos completados
+                      </span>
+                    )}
                     {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
                   </div>
                 </button>
@@ -189,19 +309,21 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                     {group.installments.map((installment) => (
                       <div key={installment.id} className="p-3 flex flex-col gap-2">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium">Cuota {installment.installmentNumber}</span>
-                            <span
-                              className={`badge badge-ghost badge-sm text-white ${
-                                installment.status === "cancelado" ? "badge-success" : "badge-neutral"
-                              }`}>
-                              {installment.status}
-                            </span>
+                            <PaymentStatusBadge status={installment.status} />
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 text-right">
                             {installment.amount != null ? `S/ ${installment.amount.toFixed(2)}` : "—"}
-                            {installment.paidDate ? ` · ${installment.paidDate}` : ""}
+                            {installment.paidDate ? ` · Pagado: ${formatDateDisplay(installment.paidDate)}` : ""}
                           </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
+                          <span>Vencimiento:</span>
+                          <span className="text-black">
+                            {installment.dueDate ? formatDateDisplay(installment.dueDate) : "Sin fecha"}
+                          </span>
                         </div>
 
                         {editingInstallmentId === installment.id ? (

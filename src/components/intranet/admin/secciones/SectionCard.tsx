@@ -3,7 +3,9 @@
 import { IconPencil, IconPhotoX, IconTrash, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/stores";
 import { Section } from "@/types/section";
+import { Roles } from "@/types/roles";
 import DeleteSectionDialog from "./DeleteSectionDialog";
 
 interface SectionCardProps {
@@ -29,6 +31,8 @@ function isAllowedImageHost(url: string): boolean {
 function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const role = useAppSelector((state) => state.user?.userLogin?.role);
+  const isAdmin = role === Roles.ADMIN;
 
   const handleCardClick = () => {
     router.push(`${pathname}/${section.id}`);
@@ -91,22 +95,24 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
           }`}>
           {section.isActive ? "Activa" : "Inactiva"}
         </span>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={handleEdit}
-            className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
-            <IconPencil size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={handleDeleteClick}
-            className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
-            <IconTrash size={16} />
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
+              <IconPencil size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
+              <IconTrash size={16} />
+            </button>
+          </div>
+        )}
       </div>
-      <DeleteSectionDialog section={section} onConfirm={handleConfirmDelete} />
+      {isAdmin && <DeleteSectionDialog section={section} onConfirm={handleConfirmDelete} />}
     </div>
   );
 }

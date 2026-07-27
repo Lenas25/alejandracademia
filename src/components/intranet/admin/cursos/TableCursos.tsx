@@ -75,17 +75,21 @@ export function TableCursos() {
       <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
         {userLogin?.role === Roles.ADMIN && (
           <div className="flex flex-col gap-5">
-            <div className="flex flex-wrap justify-center items-center gap-5 md:justify-end">
+            {/* `flex-col` guarantees a full-width stack on mobile (not
+                wrap-if-it-doesn't-fit) so the pair never overflows the card
+                horizontally regardless of label/icon width; `sm:flex-row`
+                restores the original side-by-side layout at 640px+. */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center items-stretch sm:items-center gap-3 sm:gap-5 md:justify-end">
               <button
                 type="button"
-                className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
+                className="btn-ghost btn bg-flamingo text-lg sm:flex-1 h-fit"
                 onClick={handleModalAdd}
               >
                 Agregar <IconPlus />
               </button>
               <button
                 type="button"
-                className={`btn-ghost btn text-lg flex-1 h-fit disabled:cursor-not-allowed disabled:opacity-100 disabled:border disabled:border-gray-300 disabled:bg-gray-200 disabled:text-gray-600 ${selectedCourse ? "bg-darkpink" : ""}`}
+                className={`btn-ghost btn text-lg sm:flex-1 h-fit disabled:cursor-not-allowed disabled:opacity-100 disabled:border disabled:border-gray-300 disabled:bg-gray-200 disabled:text-gray-600 ${selectedCourse ? "bg-darkpink" : ""}`}
                 onClick={handleModalEdit}
                 disabled={!selectedCourse}
               >

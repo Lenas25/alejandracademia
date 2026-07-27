@@ -1,21 +1,25 @@
 // Payment: mirrors BackSpa `src/payment/payment.service.ts`'s `PaymentView`
 // exactly (sdd/pagos verify-report, PR1-PR4 backend slice, PASS verdict).
 // `status` is NEVER sent by the client — it is derived server-side from
-// `paidDate` in `PaymentService.toView()` (design ADR "Status: derived from
-// paidDate" — sdd/pagos/design). `amount` is always a JS number or null
-// (bugfix, verify-report WARNING — backend normalizes numeric-column string
-// hydration in `toView()`). `paidDate` is always a "YYYY-MM-DD" string or
-// null, never a `Date` (bugfix, verify-report CRITICAL — see backend
-// `payment.entity.ts` comment for the full timezone-corruption root cause;
-// constructing `new Date(paidDate)` client-side for anything other than
-// display formatting would reintroduce the same class of bug).
-export type PaymentStatus = "pendiente" | "cancelado";
+// `paidDate` and `dueDate` in `PaymentService.toView()` (design ADR "Status:
+// derived from paidDate" — sdd/pagos/design, extended for the due-date
+// slice: a still-`pendiente` cuota whose `dueDate` is in the past is
+// derived as `atrasado`; this is informational only, no late fee applies).
+// `amount` is always a JS number or null (bugfix, verify-report WARNING —
+// backend normalizes numeric-column string hydration in `toView()`).
+// `paidDate` and `dueDate` are always "YYYY-MM-DD" strings or null, never a
+// `Date` (bugfix, verify-report CRITICAL — see backend `payment.entity.ts`
+// comment for the full timezone-corruption root cause; constructing
+// `new Date(paidDate)` / `new Date(dueDate)` client-side for anything other
+// than display formatting would reintroduce the same class of bug).
+export type PaymentStatus = "pendiente" | "cancelado" | "atrasado";
 
 export interface Payment {
   id: number;
   installmentNumber: number;
   amount: number | null;
   paidDate: string | null;
+  dueDate: string | null;
   status: PaymentStatus;
 }
 
@@ -37,4 +41,17 @@ export interface PaymentSectionRow extends Payment {
 export interface RegisterPaymentPayload {
   amount: number;
   paidDate: string;
+}
+
+// Mirrors the admin-only
+// `PATCH /payment/section/:sectionId/installment/:installmentNumber/due-date`
+// body exactly: sets the due date (ISO 8601 date-only string) for a whole
+// installment number across every student in a section, or clears it with
+// `null`. The due date is a per-section-per-cuota setting, not a per-student
+// one — the admin sets it once per installment number (client business rule,
+// sdd/pagos) — there is no automatic due-date generation.
+export interface SetSectionInstallmentDueDatePayload {
+  sectionId: number;
+  installmentNumber: number;
+  dueDate: string | null;
 }
