@@ -3,7 +3,7 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import { Enrollment } from "@/types/enrollment";
-import { fetchEnrollment, fetchEnrollmentByUser, finishEnrollment, updateEnrollment } from "../service/enrollmentService";
+import { fetchEnrollment, fetchEnrollmentByUser, finishEnrollment, reopenEnrollment, updateEnrollment } from "../service/enrollmentService";
 
 const enrollmentSlice = createSlice({
   name: "enrollment",
@@ -42,6 +42,9 @@ const enrollmentSlice = createSlice({
       state.message = action.payload.message;
     });
     builder.addCase(finishEnrollment.fulfilled, (state, action) => {
+      state.message = action.payload.message;
+    });
+    builder.addCase(reopenEnrollment.fulfilled, (state, action) => {
       state.message = action.payload.message;
     });
     builder

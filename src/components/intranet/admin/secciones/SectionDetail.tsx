@@ -1,6 +1,6 @@
 "use client";
 
-import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { IconCircleCheck, IconPencil, IconRotateClockwise2, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -9,10 +9,12 @@ import {
   deleteSection,
   fetchSectionById,
 } from "@/redux/service/sectionService";
+import { finishEnrollment, reopenEnrollment } from "@/redux/service/enrollmentService";
 import { Roles } from "@/types/roles";
 import CuadrosAsignar from "@/components/intranet/admin/asignar/CuadrosAsignar";
 import AsistenciaTab from "./AsistenciaTab";
 import DeleteSectionDialog from "./DeleteSectionDialog";
+import FinishSectionDialog from "./FinishSectionDialog";
 import NotasTab from "./NotasTab";
 import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
@@ -50,6 +52,8 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
   const [activeTab, setActiveTab] = useState<TabKey>(tabs[0].key);
   const [showEditForm, setShowEditForm] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [finishLoading, setFinishLoading] = useState(false);
+  const isFinished = section?.isActive === false;
 
   useEffect(() => {
     if (!tabs.some((tab) => tab.key === activeTab)) {
@@ -78,6 +82,23 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         router.push("..");
       }
     }
+  };
+
+  const handleFinishToggle = async () => {
+    setFinishLoading(true);
+    // Both thunks always resolve — they catch and return a
+    // `{ message, error? }` payload instead of calling rejectWithValue —
+    // so the outcome is read from `.payload`, not from `.fulfilled.match`.
+    const thunk = isFinished ? reopenEnrollment : finishEnrollment;
+    const resultAction = await dispatch(thunk({ courseId: sectionId }));
+    const payload = resultAction.payload as { message?: string; error?: string };
+    if (payload.error) {
+      setMessage(`Error al ${isFinished ? "reabrir" : "finalizar"} la sección: ${payload.error}`);
+    } else {
+      setMessage(payload.message ?? (isFinished ? "Sección reabierta" : "Sección finalizada"));
+      dispatch(fetchSectionById(sectionId));
+    }
+    setFinishLoading(false);
   };
 
   if (!section || section.id !== sectionId) {
@@ -119,9 +140,38 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
           / {section.course?.name}
         </div>
         <div className="flex gap-5 items-center justify-between flex-wrap">
-          <h1 className="text-2xl font-medium text-white">{section.name}</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-medium text-white">{section.name}</h1>
+            {isFinished && (
+              <span className="badge bg-yellow text-black border-none font-semibold">
+                Finalizada
+              </span>
+            )}
+          </div>
           {isAdmin && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() =>
+                  (
+                    document.getElementById(
+                      `finish_section_${section.id}`,
+                    ) as HTMLDialogElement
+                  )?.showModal()
+                }
+                className="btn btn-ghost btn-sm bg-white text-black hover:bg-darkpink hover:text-white disabled:bg-gray-300 disabled:text-gray-500"
+                disabled={finishLoading}
+              >
+                {isFinished ? (
+                  <>
+                    <IconRotateClockwise2 size={16} /> Reabrir sección
+                  </>
+                ) : (
+                  <>
+                    <IconCircleCheck size={16} /> Finalizar sección
+                  </>
+                )}
+              </button>
               <button
                 type="button"
                 onClick={() => setShowEditForm(true)}
@@ -196,6 +246,14 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         )}
       </div>
 
+      {isAdmin && (
+        <FinishSectionDialog
+          section={section}
+          mode={isFinished ? "reopen" : "finish"}
+          onConfirm={handleFinishToggle}
+          loading={finishLoading}
+        />
+      )}
       <DeleteSectionDialog section={section} onConfirm={handleDelete} />
     </>
   );
