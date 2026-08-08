@@ -1,5 +1,6 @@
 import { User } from "@/types/user";
-import { IconTrash } from "@tabler/icons-react";
+import { IconHistory, IconTrash } from "@tabler/icons-react";
+import Link from "next/link";
 import ModalDelete from "./ModalDelete";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
@@ -88,13 +89,23 @@ function RowAlumnos({
           .toUpperCase()}${(user.role ?? "").slice(1)}`}</span>
       </td>
       <th>
-        <button
-          type="button"
-          className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-black"
-          onClick={handleModalDelete}>
-          <IconTrash />
-          Eliminar
-        </button>
+        <div className="flex flex-col gap-2">
+          {user.role === "alumno" && (
+            <Link
+              href={`/intranet/admin/alumnos/${user.id}`}
+              className="btn btn-ghost btn-xs bg-darkpink text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-darkpink">
+              <IconHistory />
+              Historial
+            </Link>
+          )}
+          <button
+            type="button"
+            className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-black"
+            onClick={handleModalDelete}>
+            <IconTrash />
+            Eliminar
+          </button>
+        </div>
         <ModalDelete handleDelete={handleDelete} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
       </th>
     </tr>

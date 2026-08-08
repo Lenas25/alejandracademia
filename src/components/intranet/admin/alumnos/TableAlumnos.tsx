@@ -15,6 +15,15 @@ import { fetchUsers } from "@/redux/service/userService";
 import { fetchCourses } from "@/redux/service/courseService";
 import { useDebounce } from "@/hooks/useDebounce";
 
+type RoleFilter = "todos" | "alumno" | "tutor" | "admin";
+
+const ROLE_FILTERS: { key: RoleFilter; label: string }[] = [
+  { key: "todos", label: "Todos" },
+  { key: "alumno", label: "Alumno" },
+  { key: "tutor", label: "Tutor" },
+  { key: "admin", label: "Admin" },
+];
+
 export function TableAlumnos() {
   const dispatch = useAppDispatch();
   const users = useAppSelector((state) => state.user?.users);
@@ -26,6 +35,7 @@ export function TableAlumnos() {
   }>({ active: false, type: "" });
   const [message, setMessage] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>("todos");
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   useEffect(() => {
@@ -35,14 +45,16 @@ export function TableAlumnos() {
 
   const filteredUsers = useMemo(() => {
     if (!users) return [];
-    return users.filter((user) =>
-      ["id", "name", "lastName", "email", "phone", "username"].some((field) =>
-        String(user[field as keyof typeof user])
-          .toLowerCase()
-          .includes(debouncedSearch.toLowerCase())
-      )
-    );
-  }, [users, debouncedSearch]);
+    return users.filter((user) => {
+      if (roleFilter !== "todos" && user.role !== roleFilter) return false;
+      return ["id", "name", "lastName", "email", "phone", "username"].some(
+        (field) =>
+          String(user[field as keyof typeof user])
+            .toLowerCase()
+            .includes(debouncedSearch.toLowerCase())
+      );
+    });
+  }, [users, debouncedSearch, roleFilter]);
 
   useEffect(() => {
     if (message) {
@@ -111,6 +123,24 @@ export function TableAlumnos() {
               className="input-search"
             />
             <IconSearch className="absolute right-3 top-2 text-gray-400" />
+          </div>
+
+          {/* Role filter chips — same pill pattern as CourseSelector. */}
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap sm:overflow-visible">
+            {ROLE_FILTERS.map((filter) => (
+              <button
+                key={filter.key}
+                type="button"
+                onClick={() => setRoleFilter(filter.key)}
+                aria-pressed={roleFilter === filter.key}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                  roleFilter === filter.key
+                    ? "bg-darkpink text-white"
+                    : "bg-white text-black border border-grey hover:bg-lightpink"
+                }`}>
+                {filter.label}
+              </button>
+            ))}
           </div>
         </div>
 

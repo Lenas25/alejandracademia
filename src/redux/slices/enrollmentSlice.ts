@@ -55,6 +55,9 @@ const enrollmentSlice = createSlice({
       .addCase(fetchEnrollmentByUser.pending, (state) => {
         state.status = 'loading';
         state.errorMessage = null;
+        // Clear stale list — admin detail and alumno panel share this slice,
+        // so without this the previous student's enrollments flash while loading.
+        state.enrollmentsUser = [];
       })
       .addCase(fetchEnrollmentByUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
