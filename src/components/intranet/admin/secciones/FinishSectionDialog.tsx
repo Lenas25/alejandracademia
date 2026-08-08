@@ -15,7 +15,12 @@ interface FinishSectionDialogProps {
   loading?: boolean;
 }
 
-function FinishSectionDialog({ section, mode, onConfirm, loading }: FinishSectionDialogProps) {
+function FinishSectionDialog({
+  section,
+  mode,
+  onConfirm,
+  loading,
+}: FinishSectionDialogProps) {
   const dialogId = `finish_section_${section.id}`;
   const isFinish = mode === "finish";
 
@@ -32,13 +37,15 @@ function FinishSectionDialog({ section, mode, onConfirm, loading }: FinishSectio
     <dialog
       id={dialogId}
       className="modal backdrop-blur-sm"
-      onClick={(event) => event.stopPropagation()}>
+      onClick={(event) => event.stopPropagation()}
+    >
       <div className="modal-box text-white max-h-[90vh] overflow-y-auto">
         <form method="dialog">
           <button
             type="submit"
             onClick={handleClose}
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
             ✕
           </button>
         </form>
@@ -57,14 +64,14 @@ function FinishSectionDialog({ section, mode, onConfirm, loading }: FinishSectio
           ) : (
             <>
               Vas a reabrir la sección <strong>{section.name}</strong>. Los
-              alumnos dejarán de ver el resultado final hasta que la vuelvas
-              a finalizar.
+              alumnos dejarán de ver el resultado final hasta que la vuelvas a
+              finalizar.
             </>
           )}
         </p>
         <p className="text-sm text-gray-300">
           {isFinish
-            ? "La sección sigue siendo editable y podés reabrirla cuando quieras. No se elimina nada."
+            ? "La sección sigue siendo editable y puedes reabrirla cuando quieras. No se elimina nada."
             : "Las matrículas de la sección vuelven a quedar activas. No se elimina nada."}
         </p>
         <div className="w-full flex justify-end gap-3 mt-4">
@@ -75,7 +82,8 @@ function FinishSectionDialog({ section, mode, onConfirm, loading }: FinishSectio
             type="button"
             onClick={handleConfirm}
             disabled={loading}
-            className="btn btn-sm bg-darkpink text-white text-lg hover:bg-black disabled:bg-gray-500 disabled:text-gray-300">
+            className="btn btn-sm bg-darkpink text-white text-lg hover:bg-black disabled:bg-gray-500 disabled:text-gray-300"
+          >
             {isFinish ? "Finalizar sección" : "Reabrir sección"}
           </button>
         </div>
