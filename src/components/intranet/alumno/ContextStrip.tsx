@@ -4,8 +4,18 @@ import { useAppSelector } from "@/redux/stores";
 import { IconCalendarEvent, IconCoin } from "@tabler/icons-react";
 
 const MONTH_SHORT_ES = [
-  "ene", "feb", "mar", "abr", "may", "jun",
-  "jul", "ago", "sep", "oct", "nov", "dic",
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
 ];
 
 // `section.initialDate`/`endDate` are date-only strings (YYYY-MM-DD...) at
@@ -30,8 +40,12 @@ function formatDate(value: Date | string | undefined | null): string | null {
 // same enrollment — no separate fetch here. Intentionally compact so it
 // never pushes real data (Promedio, Notas) below the fold on mobile.
 export function ContextStrip() {
-  const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
-  const myInstallments = useAppSelector((state) => state.payment.myInstallments);
+  const enrollmentView = useAppSelector(
+    (state) => state.enrollment.enrollmentView,
+  );
+  const myInstallments = useAppSelector(
+    (state) => state.payment.myInstallments,
+  );
   const paymentStatus = useAppSelector((state) => state.payment?.status);
 
   if (!enrollmentView) return null;
@@ -68,7 +82,9 @@ export function ContextStrip() {
           <IconCalendarEvent size={18} className="text-darkpink shrink-0" />
           <span className="text-gray-500 shrink-0">Duración:</span>
           <span className="font-medium text-gray-800 truncate">
-            {startDate && endDate ? `${startDate} – ${endDate}` : "Fechas no disponibles"}
+            {startDate && endDate
+              ? `${startDate} – ${endDate}`
+              : "Fechas no disponibles"}
           </span>
         </div>
         <div className="hidden sm:block w-px h-4 bg-grey" />
@@ -77,15 +93,22 @@ export function ContextStrip() {
           <span className="text-gray-500 shrink-0">Próxima cuota:</span>
           <span
             className={`font-medium truncate ${
-              nextInstallment?.status === "atrasado" ? "text-red-600" : "text-gray-800"
-            }`}>
+              nextInstallment?.status === "atrasado"
+                ? "text-red-600"
+                : "text-gray-800"
+            }`}
+          >
             {paymentStatus === "loading"
               ? "Cargando..."
               : nextInstallment
                 ? `Cuota ${nextInstallment.installmentNumber}${
-                    nextInstallment.amount != null ? ` · S/ ${nextInstallment.amount.toFixed(2)}` : ""
+                    nextInstallment.amount != null
+                      ? ` · ${nextInstallment.amount.toFixed(2)}`
+                      : ""
                   }${
-                    nextInstallment.dueDate ? ` · vence ${formatDate(nextInstallment.dueDate)}` : ""
+                    nextInstallment.dueDate
+                      ? ` · vence ${formatDate(nextInstallment.dueDate)}`
+                      : ""
                   }${nextInstallment.status === "atrasado" ? " (atrasada)" : ""}`
                 : "Sin cuotas pendientes"}
           </span>

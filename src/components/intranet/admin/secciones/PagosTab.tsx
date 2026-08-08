@@ -10,7 +10,13 @@ import {
 } from "@/redux/service/paymentService";
 import { Section } from "@/types/section";
 import { PaymentSectionRow } from "@/types/payment";
-import { IconCash, IconChevronDown, IconChevronUp, IconSearch, IconX } from "@tabler/icons-react";
+import {
+  IconCash,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react";
 import { normalizeLeadingZero } from "@/utils/numberInput";
 import { useDebounce } from "@/hooks/useDebounce";
 import { PaymentStatusBadge } from "@/components/shared/PaymentStatusBadge";
@@ -49,13 +55,21 @@ interface StudentGroup {
 // badge read-only.
 function PagosTab({ selectedSection }: PagosTabProps) {
   const dispatch = useAppDispatch();
-  const sectionInstallments = useAppSelector((state) => state.payment.sectionInstallments);
+  const sectionInstallments = useAppSelector(
+    (state) => state.payment.sectionInstallments,
+  );
   const paymentStatus = useAppSelector((state) => state.payment.status);
-  const loadErrorMessage = useAppSelector((state) => state.payment.errorMessage);
+  const loadErrorMessage = useAppSelector(
+    (state) => state.payment.errorMessage,
+  );
 
   const [message, setMessage] = useState<string>("");
-  const [expandedEnrollmentId, setExpandedEnrollmentId] = useState<number | null>(null);
-  const [editingInstallmentId, setEditingInstallmentId] = useState<number | null>(null);
+  const [expandedEnrollmentId, setExpandedEnrollmentId] = useState<
+    number | null
+  >(null);
+  const [editingInstallmentId, setEditingInstallmentId] = useState<
+    number | null
+  >(null);
   const [formAmount, setFormAmount] = useState<string>("");
   const [formDate, setFormDate] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -112,7 +126,7 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   const filteredGroups = useMemo(() => {
     const term = debouncedSearch.toLowerCase();
     return studentGroups.filter((group) =>
-      group.studentName.toLowerCase().includes(term)
+      group.studentName.toLowerCase().includes(term),
     );
   }, [studentGroups, debouncedSearch]);
 
@@ -136,19 +150,31 @@ function PagosTab({ selectedSection }: PagosTabProps) {
 
   const handleSubmitPay = async (installmentId: number) => {
     const amountValue = Number(formAmount);
-    if (!formAmount || Number.isNaN(amountValue) || amountValue <= 0 || !formDate) {
+    if (
+      !formAmount ||
+      Number.isNaN(amountValue) ||
+      amountValue <= 0 ||
+      !formDate
+    ) {
       setMessage("Error: ingresa un monto mayor a 0 y una fecha válida");
       return;
     }
     const resultAction = await dispatch(
-      payInstallment({ id: installmentId, data: { amount: amountValue, paidDate: formDate } })
+      payInstallment({
+        id: installmentId,
+        data: { amount: amountValue, paidDate: formDate },
+      }),
     );
     if (payInstallment.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message || "Cuota registrada correctamente");
+      setMessage(
+        resultAction.payload.message || "Cuota registrada correctamente",
+      );
       cancelEdit();
       refetch();
     } else {
-      setMessage(`Error: ${resultAction.payload ?? "no se pudo registrar la cuota"}`);
+      setMessage(
+        `Error: ${resultAction.payload ?? "no se pudo registrar la cuota"}`,
+      );
     }
   };
 
@@ -158,7 +184,9 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       setMessage(resultAction.payload.message || "Cuota revertida a pendiente");
       refetch();
     } else {
-      setMessage(`Error: ${resultAction.payload ?? "no se pudo revertir la cuota"}`);
+      setMessage(
+        `Error: ${resultAction.payload ?? "no se pudo revertir la cuota"}`,
+      );
     }
   };
 
@@ -167,17 +195,28 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   // a single student's row — client business rule, sdd/pagos due-date
   // slice). `<input type="date">` already yields "YYYY-MM-DD" (or "" when
   // cleared), passed straight to the thunk.
-  const handleCuotaDueDateChange = async (installmentNumber: number, value: string) => {
+  const handleCuotaDueDateChange = async (
+    installmentNumber: number,
+    value: string,
+  ) => {
     if (!selectedSection?.id) return;
     const dueDate = value === "" ? null : value;
     const resultAction = await dispatch(
-      setSectionInstallmentDueDate({ sectionId: selectedSection.id, installmentNumber, dueDate })
+      setSectionInstallmentDueDate({
+        sectionId: selectedSection.id,
+        installmentNumber,
+        dueDate,
+      }),
     );
     if (setSectionInstallmentDueDate.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message || "Fecha de vencimiento actualizada");
+      setMessage(
+        resultAction.payload.message || "Fecha de vencimiento actualizada",
+      );
       refetch();
     } else {
-      setMessage(`Error: ${resultAction.payload ?? "no se pudo actualizar la fecha de vencimiento"}`);
+      setMessage(
+        `Error: ${resultAction.payload ?? "no se pudo actualizar la fecha de vencimiento"}`,
+      );
     }
   };
 
@@ -192,12 +231,15 @@ function PagosTab({ selectedSection }: PagosTabProps) {
         <TabHeader title="Pagos" />
         <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
           <div className="alert alert-error text-white max-w-md">
-            <span>{loadErrorMessage || "No se pudieron cargar las cuotas"}</span>
+            <span>
+              {loadErrorMessage || "No se pudieron cargar las cuotas"}
+            </span>
           </div>
           <button
             type="button"
             onClick={refetch}
-            className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+            className="btn btn-sm bg-darkpink text-white border-none hover:bg-black"
+          >
             Reintentar
           </button>
         </div>
@@ -211,9 +253,12 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       <div className="flex flex-col gap-5">
         <TabHeader title="Pagos" />
         <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-          <p className="font-medium text-gray-500">Esta sección no tiene cuotas configuradas</p>
+          <p className="font-medium text-gray-500">
+            Esta sección no tiene cuotas configuradas
+          </p>
           <p className="text-sm text-gray-400">
-            Edita la sección y define la cantidad de cuotas para habilitar los pagos.
+            Edita la sección y define la cantidad de cuotas para habilitar los
+            pagos.
           </p>
         </div>
       </div>
@@ -225,7 +270,9 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       <TabHeader title="Pagos" />
 
       {message && (
-        <div className={`alert ${message.includes("Error") ? "alert-error" : "alert-success"} text-white`}>
+        <div
+          className={`alert ${message.includes("Error") ? "alert-error" : "alert-success"} text-white`}
+        >
           {message}
         </div>
       )}
@@ -237,12 +284,17 @@ function PagosTab({ selectedSection }: PagosTabProps) {
             {cuotaDueDates.map(({ installmentNumber, dueDate }) => (
               <label
                 key={installmentNumber}
-                className="flex items-center justify-between gap-2 rounded-md border border-grey bg-white px-3 py-2">
-                <span className="text-sm font-medium text-black shrink-0">Cuota {installmentNumber}</span>
+                className="flex items-center justify-between gap-2 rounded-md border border-grey bg-white px-3 py-2"
+              >
+                <span className="text-sm font-medium text-black shrink-0">
+                  Cuota {installmentNumber}
+                </span>
                 <input
                   type="date"
                   value={dueDate ?? ""}
-                  onChange={(e) => handleCuotaDueDateChange(installmentNumber, e.target.value)}
+                  onChange={(e) =>
+                    handleCuotaDueDateChange(installmentNumber, e.target.value)
+                  }
                   className="input input-bordered input-sm min-w-0 flex-1 bg-white text-black [color-scheme:light]"
                 />
               </label>
@@ -269,28 +321,46 @@ function PagosTab({ selectedSection }: PagosTabProps) {
           <span className="loading loading-spinner loading-lg text-darkpink" />
         </div>
       ) : studentGroups.length === 0 ? (
-        <p className="text-center py-10 text-gray-400">No hay estudiantes matriculados en esta sección</p>
+        <p className="text-center py-10 text-gray-400">
+          No hay estudiantes matriculados en esta sección
+        </p>
       ) : filteredGroups.length === 0 ? (
-        <p className="text-center py-10 text-gray-400">No se encontraron estudiantes</p>
+        <p className="text-center py-10 text-gray-400">
+          No se encontraron estudiantes
+        </p>
       ) : (
         <div className="flex flex-col gap-3">
           {filteredGroups.map((group) => {
-            const paidCount = group.installments.filter((i) => i.status === "cancelado").length;
-            const allPaid = group.installments.length > 0 && paidCount === group.installments.length;
+            const paidCount = group.installments.filter(
+              (i) => i.status === "cancelado",
+            ).length;
+            const allPaid =
+              group.installments.length > 0 &&
+              paidCount === group.installments.length;
             const isExpanded = expandedEnrollmentId === group.enrollmentId;
             return (
-              <div key={group.enrollmentId} className="border border-grey rounded-lg overflow-hidden bg-white">
+              <div
+                key={group.enrollmentId}
+                className="border border-grey rounded-lg overflow-hidden bg-white"
+              >
                 <button
                   type="button"
-                  onClick={() => setExpandedEnrollmentId(isExpanded ? null : group.enrollmentId)}
-                  className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 bg-white hover:bg-lightpink/40 transition-colors text-left">
+                  onClick={() =>
+                    setExpandedEnrollmentId(
+                      isExpanded ? null : group.enrollmentId,
+                    )
+                  }
+                  className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 bg-white hover:bg-lightpink/40 transition-colors text-left"
+                >
                   {/* Stacked on mobile (name row, then badges row) so a long
                       name never gets squeezed against the `shrink-0` badges
                       group down to a near-zero width — that squeeze was
                       rendering names one letter per line. `truncate` (needs
                       `min-w-0` on a flex child) caps a single very long name
                       instead of letting it wrap. */}
-                  <span className="font-medium text-black min-w-0 truncate">{group.studentName}</span>
+                  <span className="font-medium text-black min-w-0 truncate">
+                    {group.studentName}
+                  </span>
                   <div className="flex items-center gap-2 flex-wrap sm:justify-end shrink-0">
                     <span className="badge badge-outline">
                       {paidCount}/{group.installments.length} pagadas
@@ -300,29 +370,44 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                         Pagos completados
                       </span>
                     )}
-                    {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+                    {isExpanded ? (
+                      <IconChevronUp size={18} />
+                    ) : (
+                      <IconChevronDown size={18} />
+                    )}
                   </div>
                 </button>
 
                 {isExpanded && (
                   <div className="flex flex-col divide-y">
                     {group.installments.map((installment) => (
-                      <div key={installment.id} className="p-3 flex flex-col gap-2">
+                      <div
+                        key={installment.id}
+                        className="p-3 flex flex-col gap-2"
+                      >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium">Cuota {installment.installmentNumber}</span>
+                            <span className="font-medium">
+                              Cuota {installment.installmentNumber}
+                            </span>
                             <PaymentStatusBadge status={installment.status} />
                           </div>
                           <div className="text-sm text-gray-500 text-right">
-                            {installment.amount != null ? `S/ ${installment.amount.toFixed(2)}` : "—"}
-                            {installment.paidDate ? ` · Pagado: ${formatDateDisplay(installment.paidDate)}` : ""}
+                            {installment.amount != null
+                              ? `${installment.amount.toFixed(2)}`
+                              : "—"}
+                            {installment.paidDate
+                              ? ` · Pagado: ${formatDateDisplay(installment.paidDate)}`
+                              : ""}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
                           <span>Vencimiento:</span>
                           <span className="text-black">
-                            {installment.dueDate ? formatDateDisplay(installment.dueDate) : "Sin fecha"}
+                            {installment.dueDate
+                              ? formatDateDisplay(installment.dueDate)
+                              : "Sin fecha"}
                           </span>
                         </div>
 
@@ -336,7 +421,11 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                                 step="0.01"
                                 value={formAmount}
                                 onFocus={(e) => e.target.select()}
-                                onChange={(e) => setFormAmount(normalizeLeadingZero(e.target.value))}
+                                onChange={(e) =>
+                                  setFormAmount(
+                                    normalizeLeadingZero(e.target.value),
+                                  )
+                                }
                                 className="input input-bordered input-sm w-full bg-white text-black"
                               />
                             </label>
@@ -353,13 +442,15 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                               <button
                                 type="button"
                                 onClick={() => handleSubmitPay(installment.id)}
-                                className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+                                className="btn btn-sm bg-darkpink text-white border-none hover:bg-black"
+                              >
                                 Guardar
                               </button>
                               <button
                                 type="button"
                                 onClick={cancelEdit}
-                                className="btn btn-sm btn-ghost bg-white text-black">
+                                className="btn btn-sm btn-ghost bg-white text-black"
+                              >
                                 Cancelar
                               </button>
                             </div>
@@ -369,14 +460,19 @@ function PagosTab({ selectedSection }: PagosTabProps) {
                             <button
                               type="button"
                               onClick={() => startEdit(installment)}
-                              className="btn btn-sm btn-ghost bg-white text-black hover:bg-darkpink hover:text-white">
-                              <IconCash size={16} /> {installment.status === "cancelado" ? "Editar" : "Registrar"}
+                              className="btn btn-sm btn-ghost bg-white text-black hover:bg-darkpink hover:text-white"
+                            >
+                              <IconCash size={16} />{" "}
+                              {installment.status === "cancelado"
+                                ? "Editar"
+                                : "Registrar"}
                             </button>
                             {installment.status === "cancelado" && (
                               <button
                                 type="button"
                                 onClick={() => handleUnmark(installment.id)}
-                                className="btn btn-sm btn-ghost bg-white text-black hover:bg-error hover:text-white">
+                                className="btn btn-sm btn-ghost bg-white text-black hover:bg-error hover:text-white"
+                              >
                                 <IconX size={16} /> Desmarcar
                               </button>
                             )}
