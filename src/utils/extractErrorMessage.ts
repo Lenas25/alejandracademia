@@ -73,7 +73,7 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/must be a valid iso 8601 date|YYYY-MM-DD/i, () => "debe ser una fecha válida (AAAA-MM-DD)"],
 ];
 
-const ENGLISH_RE = /\b(the|must|should|cannot|failed|invalid|duplicate|violates|constraint|select|insert|column|relation|undefined|unauthorized|forbidden|bad request|not found|internal server|exception|query|syntax)\b/i;
+const ENGLISH_RE = /\b(the|must|should|cannot|failed|invalid|duplicate|violates|constraint|select|insert|column|relation|undefined|unauthorized|forbidden|bad request|not found|conflict|unprocessable|entity|too many|payload|gone|timeout|acceptable|internal server|exception|query|syntax)\b/i;
 
 const GENERIC = "Revisa los datos ingresados.";
 
@@ -144,13 +144,13 @@ export function mapApiError(error: unknown, opts?: { unauthorized?: string }): s
   if (status === 400 || status === 422) {
     if (Array.isArray(data?.message)) return mapValidation(data.message as string[]);
   }
-  // Business errors: backend label (`message`) plus optional specific reason (`error`).
+  // Business errors: backend `message` is a generic label ("Error al eliminar
+  // el curso") and `error` the specific human reason. Prefer the reason and
+  // fall back to the label, so users never see both joined or repeated.
   if (status < 500 && status !== 401 && status !== 403) {
-    const parts: string[] = [];
-    for (const v of [data?.message, data?.error]) {
-      if (typeof v === "string" && looksCustomSpanish(v) && !parts.includes(v)) parts.push(v);
+    for (const v of [data?.error, data?.message]) {
+      if (typeof v === "string" && looksCustomSpanish(v)) return v;
     }
-    if (parts.length > 0) return parts.join(" — ");
   }
   if (status >= 500 && typeof data?.message === "string" && looksCustomSpanish(data.message)) {
     return data.message;

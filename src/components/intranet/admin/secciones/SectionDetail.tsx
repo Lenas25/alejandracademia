@@ -101,7 +101,7 @@ function SectionDetailContent({ sectionId }: SectionDetailProps) {
     if (deleteSection.fulfilled.match(resultAction)) {
       const payload = resultAction.payload;
       if ("error" in payload && payload.error) {
-        toast.error(`Error al eliminar la sección: ${payload.error}`);
+        toast.error(payload.error);
       } else {
         toast.success(payload.message);
         router.push("..");

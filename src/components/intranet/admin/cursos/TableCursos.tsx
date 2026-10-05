@@ -81,7 +81,7 @@ export function TableCursos() {
       if (deleteCourse.fulfilled.match(resultAction)) {
         const payload = resultAction.payload;
         if ("error" in payload && payload.error) {
-          toast.error(`Error al eliminar el curso: ${payload.error}`);
+          toast.error(payload.error);
         } else {
           if (course.imageUrl) {
             const publicId = extractImageId(course.imageUrl);
@@ -173,26 +173,27 @@ export function TableCursos() {
           )}
         </div>
         <div className="table-scroll table-scroll-sticky size-full hidden md:block">
-          <table className="table mb-5 lg:min-w-[560px]">
-            <thead className="text-black md:text-lg">
+          <table className="table mb-5 w-full">
+            <thead className="text-xs uppercase tracking-wide text-gray-500">
               <tr>
-                {userLogin?.role === Roles.ADMIN && <th />}
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Descripcion</th>
-                {userLogin?.role === Roles.ADMIN && <th />}
+                <th>Curso</th>
+                {userLogin?.role === Roles.ADMIN && (
+                  <th className="text-right">
+                    <span className="sr-only">Acciones</span>
+                  </th>
+                )}
               </tr>
             </thead>
-            <tbody className="md:text-lg">
+            <tbody>
               {courseStatus === "loading" ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10">
+                  <td colSpan={2} className="text-center py-10">
                     <span className="loading loading-spinner loading-lg text-darkpink" />
                   </td>
                 </tr>
               ) : filteredCourses.length === 0 && courseStatus === "succeeded" ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-400">
+                  <td colSpan={2} className="text-center py-10 text-gray-400">
                     No hay cursos registrados
                   </td>
                 </tr>

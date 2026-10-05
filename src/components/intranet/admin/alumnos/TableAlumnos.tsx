@@ -100,7 +100,7 @@ export function TableAlumnos() {
       if (deleteUser.fulfilled.match(resultAction)) {
         const payload = resultAction.payload as { message: string; error?: string };
         if (payload.error) {
-          toast.error(`Error al eliminar el usuario: ${payload.error}`);
+          toast.error(payload.error);
         } else {
           toast.success(payload.message);
           if (selectedUser?.id === user.id) setSelectedUser(null);
@@ -202,29 +202,29 @@ export function TableAlumnos() {
           )}
         </div>
         <div className="table-scroll table-scroll-sticky size-full hidden md:block">
-          <table className="table mb-5 min-w-[640px]">
-            <thead className="text-black md:text-lg">
+          <table className="table mb-5 w-full">
+            <thead className="text-xs uppercase tracking-wide text-gray-500">
               <tr>
-                <th />
-                <th>Dni</th>
                 <th>Nombre</th>
+                <th className="hidden xl:table-cell">DNI</th>
                 <th className="hidden xl:table-cell">Usuario</th>
-                <th>Email</th>
                 <th className="hidden xl:table-cell">Celular</th>
                 <th>Rol</th>
-                <th />
+                <th className="text-right">
+                  <span className="sr-only">Acciones</span>
+                </th>
               </tr>
             </thead>
-            <tbody className="md:text-lg">
+            <tbody>
               {userStatus === 'loading' ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-10">
+                  <td colSpan={6} className="text-center py-10">
                     <span className="loading loading-spinner loading-lg text-darkpink" />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 && userStatus === 'succeeded' ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-10 text-gray-400">
+                  <td colSpan={6} className="text-center py-10 text-gray-400">
                     No hay usuarios registrados
                   </td>
                 </tr>

@@ -106,69 +106,97 @@ function RowAlumnos({
     );
   }
 
+  const isSelected = selectedUser?.id === user.id;
+  const initials =
+    `${(user.name ?? "").charAt(0)}${(user.lastName ?? "").charAt(0)}`.toUpperCase() || "?";
+  const avatarClass =
+    user.role === "tutor" ? "bg-flamingo text-black" : `${classRole} text-white`;
+
+  // Row click selects; clicks on inner buttons/links must not toggle selection.
+  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    handleRadioChange(user);
+  };
+  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleRadioChange(user);
+    }
+  };
+
+  const iconBtn =
+    "btn btn-ghost btn-sm size-10 min-h-10 p-0 flex items-center justify-center";
+
   return (
-    <tr>
-      <th>
-        <label>
-          <input
-            type="radio"
-            name="users"
-            className="radio border-black"
-            value={user.id}
-            checked={selectedUser?.id === user.id}
-            onChange={() => handleRadioChange(user)}
-          />
-        </label>
-      </th>
-      <td className="max-w-[80px] truncate" title={String(user.id)}>
-        {user.id}
-      </td>
-      <td>
-        <div className="flex items-center gap-3">
-          <div>
-            <div className="font-semibold">{user.name}</div>
-            <div className="font-semibold">{user.lastName}</div>
+    <tr
+      tabIndex={0}
+      aria-current={isSelected ? "true" : undefined}
+      onClick={handleRowClick}
+      onKeyDown={handleRowKeyDown}
+      className={`cursor-pointer text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-darkpink ${
+        isSelected ? "!bg-lightpink/70" : ""
+      }`}>
+      <td
+        className={`py-3 ${isSelected ? "shadow-[inset_3px_0_0_#a16361]" : ""}`}>
+        <div className="flex items-center gap-3 min-w-0">
+          <span
+            aria-hidden="true"
+            className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${avatarClass}`}>
+            {initials}
+          </span>
+          <div className="min-w-0">
+            <div className="font-semibold break-words line-clamp-2">{fullName}</div>
+            <div className="text-sm text-gray-500 break-all" title={user.email}>
+              {user.email}
+            </div>
           </div>
         </div>
       </td>
-      <td className="hidden xl:table-cell">{user.username}</td>
-      <td className="max-w-[180px] truncate lg:max-w-none lg:whitespace-normal lg:break-all" title={user.email}>
-        {user.email}
+      <td className="hidden xl:table-cell text-sm tabular-nums font-mono whitespace-nowrap">
+        {user.id}
       </td>
-      <td className="hidden xl:table-cell">{user.phone}</td>
+      <td className="hidden xl:table-cell text-sm break-all">{user.username}</td>
+      <td className="hidden xl:table-cell text-sm tabular-nums whitespace-nowrap">
+        {user.phone}
+      </td>
       <td>
         <span
-          className={`badge badge-ghost badge-sm text-white p-3 border-none font-semibold text-sm md:text-lg ${classRole}`}>{`${(user.role ?? "")
-          .charAt(0)
-          .toUpperCase()}${(user.role ?? "").slice(1)}`}</span>
+          className={`badge badge-sm border-none px-3 py-3 text-xs font-semibold ${
+            user.role === "tutor" ? "bg-flamingo text-black" : `${classRole} text-white`
+          }`}>
+          {roleLabel}
+        </span>
       </td>
-      <th>
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            aria-label={`Editar a ${fullName}`}
-            className="btn btn-ghost btn-xs bg-flamingo text-black py-2 min-h-10 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto"
-            onClick={() => onRequestEdit(user)}>
-            <IconPencil />
-            Editar
-          </button>
+      <td>
+        <div className="flex items-center justify-end gap-1">
           {user.role === "alumno" && (
             <Link
               href={`/intranet/admin/alumnos/${user.id}`}
-              className="btn btn-ghost btn-xs bg-darkpink text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-darkpink">
-              <IconHistory />
-              Historial
+              title="Historial"
+              aria-label={`Historial de ${fullName}`}
+              className={`${iconBtn} text-darkpink hover:bg-lightpink`}>
+              <IconHistory size={20} />
             </Link>
           )}
           <button
             type="button"
-            className="btn btn-ghost btn-xs bg-black text-white py-2 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto hover:text-black"
+            title="Editar"
+            aria-label={`Editar a ${fullName}`}
+            className={`${iconBtn} text-black hover:bg-flamingo`}
+            onClick={() => onRequestEdit(user)}>
+            <IconPencil size={20} />
+          </button>
+          <button
+            type="button"
+            title="Eliminar"
+            aria-label={`Eliminar a ${fullName}`}
+            className={`${iconBtn} text-black hover:bg-black hover:text-white`}
             onClick={handleModalDelete}>
-            <IconTrash />
-            Eliminar
+            <IconTrash size={20} />
           </button>
         </div>
-      </th>
+      </td>
     </tr>
   );
 }

@@ -77,7 +77,7 @@ export function TableSecciones() {
     if (deleteSection.fulfilled.match(resultAction)) {
       const payload = resultAction.payload as { message: string; error?: string };
       if (payload.error) {
-        toast.error(`Error al eliminar la sección: ${payload.error}`);
+        toast.error(payload.error);
       } else {
         toast.success(payload.message);
       }

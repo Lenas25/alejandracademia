@@ -81,67 +81,78 @@ function RowCursos({
     );
   }
 
+  const isSelected = selectedCourse?.id === course.id;
+
+  // Row click selects (admin only); clicks on inner buttons must not toggle it.
+  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
+    if (!isAdmin || (e.target as HTMLElement).closest("a,button")) return;
+    handleRadioChange(course);
+  };
+  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    if (!isAdmin || e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleRadioChange(course);
+    }
+  };
+
+  const iconBtn =
+    "btn btn-ghost btn-sm size-10 min-h-10 p-0 flex items-center justify-center";
+
   return (
-    <tr>
-      {isAdmin && (
-        <th>
-          <label>
-            <input
-              type="radio"
-              name="courses"
-              className="radio border-black"
-              value={course.id}
-              checked={selectedCourse?.id === course.id}
-              onChange={() => handleRadioChange(course)}
-            />
-          </label>
-        </th>
-      )}
-      <td>
-        <div className="size-24 flex justify-center items-center">
-          {course.imageUrl !== "" ? (
-            <Image
-              src={course.imageUrl}
-              alt={course.name}
-              width={100}
-              height={100}
-              className="rounded-full object-cover size-full"
-            />
-          ) : (
-            <IconPhotoX size={40} className="text-black" />
-          )}
+    <tr
+      tabIndex={isAdmin ? 0 : undefined}
+      aria-current={isAdmin && isSelected ? "true" : undefined}
+      onClick={handleRowClick}
+      onKeyDown={handleRowKeyDown}
+      className={`text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-darkpink ${
+        isAdmin ? "cursor-pointer" : ""
+      } ${isSelected && isAdmin ? "!bg-lightpink/70" : ""}`}>
+      <td
+        className={`py-3 ${isSelected && isAdmin ? "shadow-[inset_3px_0_0_#a16361]" : ""}`}>
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="size-14 shrink-0 flex items-center justify-center rounded-xl bg-gray-100 overflow-hidden">
+            {course.imageUrl !== "" ? (
+              <Image
+                src={course.imageUrl}
+                alt={course.name}
+                width={56}
+                height={56}
+                className="object-cover size-full"
+              />
+            ) : (
+              <IconPhotoX size={28} className="text-gray-500" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold break-words line-clamp-2">{course.name}</p>
+            <p className="text-sm text-gray-500 break-words line-clamp-2">
+              {course.description}
+            </p>
+          </div>
         </div>
       </td>
-      <td>
-        <div className="flex items-center gap-3">
-          <p className="font-semibold break-words">{course.name}</p>
-        </div>
-      </td>
-      <td>
-        <p className="overflow-hidden text-ellipsis line-clamp-3 z-10">
-          {course.description}
-        </p>
-      </td>
       {isAdmin && (
-        <th>
-          <div className="flex flex-col gap-2 justify-center items-stretch">
+        <td>
+          <div className="flex items-center justify-end gap-1">
             <button
               type="button"
-              aria-label={`Editar a ${course.name}`}
-              className="btn btn-ghost btn-xs bg-flamingo text-black py-2 min-h-10 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg w-full h-auto"
+              title="Editar"
+              aria-label={`Editar ${course.name}`}
+              className={`${iconBtn} text-black hover:bg-flamingo`}
               onClick={() => onRequestEdit(course)}>
-              <IconPencil />
-              Editar
+              <IconPencil size={20} />
             </button>
             <button
               type="button"
-              className="btn btn-ghost btn-xs bg-black text-white py-2 min-h-10 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg w-full h-auto hover:text-black"
+              title="Eliminar"
+              aria-label={`Eliminar ${course.name}`}
+              className={`${iconBtn} text-black hover:bg-black hover:text-white`}
               onClick={() => onRequestDelete(course)}>
-              <IconTrash />
-              Eliminar
+              <IconTrash size={20} />
             </button>
           </div>
-        </th>
+        </td>
       )}
     </tr>
   );
