@@ -37,7 +37,7 @@ export function CursoCard() {
     totalActivities > 0 ? Math.min(Math.round((completedActivities / totalActivities) * 100), 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 h-full flex flex-col">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 h-full flex flex-col overflow-x-clip">
       <h3 className="font-semibold text-gray-800">Curso Actual</h3>
       <div className="flex-grow flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-4">
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex-shrink-0">
@@ -52,11 +52,11 @@ export function CursoCard() {
         <div className="flex-grow min-w-0 w-full text-center sm:text-left">
           {enrollmentView ? (
             <>
-              <h4 className="text-xl sm:text-2xl font-bold text-gray-800">{course?.name}</h4>
+              <h4 className="text-lg sm:text-2xl font-bold text-gray-800 break-words">{course?.name}</h4>
               {section?.name ? (
-                <p className="text-sm text-rose font-medium mt-0.5">{section.name}</p>
+                <p className="text-sm text-rose font-medium mt-0.5 break-words">{section.name}</p>
               ) : null}
-              <div className="md-content text-gray-600 mt-2 text-sm sm:text-base">
+              <div className="md-content text-gray-600 mt-2 text-sm sm:text-base break-words">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                   {course?.description ?? ""}
                 </ReactMarkdown>

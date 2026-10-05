@@ -190,3 +190,24 @@ input[type="number"] {
   padding: 0.1rem 0.35rem;
   font-size: 0.9em;
 }
+
+/* Native date inputs (DaisyUI `.input`): consistent touch height, no clipped
+   text and a larger calendar picker target. Light scheme keeps the native
+   picker readable on the white form surfaces. */
+input.input[type="date"] {
+  min-height: 2.75rem;
+  color-scheme: light;
+  padding-block: 0;
+  line-height: 1.25;
+}
+
+input.input[type="date"]::-webkit-datetime-edit {
+  padding: 0;
+}
+
+input.input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}

@@ -54,9 +54,9 @@ function RowCursosHead({
   }, [sections, debouncedSearch]);
 
   return (
-    <div className="flex flex-col gap-5 mb-5 bg-black rounded-lg shadow relative p-6">
+    <div className="flex flex-col gap-5 mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 overflow-x-clip">
       <div className="flex items-center gap-5 justify-between w-full flex-wrap">
-        <h1 className="text-2xl font-semibold text-white">Cursos</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold text-white min-w-0 break-words">Cursos</h1>
         <div className="relative w-full sm:w-auto sm:min-w-[260px]">
           <input
             type="text"
@@ -69,7 +69,7 @@ function RowCursosHead({
         </div>
       </div>
 
-      <div className="grid-scroll max-h-[420px] overflow-y-auto pr-1">
+      <div className="grid-scroll lg:max-h-[420px] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
         {filteredSections.length === 0 ? (
           <div className="flex justify-center items-center py-10">
             <span className="text-gray-400 text-sm text-center">
@@ -77,7 +77,7 @@ function RowCursosHead({
             </span>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredSections.map((section) => {
               const isSelected = selectedSection?.id === section.id;
               const imageUrl = section.course?.imageUrl;
@@ -106,9 +106,9 @@ function RowCursosHead({
                     )}
                   </div>
                   <div className="text-left min-w-0">
-                    <p className="font-semibold truncate">{section.course?.name}</p>
+                    <p className="font-semibold break-words line-clamp-2">{section.course?.name}</p>
                     <p
-                      className={`text-sm truncate ${
+                      className={`text-sm break-words line-clamp-2 ${
                         isSelected ? "text-gray-600" : "text-gray-300"
                       }`}>
                       {section.name}

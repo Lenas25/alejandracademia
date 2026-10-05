@@ -101,14 +101,14 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-2 mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
+      <div className="flex flex-col gap-2 mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8 overflow-x-clip">
         <div className="text-sm text-gray-400">
           <Link href=".." className="hover:text-white">
             Alumnos
           </Link>{" "}
           / Historial
         </div>
-        <h1 className="text-2xl font-medium text-white break-words">
+        <h1 className="text-xl sm:text-2xl font-medium text-white break-words">
           {alumno
             ? `${alumno.name ?? ""} ${alumno.lastName ?? ""}`.trim() ||
               `Alumno #${userId}`
@@ -116,16 +116,16 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
         </h1>
         {alumno && (
           <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-300">
-            <span>DNI: {alumno.id}</span>
+            <span className="break-words">DNI: {alumno.id}</span>
             {alumno.email && (
               <span className="break-all">Email: {alumno.email}</span>
             )}
-            {alumno.phone && <span>Celular: {alumno.phone}</span>}
+            {alumno.phone && <span className="break-words">Celular: {alumno.phone}</span>}
           </div>
         )}
       </div>
 
-      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10 max-w-full">
+      <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10 max-w-full">
         {enrollmentStatus === "loading" ? (
           <div className="flex justify-center py-10">
             <span className="loading loading-spinner loading-lg text-darkpink" />
@@ -155,13 +155,13 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
                       type="button"
                       onClick={() => setSelectedEnrollmentId(enrollment.id)}
                       aria-pressed={isSelected}
-                      className={`w-full text-left rounded-lg border p-4 transition-colors ${
+                      className={`w-full text-left rounded-lg border p-3 sm:p-4 min-h-10 transition-colors ${
                         isSelected
                           ? "border-darkpink bg-lightpink"
                           : "border-grey bg-white hover:bg-gray-50"
                       }`}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1 basis-48">
                           <h3 className="font-semibold text-gray-800 break-words">
                             {enrollment.section?.course?.name || "Curso"}
                           </h3>
@@ -170,7 +170,7 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
                             {formatEnrollmentDate(enrollment.enrollment_date)}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex flex-wrap items-center gap-2 shrink-0">
                           <span
                             className={`badge border-none font-semibold ${
                               finished
@@ -194,17 +194,17 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
 
             {selectedEnrollment && (
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium text-gray-700">
+                <div className="flex justify-between items-center gap-3 mb-4">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-700 min-w-0">
                     {isFinished(selectedEnrollment)
                       ? "Nota final"
                       : "Notas por actividad"}
                   </h3>
-                  <IconListDetails size={24} className="text-gray-400" />
+                  <IconListDetails size={24} className="text-gray-400 shrink-0" />
                 </div>
                 {isFinished(selectedEnrollment) ? (
-                  <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                    <h4 className="font-semibold text-gray-800 break-words">
+                  <div className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                    <h4 className="font-semibold text-gray-800 break-words min-w-0">
                       {selectedEnrollment.section?.course?.name || "Curso"} ·{" "}
                       {selectedEnrollment.section?.name}
                     </h4>
@@ -233,7 +233,7 @@ function AlumnoDetail({ userId }: AlumnoDetailProps) {
                       return (
                         <div
                           key={grade.id_activity}
-                          className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                          className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-lg">
                           <div className="min-w-0">
                             <h4 className="font-semibold text-gray-800 break-words">
                               {grade.activity.name}

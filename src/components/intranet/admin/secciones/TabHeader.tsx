@@ -12,8 +12,8 @@ interface TabHeaderProps {
 function TabHeader({ title, children }: TabHeaderProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
-      <h2 className="text-xl md:text-2xl font-semibold text-black">{title}</h2>
-      {children && <div className="flex gap-2">{children}</div>}
+      <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-black min-w-0 break-words">{title}</h2>
+      {children && <div className="flex flex-wrap gap-2 max-w-full">{children}</div>}
     </div>
   );
 }

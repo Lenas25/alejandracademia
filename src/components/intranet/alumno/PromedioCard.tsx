@@ -43,10 +43,10 @@ export function PromedioCard() {
           : "stroke-black";
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col h-full">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col h-full overflow-x-clip">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-base sm:text-lg font-medium text-gray-700">Promedio en curso</h3>
-        <IconChartDonut3 size={24} className="text-gray-400" />
+        <IconChartDonut3 size={24} className="text-gray-400 shrink-0" />
       </div>
       <div className="flex-grow flex flex-col justify-center items-center gap-3">
         <div className="relative w-32 h-32 sm:w-40 sm:h-40">

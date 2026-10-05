@@ -38,13 +38,13 @@ function FinishSectionDialog({
   return (
     <dialog
       id={dialogId}
-      className="modal backdrop-blur-sm"
+      className="modal modal-bottom sm:modal-middle backdrop-blur-sm"
       onCancel={(e) => {
         if (loading) e.preventDefault();
       }}
       onClick={(event) => event.stopPropagation()}
     >
-      <div className="modal-box text-white max-h-[90dvh] overflow-y-auto">
+      <div className="modal-box text-white max-h-[90dvh] overflow-y-auto overflow-x-clip pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6">
         <form method="dialog">
           <button
             type="submit"
@@ -56,7 +56,7 @@ function FinishSectionDialog({
           </button>
         </form>
         <div className="flex items-center gap-5">
-          <h3 className="font-semibold text-2xl">
+          <h3 className="font-semibold text-xl sm:text-2xl">
             {isFinish ? "Finalizar Sección" : "Reabrir Sección"}
           </h3>
           <IconAlertTriangle className="text-yellow" />
@@ -80,8 +80,8 @@ function FinishSectionDialog({
             ? "La sección sigue siendo editable y puedes reabrirla cuando quieras. No se elimina nada."
             : "Las matrículas de la sección vuelven a quedar activas. No se elimina nada."}
         </p>
-        <div className="w-full flex justify-end gap-3 mt-4">
-          <button type="button" onClick={handleClose} disabled={loading} className="btn btn-sm">
+        <div className="w-full flex flex-wrap justify-end gap-3 mt-4">
+          <button type="button" onClick={handleClose} disabled={loading} className="btn btn-sm h-10 min-h-10">
             Cancelar
           </button>
           <LoadingButton
@@ -89,7 +89,7 @@ function FinishSectionDialog({
             onClick={handleConfirm}
             loading={loading}
             loadingText={isFinish ? "Finalizando…" : "Reabriendo…"}
-            className="btn btn-sm bg-darkpink text-white text-lg hover:bg-black disabled:bg-gray-500 disabled:text-gray-300"
+            className="btn btn-sm h-10 min-h-10 bg-darkpink text-white text-base sm:text-lg hover:bg-black disabled:bg-gray-500 disabled:text-gray-300"
           >
             {isFinish ? "Finalizar sección" : "Reabrir sección"}
           </LoadingButton>

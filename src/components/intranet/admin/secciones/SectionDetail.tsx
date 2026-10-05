@@ -3,7 +3,7 @@
 import { IconCircleCheck, IconPencil, IconRotateClockwise2, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
   deleteSection,
@@ -56,6 +56,30 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const [finishLoading, setFinishLoading] = useState(false);
   const isFinished = section?.isActive === false;
+
+  // Tab bar scroll affordance: a right-edge fade while more tabs are hidden,
+  // and the active tab kept in view (scrolls the bar only, never the page).
+  const tabScrollRef = useRef<HTMLDivElement>(null);
+  const [hasMoreTabsRight, setHasMoreTabsRight] = useState(false);
+
+  const updateTabFade = useCallback(() => {
+    const el = tabScrollRef.current;
+    if (!el) return;
+    setHasMoreTabsRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = tabScrollRef.current;
+    if (!el) return;
+    const activeEl = el.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');
+    if (activeEl) {
+      const target = activeEl.offsetLeft - (el.clientWidth - activeEl.offsetWidth) / 2;
+      el.scrollTo({ left: Math.max(target, 0), behavior: "smooth" });
+    }
+    updateTabFade();
+    window.addEventListener("resize", updateTabFade);
+    return () => window.removeEventListener("resize", updateTabFade);
+  }, [activeTab, tabs, updateTabFade, section?.id]);
 
   useEffect(() => {
     if (!tabs.some((tab) => tab.key === activeTab)) {
@@ -142,7 +166,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         </div>
         <div className="flex gap-5 items-center justify-between flex-wrap">
           <div className="flex items-center gap-3 flex-wrap min-w-0">
-            <h1 className="text-2xl font-medium text-white min-w-0 break-words">{section.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-medium text-white min-w-0 break-words">{section.name}</h1>
             {isFinished && (
               <span className="badge bg-yellow text-black border-none font-semibold">
                 Finalizada
@@ -150,7 +174,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
             )}
           </div>
           {isAdmin && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap max-w-full">
               <LoadingButton
                 type="button"
                 onClick={() =>
@@ -209,7 +233,12 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
             tab row on one line so it never wraps and breaks the boxed
             look; `pr-2` gives the last tab breathing room at the scroll
             end instead of touching the container edge. */}
-        <div className="mb-6 max-w-full table-scroll">
+        <div className="relative mb-6 max-w-full">
+          <div
+            ref={tabScrollRef}
+            onScroll={updateTabFade}
+            className="table-scroll max-w-full snap-x snap-proximity"
+          >
           <div role="tablist" className="tabs tabs-boxed w-max gap-1 bg-black pr-2">
             {tabs.map((tab) => (
               <button
@@ -217,7 +246,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                 type="button"
                 role="tab"
                 aria-selected={activeTab === tab.key}
-                className={`tab whitespace-nowrap transition-colors ${
+                className={`tab h-10 min-h-10 snap-start whitespace-nowrap transition-colors ${
                   activeTab === tab.key
                     ? "!bg-darkpink !text-white"
                     : "text-gray-300 hover:!text-white"
@@ -228,6 +257,14 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
               </button>
             ))}
           </div>
+          </div>
+          {/* Right-edge fade: hints that more tabs are off-screen. */}
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-lg bg-gradient-to-r from-transparent to-black transition-opacity ${
+              hasMoreTabsRight ? "opacity-100" : "opacity-0"
+            }`}
+          />
         </div>
 
         {activeTab === "estudiantes" && (

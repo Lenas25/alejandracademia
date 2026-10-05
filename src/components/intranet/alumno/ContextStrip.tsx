@@ -81,7 +81,7 @@ export function ContextStrip() {
         <div className="flex items-center gap-2 min-w-0">
           <IconCalendarEvent size={18} className="text-darkpink shrink-0" />
           <span className="text-gray-500 shrink-0">Duración:</span>
-          <span className="font-medium text-gray-800 truncate">
+          <span className="font-medium text-gray-800 break-words min-w-0">
             {startDate && endDate
               ? `${startDate} – ${endDate}`
               : "Fechas no disponibles"}
@@ -92,7 +92,7 @@ export function ContextStrip() {
           <IconCoin size={18} className="text-yellow shrink-0" />
           <span className="text-gray-500 shrink-0">Próxima cuota:</span>
           <span
-            className={`font-medium truncate ${
+            className={`font-medium break-words min-w-0 ${
               nextInstallment?.status === "atrasado"
                 ? "text-red-600"
                 : "text-gray-800"

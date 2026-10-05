@@ -55,7 +55,7 @@ export function CourseSelector() {
               type="button"
               onClick={() => dispatch(setSelectedEnrollment(enrollment))}
               aria-pressed={isSelected}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`shrink-0 rounded-full px-4 py-2 min-h-10 text-sm font-medium whitespace-nowrap transition-colors ${
                 isSelected
                   ? "bg-darkpink text-white"
                   : "bg-white text-black border border-grey hover:bg-lightpink"

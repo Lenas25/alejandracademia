@@ -5,6 +5,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconCoin, IconConfetti, IconReceipt2 } from "@tabler/icons-react";
 import { PaymentStatusBadge } from "@/components/shared/PaymentStatusBadge";
 import { useEffect } from "react";
+import { usePagedList } from "../ui/usePagedList";
+import { ShowMore } from "../ui/ShowMore";
+
+const PAGE_SIZE = 8;
 
 // Display-only "YYYY-MM-DD" -> "DD/MM/YYYY" formatter (string split, never
 // `new Date(...)` — see src/types/payment.ts comment on the
@@ -44,13 +48,19 @@ export function CuotasCard() {
     myInstallments.length > 0 &&
     myInstallments.every((installment) => installment.status === "cancelado");
 
+  const { visible, total, shown, remaining, showMore } = usePagedList(
+    myInstallments,
+    PAGE_SIZE,
+    String(enrollmentView?.id ?? ""),
+  );
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 flex flex-col h-full">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col h-full overflow-x-clip">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-gray-700">Mis Cuotas</h3>
-        <IconReceipt2 size={24} className="text-gray-400" />
+        <h3 className="text-base sm:text-lg font-medium text-gray-700">Mis Cuotas</h3>
+        <IconReceipt2 size={24} className="text-gray-400 shrink-0" />
       </div>
-      <div className="flex-grow flex flex-col gap-3 overflow-y-auto pr-2">
+      <div className="flex-grow flex flex-col gap-3">
         {paymentStatus === "loading" ? (
           <div className="flex justify-center items-center h-full">
             <span className="loading loading-spinner text-gray-300"></span>
@@ -71,7 +81,7 @@ export function CuotasCard() {
                 enrollmentView &&
                 dispatch(fetchMyInstallments(enrollmentView.id))
               }
-              className="btn btn-sm min-h-10 bg-darkpink text-white border-none hover:bg-black"
+              className="btn btn-sm h-10 min-h-10 bg-darkpink text-white border-none hover:bg-black"
             >
               Reintentar
             </button>
@@ -86,13 +96,13 @@ export function CuotasCard() {
                 </p>
               </div>
             )}
-            {myInstallments.map((installment) => (
+            {visible.map((installment) => (
               <div
                 key={installment.id}
                 className="flex justify-between items-start bg-gray-50 p-3 rounded-lg gap-3"
               >
                 <div className="min-w-0">
-                  <h4 className="font-semibold text-gray-800">
+                  <h4 className="font-semibold text-gray-800 break-words">
                     Cuota {installment.installmentNumber}
                   </h4>
                   <p className="text-sm text-gray-500">
@@ -132,6 +142,9 @@ export function CuotasCard() {
           </div>
         )}
       </div>
+      {paymentStatus !== "loading" && paymentStatus !== "failed" && total > PAGE_SIZE && (
+        <ShowMore className="mt-4" shown={shown} total={total} remaining={remaining} onClick={showMore} />
+      )}
     </div>
   );
 }

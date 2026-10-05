@@ -4,6 +4,10 @@ import { fetchMyAttendance } from "@/redux/service/attendanceService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconCalendarCheck, IconClipboardX } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { usePagedList } from "../ui/usePagedList";
+import { ShowMore } from "../ui/ShowMore";
+
+const PAGE_SIZE = 8;
 
 // Alumno Read-Only Mi Asistencia. Follows `NotasCard`/`CuotasCard`'s
 // conventions exactly (card shell, spinner, icon empty state) and the same
@@ -38,6 +42,9 @@ export function AsistenciaCard() {
     }
   }, [dispatch, enrollmentView]);
 
+  const days = myAttendance?.days ?? [];
+  const paged = usePagedList(days, PAGE_SIZE, String(enrollmentView?.id ?? ""));
+
   const hasData = myAttendance !== null && myAttendance.totalDays > 0;
   const heroColor = !hasData
     ? "text-gray-400"
@@ -46,10 +53,10 @@ export function AsistenciaCard() {
       : "text-darkpink";
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col h-full">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col h-full overflow-x-clip">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-base sm:text-lg font-medium text-gray-700">Mi Asistencia</h3>
-        <IconCalendarCheck size={24} className="text-gray-400" />
+        <IconCalendarCheck size={24} className="text-gray-400 shrink-0" />
       </div>
 
       {myAttendanceStatus === "loading" ? (
@@ -64,7 +71,7 @@ export function AsistenciaCard() {
           <button
             type="button"
             onClick={() => enrollmentView && dispatch(fetchMyAttendance(enrollmentView.id))}
-            className="btn btn-sm min-h-10 bg-darkpink text-white border-none hover:bg-black">
+            className="btn btn-sm h-10 min-h-10 bg-darkpink text-white border-none hover:bg-black">
             Reintentar
           </button>
         </div>
@@ -87,11 +94,11 @@ export function AsistenciaCard() {
             </p>
           </div>
 
-          <div className="grid-scroll flex flex-col gap-2 max-h-48 overflow-y-auto pr-2">
-            {myAttendance!.days.map((day) => (
+          <div className="grid-scroll flex flex-col gap-2 lg:max-h-72 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
+            {paged.visible.map((day) => (
               <div
                 key={day.date}
-                className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-lg">
                 <span className="text-sm font-medium text-gray-700">{formatDayDate(day.date)}</span>
                 <span
                   className={`badge badge-sm border-none font-medium ${
@@ -102,6 +109,14 @@ export function AsistenciaCard() {
               </div>
             ))}
           </div>
+          {paged.total > PAGE_SIZE && (
+            <ShowMore
+              shown={paged.shown}
+              total={paged.total}
+              remaining={paged.remaining}
+              onClick={paged.showMore}
+            />
+          )}
         </div>
       )}
     </div>
