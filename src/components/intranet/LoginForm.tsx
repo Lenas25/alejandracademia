@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import type { Login } from "@/types/login";
 import { getMe, login } from "@/utils/api";
 import { useState } from "react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { Roles } from "@/types/roles";
 import { LoadingButton, useSlowFlag } from "./ui/LoadingButton";
@@ -17,6 +18,7 @@ export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const slow = useSlowFlag(submitting, 5000);
   const onSubmit = async (data: Login) => {
     if (submitting) return;
@@ -80,10 +82,11 @@ export function LoginForm() {
         )}
       </div>
       <div>
+        <div className="relative">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Contraseña"
-          className={`p-2 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3 placeholder:text-black ${
+          className={`p-2 pr-12 rounded-lg w-full outline-none transition-all ease-in-out delay-150 focus:bg-transparent text-black text-lg lg:p-3 placeholder:text-black ${
             errors.password
               ? "ring-2 focus:ring-red-700 bg-transparent ring-red-700"
               : "focus:ring-2 focus:ring-black bg-flamingo"
@@ -97,6 +100,16 @@ export function LoginForm() {
             minLength: { value: 3, message: "Minimo 3 caracteres" },
           })}
         />
+        <button
+          type="button"
+          onClick={() => setShowPassword((v) => !v)}
+          aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+          aria-pressed={showPassword}
+          className="absolute right-1 top-1/2 -translate-y-1/2 size-10 inline-flex items-center justify-center rounded-lg text-black/70 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+        >
+          {showPassword ? <IconEyeOff size={22} aria-hidden="true" /> : <IconEye size={22} aria-hidden="true" />}
+        </button>
+        </div>
         {errors.password && (
           <p id="login-password-error" className="text-red-700 font-semibold pt-2">
             {errors.password.message}
