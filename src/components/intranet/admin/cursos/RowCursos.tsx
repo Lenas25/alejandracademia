@@ -1,4 +1,5 @@
 import { IconPhotoX, IconTrash } from "@tabler/icons-react";
+import { useState } from "react";
 import ModalDelete from "./ModalDelete";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { Course } from "@/types/course";
@@ -21,6 +22,7 @@ function RowCursos({
 }: RowCursosProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const [deleting, setDeleting] = useState(false);
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const handleModalDelete = () => {
     (
@@ -29,6 +31,9 @@ function RowCursos({
   };
 
   const handleDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+    try {
     const resultAction = await dispatch(deleteCourse(course.id));
     if (deleteCourse.fulfilled.match(resultAction)) {
       const payload = resultAction.payload;
@@ -45,6 +50,9 @@ function RowCursos({
       }
     } else {
       toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
+    }
+    } finally {
+      setDeleting(false);
     }
     (
       document.getElementById(`delete_${course.id}`) as HTMLDialogElement
@@ -103,7 +111,7 @@ function RowCursos({
               Eliminar
             </button>
           </div>
-          <ModalDelete handleDelete={handleDelete} info={course.id} name={course.name} />
+          <ModalDelete handleDelete={handleDelete} pending={deleting} info={course.id} name={course.name} />
         </th>
       )}
     </tr>

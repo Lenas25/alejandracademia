@@ -2,6 +2,7 @@
 
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { Section } from "@/types/section";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 // Confirm dialog for the "Finalizar / Reabrir sección" action — same
 // `<dialog>` structure and palette as DeleteSectionDialog, but without the
@@ -11,7 +12,7 @@ import { Section } from "@/types/section";
 interface FinishSectionDialogProps {
   section: Section;
   mode: "finish" | "reopen";
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   loading?: boolean;
 }
 
@@ -28,8 +29,9 @@ function FinishSectionDialog({
     (document.getElementById(dialogId) as HTMLDialogElement)?.close();
   };
 
-  const handleConfirm = () => {
-    onConfirm();
+  const handleConfirm = async () => {
+    if (loading) return;
+    await onConfirm();
     handleClose();
   };
 
@@ -44,6 +46,7 @@ function FinishSectionDialog({
           <button
             type="submit"
             onClick={handleClose}
+            disabled={loading}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
           >
             ✕
@@ -75,17 +78,18 @@ function FinishSectionDialog({
             : "Las matrículas de la sección vuelven a quedar activas. No se elimina nada."}
         </p>
         <div className="w-full flex justify-end gap-3 mt-4">
-          <button type="button" onClick={handleClose} className="btn btn-sm">
+          <button type="button" onClick={handleClose} disabled={loading} className="btn btn-sm">
             Cancelar
           </button>
-          <button
+          <LoadingButton
             type="button"
             onClick={handleConfirm}
-            disabled={loading}
+            loading={loading}
+            loadingText={isFinish ? "Finalizando…" : "Reabriendo…"}
             className="btn btn-sm bg-darkpink text-white text-lg hover:bg-black disabled:bg-gray-500 disabled:text-gray-300"
           >
             {isFinish ? "Finalizar sección" : "Reabrir sección"}
-          </button>
+          </LoadingButton>
         </div>
       </div>
     </dialog>

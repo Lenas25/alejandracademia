@@ -3,6 +3,7 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useState } from "react";
 import { Section } from "@/types/section";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 // Escalated delete confirmation — adapted from the "Terminar Curso" dialog
 // pattern (see git history of cursos/RowCursos.tsx pre-PR3 trim): same
@@ -13,13 +14,14 @@ import { Section } from "@/types/section";
 // confirmation word before the destructive action is enabled.
 interface DeleteSectionDialogProps {
   section: Section;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
 }
 
 const CONFIRM_WORD = "ELIMINAR";
 
 function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
   const [confirmText, setConfirmText] = useState("");
+  const [pending, setPending] = useState(false);
   const dialogId = `delete_section_${section.id}`;
 
   const handleClose = () => {
@@ -27,9 +29,14 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
     (document.getElementById(dialogId) as HTMLDialogElement)?.close();
   };
 
-  const handleConfirm = () => {
-    if (confirmText.trim().toUpperCase() !== CONFIRM_WORD) return;
-    onConfirm();
+  const handleConfirm = async () => {
+    if (pending || confirmText.trim().toUpperCase() !== CONFIRM_WORD) return;
+    setPending(true);
+    try {
+      await onConfirm();
+    } finally {
+      setPending(false);
+    }
     handleClose();
   };
 
@@ -43,6 +50,7 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
           <button
             type="submit"
             onClick={handleClose}
+            disabled={pending}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
@@ -73,21 +81,24 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
             type="text"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
+            disabled={pending}
             className="input input-bordered w-full bg-white text-black"
             autoComplete="off"
           />
         </label>
         <div className="w-full flex justify-end gap-3 mt-4">
-          <button type="button" onClick={handleClose} className="btn btn-sm">
+          <button type="button" onClick={handleClose} disabled={pending} className="btn btn-sm">
             Cancelar
           </button>
-          <button
+          <LoadingButton
             type="button"
             onClick={handleConfirm}
+            loading={pending}
+            loadingText="Eliminando…"
             disabled={confirmText.trim().toUpperCase() !== CONFIRM_WORD}
             className="btn btn-sm btn-error text-white text-lg disabled:bg-gray-500 disabled:text-gray-300">
             Eliminar
-          </button>
+          </LoadingButton>
         </div>
       </div>
     </dialog>

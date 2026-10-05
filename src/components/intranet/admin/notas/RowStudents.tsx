@@ -12,6 +12,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { User } from "@/types/user";
 import { normalizeLeadingZero } from "@/utils/numberInput";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 interface RowStudentsProps {
   selectedSection: Section | null;
@@ -63,6 +64,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
     register,
     handleSubmit,
     setValue,
+    formState: { isSubmitting },
     reset, // Se importa el método reset
     getValues, // Útil para obtener valores sin disparar un render
   } = useForm<GradeForm>({
@@ -171,12 +173,14 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
   }, [defaultValues.grades, debouncedSearch]);
 
   const saveButton = hasChanges && (
-    <button
+    <LoadingButton
       type="submit"
+      loading={isSubmitting}
+      loadingText="Guardando…"
       className="btn btn-sm bg-darkpink text-white border-none hover:bg-black w-full sm:w-auto"
     >
       Guardar cambios
-    </button>
+    </LoadingButton>
   );
 
   return (

@@ -19,6 +19,7 @@ import NotasTab from "./NotasTab";
 import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 type TabKey = "estudiantes" | "notas" | "pagos" | "asistencia";
 
@@ -83,6 +84,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
 
   const handleFinishToggle = async () => {
     setFinishLoading(true);
+    try {
     // Both thunks always resolve — they catch and return a
     // `{ message, error? }` payload instead of calling rejectWithValue —
     // so the outcome is read from `.payload`, not from `.fulfilled.match`.
@@ -95,7 +97,9 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
       toast.success(payload.message ?? (isFinished ? "Sección reabierta" : "Sección finalizada"));
       dispatch(fetchSectionById(sectionId));
     }
-    setFinishLoading(false);
+    } finally {
+      setFinishLoading(false);
+    }
   };
 
   if (!section || section.id !== sectionId) {
@@ -147,7 +151,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
           </div>
           {isAdmin && (
             <div className="flex gap-2 flex-wrap">
-              <button
+              <LoadingButton
                 type="button"
                 onClick={() =>
                   (
@@ -157,7 +161,8 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                   )?.showModal()
                 }
                 className="btn btn-ghost btn-sm min-h-10 bg-white text-black hover:bg-darkpink hover:text-white disabled:bg-gray-300 disabled:text-gray-500"
-                disabled={finishLoading}
+                loading={finishLoading}
+                loadingText={isFinished ? "Reabriendo…" : "Finalizando…"}
               >
                 {isFinished ? (
                   <>
@@ -168,7 +173,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                     <IconCircleCheck size={16} /> Finalizar sección
                   </>
                 )}
-              </button>
+              </LoadingButton>
               <button
                 type="button"
                 onClick={() => setShowEditForm(true)}

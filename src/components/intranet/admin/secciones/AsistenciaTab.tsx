@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
   createAttendanceDay,
@@ -122,11 +123,16 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
 
   const handleAddDay = async () => {
     if (!selectedSection.id || !newDayDate) return;
+    if (isAddingDay) return;
     setIsAddingDay(true);
-    const resultAction = await dispatch(
-      createAttendanceDay({ sectionId: selectedSection.id, date: newDayDate })
-    );
-    setIsAddingDay(false);
+    let resultAction;
+    try {
+      resultAction = await dispatch(
+        createAttendanceDay({ sectionId: selectedSection.id, date: newDayDate })
+      );
+    } finally {
+      setIsAddingDay(false);
+    }
     if (createAttendanceDay.fulfilled.match(resultAction)) {
       setMessage(resultAction.payload.message || "Día agregado correctamente");
       refetchDays();
@@ -171,9 +177,14 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
       enrollmentId: row.enrollmentId,
       present: localToggles[row.enrollmentId] ?? row.present,
     }));
+    if (isSavingDay) return;
     setIsSavingDay(true);
-    const resultAction = await dispatch(updateAttendanceDay({ dayId: dayDetail.id, records }));
-    setIsSavingDay(false);
+    let resultAction;
+    try {
+      resultAction = await dispatch(updateAttendanceDay({ dayId: dayDetail.id, records }));
+    } finally {
+      setIsSavingDay(false);
+    }
     if (updateAttendanceDay.fulfilled.match(resultAction)) {
       setMessage(resultAction.payload.message || "Día guardado correctamente");
       refetchDays();
@@ -183,9 +194,14 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
   };
 
   const handleDeleteDay = async (dayId: number) => {
+    if (isDeletingDay) return;
     setIsDeletingDay(true);
-    const resultAction = await dispatch(deleteAttendanceDay(dayId));
-    setIsDeletingDay(false);
+    let resultAction;
+    try {
+      resultAction = await dispatch(deleteAttendanceDay(dayId));
+    } finally {
+      setIsDeletingDay(false);
+    }
     setConfirmDeleteDayId(null);
     if (deleteAttendanceDay.fulfilled.match(resultAction)) {
       setMessage(resultAction.payload.message || "Día eliminado correctamente");
@@ -238,18 +254,16 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
                 onChange={(e) => setNewDayDate(e.target.value)}
                 className="input input-bordered input-sm w-full sm:w-auto bg-white text-black [color-scheme:light]"
               />
-              <button
+              <LoadingButton
                 type="button"
                 onClick={handleAddDay}
-                disabled={isAddingDay || !newDayDate}
+                loading={isAddingDay}
+                loadingText="Agregando…"
+                disabled={!newDayDate}
                 className="btn btn-sm bg-darkpink text-white border-none hover:bg-black disabled:bg-darkpink disabled:text-white disabled:opacity-50">
-                {isAddingDay ? (
-                  <span className="loading loading-spinner loading-xs" />
-                ) : (
-                  <IconCalendarPlus size={16} />
-                )}
+                <IconCalendarPlus size={16} />
                 Agregar día
-              </button>
+              </LoadingButton>
             </div>
           </div>
 
@@ -330,19 +344,17 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
                               {isConfirmingDelete ? (
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-sm text-gray-500">¿Eliminar este día?</span>
-                                  <button
+                                  <LoadingButton
                                     type="button"
                                     onClick={() => handleDeleteDay(day.id)}
-                                    disabled={isDeletingDay}
+                                    loading={isDeletingDay}
+                                    loadingText="Eliminando…"
                                     className="btn btn-sm bg-error text-white border-none hover:bg-black disabled:bg-error disabled:text-white disabled:opacity-50">
-                                    {isDeletingDay ? (
-                                      <span className="loading loading-spinner loading-xs" />
-                                    ) : (
-                                      "¿Confirmar borrado?"
-                                    )}
-                                  </button>
+                                    ¿Confirmar borrado?
+                                  </LoadingButton>
                                   <button
                                     type="button"
+                                    disabled={isDeletingDay}
                                     onClick={() => setConfirmDeleteDayId(null)}
                                     className="btn btn-sm btn-ghost bg-white text-black">
                                     Cancelar
@@ -358,14 +370,14 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
                               )}
 
                               {(hasChanges || isSavingDay) && (
-                                <button
+                                <LoadingButton
                                   type="button"
                                   onClick={handleSaveDay}
-                                  disabled={isSavingDay}
+                                  loading={isSavingDay}
+                                  loadingText="Guardando…"
                                   className="btn btn-sm bg-darkpink text-white border-none hover:bg-black disabled:bg-darkpink disabled:text-white disabled:opacity-70">
-                                  {isSavingDay && <span className="loading loading-spinner loading-xs" />}
                                   Guardar día
-                                </button>
+                                </LoadingButton>
                               )}
                             </div>
                           </>

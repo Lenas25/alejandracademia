@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { fetchActivity } from "@/redux/service/activityService";
 import { fetchEnrollment } from "@/redux/service/enrollmentService";
@@ -95,7 +96,7 @@ function NotasTab({ selectedSection }: NotasTabProps) {
   // `defaultInstitutionConfig` so a PDF still downloads instead of
   // blocking the whole export on a secondary config request.
   const handleDownloadConstancias = async () => {
-    if (!selectedSection?.id) return;
+    if (!selectedSection?.id || isGeneratingPdf) return;
     setIsGeneratingPdf(true);
     try {
       let config = institutionConfig;
@@ -172,18 +173,15 @@ function NotasTab({ selectedSection }: NotasTabProps) {
               overrides are required because daisyUI's `.btn:disabled` rule
               otherwise repaints the button grey with faint text (unreadable)
               while generating. */}
-          <button
+          <LoadingButton
             type="button"
-            disabled={isGeneratingPdf}
+            loading={isGeneratingPdf}
+            loadingText="Generando PDF…"
             onClick={handleDownloadConstancias}
             className="btn btn-sm w-full sm:w-auto bg-darkpink text-white border-none hover:bg-black disabled:bg-darkpink disabled:text-white disabled:opacity-70">
-            {isGeneratingPdf ? (
-              <span className="loading loading-spinner loading-xs" />
-            ) : (
-              <IconFileDownload size={16} />
-            )}
+            <IconFileDownload size={16} />
             Descargar constancias (PDF)
-          </button>
+          </LoadingButton>
         </div>
       </TabHeader>
 

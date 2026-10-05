@@ -18,6 +18,7 @@ import { useAppDispatch } from "@/redux/stores";
 import { createUser, updateUser } from "@/redux/service/userService";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 // Mirrors the backend CreateUserDto (MinLength + IsEmail). Values are trimmed
 // before measuring because the API trims name/lastName/email/username.
@@ -48,7 +49,7 @@ function ModalEditAdd({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<User>({
     defaultValues: selectedUser
       ? {
@@ -129,6 +130,7 @@ function ModalEditAdd({
         <form method="dialog" onSubmit={reset}>
           <button
             type="submit"
+            disabled={isSubmitting}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
@@ -145,6 +147,7 @@ function ModalEditAdd({
         </div>
         <p className="mb-6 text-gray-400">{modalMessage.message}</p>
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+          <fieldset disabled={isSubmitting} className="contents">
           {/* Contenedor principal para todos los campos del formulario */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* --- CAMPO DNI (SOLO EN MODO AÑADIR) --- */}
@@ -361,11 +364,14 @@ function ModalEditAdd({
             </span>
           )}
 
-          <button
+          <LoadingButton
             type="submit"
+            loading={isSubmitting}
+            loadingText="Guardando…"
             className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base w-full mt-2">
             Guardar
-          </button>
+          </LoadingButton>
+          </fieldset>
         </form>
       </div>
     </dialog>

@@ -11,7 +11,7 @@ import DeleteSectionDialog from "./DeleteSectionDialog";
 interface SectionCardProps {
   section: Section;
   onEdit: (section: Section) => void;
-  onDelete: (section: Section) => void;
+  onDelete: (section: Section) => void | Promise<void>;
 }
 
 // Keep in sync with `images.remotePatterns` in next.config.ts. next/image
@@ -53,7 +53,7 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
   };
 
   const handleConfirmDelete = () => {
-    onDelete(section);
+    return onDelete(section);
   };
 
   return (

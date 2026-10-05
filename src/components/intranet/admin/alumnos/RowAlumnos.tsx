@@ -1,6 +1,7 @@
 import { User } from "@/types/user";
 import { IconHistory, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
 import ModalDelete from "./ModalDelete";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
@@ -21,6 +22,7 @@ function RowAlumnos({
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const [deleting, setDeleting] = useState(false);
   const currentUser = useAppSelector((state) => state.user?.userLogin);
 
   let classRole = "bg-black";
@@ -49,6 +51,9 @@ function RowAlumnos({
   };
 
   const handleDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+    try {
     const resultAction = await dispatch(deleteUser(user.id.toString()));
     if (deleteUser.fulfilled.match(resultAction)) {
       const payload = resultAction.payload as { message: string; error?: string };
@@ -59,6 +64,9 @@ function RowAlumnos({
       }
     } else {
       toast.error("No se pudo eliminar el usuario. Inténtalo de nuevo.");
+    }
+    } finally {
+      setDeleting(false);
     }
     (
       document.getElementById(dialogId) as HTMLDialogElement
@@ -115,7 +123,7 @@ function RowAlumnos({
             Eliminar
           </button>
         </div>
-        <ModalDelete handleDelete={handleDelete} info={`${variant === "card" ? "card_" : ""}${user.id}`} name={fullName} />
+        <ModalDelete handleDelete={handleDelete} pending={deleting} info={`${variant === "card" ? "card_" : ""}${user.id}`} name={fullName} />
       </div>
     );
   }
@@ -174,7 +182,7 @@ function RowAlumnos({
             Eliminar
           </button>
         </div>
-        <ModalDelete handleDelete={handleDelete} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
+        <ModalDelete handleDelete={handleDelete} pending={deleting} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
       </th>
     </tr>
   );

@@ -1,14 +1,17 @@
 import { IconTrashFilled } from "@tabler/icons-react";
 import React from "react";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 function ModalDelete({
   handleDelete,
   info,
   name,
+  pending = false,
 }: {
-  handleDelete: () => void;
+  handleDelete: () => void | Promise<void>;
   info: string;
   name?: string;
+  pending?: boolean;
 }) {
   return (
     <dialog id={`delete_${info}`} className="modal backdrop-blur-sm">
@@ -16,6 +19,7 @@ function ModalDelete({
         <form method="dialog">
           <button
             type="submit"
+            disabled={pending}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
@@ -30,16 +34,18 @@ function ModalDelete({
         </p>
         <div className="w-full flex justify-end gap-3">
           <form method="dialog">
-            <button type="submit" className="btn btn-sm">
+            <button type="submit" disabled={pending} className="btn btn-sm">
               Cancelar
             </button>
           </form>
-          <button
+          <LoadingButton
             type="button"
             onClick={handleDelete}
+            loading={pending}
+            loadingText="Eliminando…"
             className="btn btn-sm btn-error text-white text-lg">
             Eliminar
-          </button>
+          </LoadingButton>
         </div>
       </div>
     </dialog>

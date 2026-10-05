@@ -2,6 +2,7 @@
 
 import { IconAlertTriangle, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { CreateSection, Section, UpdateSection } from "@/types/section";
@@ -507,15 +508,17 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
           <button
             type="button"
             onClick={onCancel}
+            disabled={saving}
             className="btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 text-base flex-1">
             Cancelar
           </button>
-          <button
+          <LoadingButton
             type="submit"
-            disabled={saving}
+            loading={saving}
+            loadingText="Guardando…"
             className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base flex-1 disabled:bg-darkpink disabled:text-white disabled:opacity-70">
-            {saving ? "Guardando..." : "Guardar"}
-          </button>
+            Guardar
+          </LoadingButton>
         </div>
       </form>
     </div>

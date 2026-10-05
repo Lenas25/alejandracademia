@@ -6,6 +6,7 @@ import {
   fetchEnrollment,
   updateEnrollment,
 } from "@/redux/service/enrollmentService";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { memo, useCallback, useEffect, useId, useMemo, useState, useSyncExternalStore } from "react";
 import { fetchUsers } from "@/redux/service/userService";
 import { Roles } from "@/types/roles";
@@ -285,6 +286,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   const handleSubmit = async () => {
     if (selectedSection && !saving) {
       setSaving(true);
+      try {
       const enrollmentData = {
         users: selectedUsers.map((user) => ({ id: String(user.id) })),
       };
@@ -309,7 +311,9 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
       } else if (updateEnrollment.fulfilled.match(resultAction)) {
         setMessage(`Error: ${resultAction.payload.message}`);
       }
-      setSaving(false);
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
@@ -453,14 +457,16 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
                 <span className="text-gray-500">Sin cambios pendientes</span>
               )}
             </div>
-            <button
+            <LoadingButton
               type="button"
               onClick={handleSubmit}
-              disabled={!hasChanges || saving}
+              loading={saving}
+              loadingText="Guardando…"
+              disabled={!hasChanges}
               className="btn btn-sm min-h-10 bg-darkpink text-white border-none hover:bg-black disabled:bg-gray-200 disabled:text-gray-400"
             >
-              {saving ? "Guardando..." : "Guardar"}
-            </button>
+              Guardar
+            </LoadingButton>
           </div>
         </div>
       )}

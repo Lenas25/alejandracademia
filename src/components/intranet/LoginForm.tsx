@@ -6,6 +6,7 @@ import { getMe, login } from "@/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Roles } from "@/types/roles";
+import { LoadingButton, useSlowFlag } from "./ui/LoadingButton";
 
 export function LoginForm() {
   const {
@@ -15,8 +16,19 @@ export function LoginForm() {
   } = useForm<Login>();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const slow = useSlowFlag(submitting, 5000);
   const onSubmit = async (data: Login) => {
+    if (submitting) return;
+    setSubmitting(true);
     setError(null);
+    try {
+      await doLogin(data);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const doLogin = async (data: Login) => {
     const logeado = await login(data.username, data.password);
     if (logeado.error) {
       setError(logeado.message);
@@ -51,6 +63,7 @@ export function LoginForm() {
           aria-label="Usuario"
           aria-invalid={errors.username ? true : undefined}
           aria-describedby={errors.username ? "login-username-error" : undefined}
+          disabled={submitting}
           {...register("username", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },
@@ -74,6 +87,7 @@ export function LoginForm() {
           aria-label="Contraseña"
           aria-invalid={errors.password ? true : undefined}
           aria-describedby={errors.password ? "login-password-error" : undefined}
+          disabled={submitting}
           {...register("password", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },
@@ -90,11 +104,18 @@ export function LoginForm() {
           </p>
         )}
       </div>
-      <button
+      <LoadingButton
         type="submit"
+        loading={submitting}
+        loadingText="Iniciando sesión…"
         className="bg-black text-white rounded-lg text-xl font-semibold py-3 lg:mx-auto lg:px-10">
         Iniciar Sesión
-      </button>
+      </LoadingButton>
+      {slow && (
+        <p role="status" aria-live="polite" className="text-black text-center">
+          El servidor está tardando más de lo normal. Espera unos segundos, por favor.
+        </p>
+      )}
     </form>
   );
 }

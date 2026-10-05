@@ -4,6 +4,7 @@ import { memo, useState } from "react";
 import { IconCash, IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 import { PaymentSectionRow } from "@/types/payment";
 import { normalizeLeadingZero } from "@/utils/numberInput";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { PaymentStatusBadge } from "@/components/shared/PaymentStatusBadge";
 
 export interface StudentGroup {
@@ -35,7 +36,7 @@ interface PagosStudentRowProps {
   onToggle: (enrollmentId: number) => void;
   // Resolve true on success so the row can close its inline form.
   onPay: (installmentId: number, amount: number, paidDate: string) => Promise<boolean>;
-  onUnmark: (installmentId: number) => void;
+  onUnmark: (installmentId: number) => void | Promise<void>;
   onInvalidForm: () => void;
 }
 
@@ -57,6 +58,8 @@ const PagosStudentRow = memo(function PagosStudentRow({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formAmount, setFormAmount] = useState("");
   const [formDate, setFormDate] = useState("");
+  // Which installment has a request in flight, so only its buttons spin.
+  const [pending, setPending] = useState<{ id: number; kind: "pay" | "unmark" } | null>(null);
 
   const startEdit = (i: PaymentSectionRow) => {
     setEditingId(i.id);
@@ -75,7 +78,23 @@ const PagosStudentRow = memo(function PagosStudentRow({
       onInvalidForm();
       return;
     }
-    if (await onPay(installmentId, amountValue, formDate)) cancelEdit();
+    if (pending) return;
+    setPending({ id: installmentId, kind: "pay" });
+    try {
+      if (await onPay(installmentId, amountValue, formDate)) cancelEdit();
+    } finally {
+      setPending(null);
+    }
+  };
+
+  const unmark = async (installmentId: number) => {
+    if (pending) return;
+    setPending({ id: installmentId, kind: "unmark" });
+    try {
+      await onUnmark(installmentId);
+    } finally {
+      setPending(null);
+    }
   };
 
   const panelId = `pagos-student-${group.enrollmentId}`;
@@ -189,15 +208,18 @@ const PagosStudentRow = memo(function PagosStudentRow({
                     />
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    <button
+                    <LoadingButton
                       type="button"
                       onClick={() => submit(installment.id)}
+                      loading={pending?.id === installment.id && pending.kind === "pay"}
+                      loadingText="Guardando…"
                       className={`btn h-10 min-h-10 bg-darkpink text-white border-none hover:bg-black ${focusRing}`}
                     >
                       Guardar
-                    </button>
+                    </LoadingButton>
                     <button
                       type="button"
+                      disabled={pending?.id === installment.id}
                       onClick={cancelEdit}
                       className={`btn btn-ghost h-10 min-h-10 bg-white text-black ${focusRing}`}
                     >
@@ -216,13 +238,15 @@ const PagosStudentRow = memo(function PagosStudentRow({
                     {installment.status === "cancelado" ? "Editar" : "Registrar"}
                   </button>
                   {installment.status === "cancelado" && (
-                    <button
+                    <LoadingButton
                       type="button"
-                      onClick={() => onUnmark(installment.id)}
+                      onClick={() => unmark(installment.id)}
+                      loading={pending?.id === installment.id && pending.kind === "unmark"}
+                      loadingText="Desmarcando…"
                       className={`btn btn-ghost h-10 min-h-10 bg-white text-black hover:bg-error hover:text-white ${focusRing}`}
                     >
                       <IconX size={16} /> Desmarcar
-                    </button>
+                    </LoadingButton>
                   )}
                 </div>
               )}

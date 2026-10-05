@@ -17,6 +17,7 @@ import { Course, CreateCourse } from "@/types/course";
 import { createCourse, updateCourse } from "@/redux/service/courseService";
 import { deleteImage, extractImageId, uploadImage } from "@/utils/api";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 // Cursos admin manages the catalog `Course` only (name/description/image) —
 // tutor, dates, duration, activities and active/finish state moved to
@@ -40,7 +41,7 @@ function ModalEditAdd({
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<Course>({
     defaultValues: selectedCourse
       ? {
@@ -184,6 +185,7 @@ function ModalEditAdd({
         <form method="dialog" onSubmit={reset}>
           <button
             type="submit"
+            disabled={isSubmitting}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
@@ -196,6 +198,7 @@ function ModalEditAdd({
         </div>
         <p className="mb-6 text-gray-400">{modalMessage.message}</p>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <fieldset disabled={isSubmitting} className="contents">
           <input
             type="file"
             className="file-input file-input-bordered w-full"
@@ -309,11 +312,14 @@ function ModalEditAdd({
               {error}
             </span>
           )}
-          <button
+          <LoadingButton
             type="submit"
+            loading={isSubmitting}
+            loadingText="Guardando…"
             className="btn bg-darkpink hover:bg-darkpink/80 text-white text-base w-full mt-2">
             Guardar
-          </button>
+          </LoadingButton>
+          </fieldset>
         </form>
       </div>
     </dialog>

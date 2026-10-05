@@ -10,6 +10,7 @@ import { InstitutionConfig } from "@/types/institutionConfig";
 import { SectionReport } from "@/types/report";
 import { IconPlus, IconTrash, IconDeviceFloppy } from "@tabler/icons-react";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
 // Sample section report used only to render the live PDF preview — one
 // active student with two graded activities is enough for the admin to see
@@ -303,13 +304,14 @@ function ConstanciaConfigurator() {
               </div>
             </div>
 
-            <button
+            <LoadingButton
               type="submit"
-              disabled={saving}
+              loading={saving}
+              loadingText="Guardando…"
               className="btn btn-sm w-full sm:w-auto self-start bg-darkpink text-white border-none hover:bg-black disabled:opacity-60">
-              {saving ? <span className="loading loading-spinner loading-xs" /> : <IconDeviceFloppy size={16} />}
+              <IconDeviceFloppy size={16} />
               Guardar
-            </button>
+            </LoadingButton>
           </form>
 
           <div className="flex flex-col gap-2 w-full lg:w-1/2">
