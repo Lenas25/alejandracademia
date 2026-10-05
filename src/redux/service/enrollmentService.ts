@@ -66,7 +66,8 @@ export const updateEnrollment = createAsyncThunk(
             'Authorization': `Bearer ${localStorage.getItem("token")}`
           },
         });
-        dispatch(fetchEnrollment({ courseId }));
+        // Await so the store holds the saved list before consumers see `fulfilled`.
+        await dispatch(fetchEnrollment({ courseId }));
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
