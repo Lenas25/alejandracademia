@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
+import { useUnsavedChanges } from "@/components/intranet/ui/UnsavedChanges";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -68,6 +69,9 @@ const CuotaDueDateInput = memo(function CuotaDueDateInput({
   };
 
   const dirty = draft !== stored && saveState !== "saving";
+  // Keep the guard on while the save is in flight (draft still differs until
+  // the store catches up); it clears itself once the stored value matches.
+  useUnsavedChanges(`pagos-due-${installmentNumber}`, draft !== stored, "Pagos");
 
   return (
     <label className="flex flex-col gap-1 rounded-md border border-grey bg-white px-3 py-2">

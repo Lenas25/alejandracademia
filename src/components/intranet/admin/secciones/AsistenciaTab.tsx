@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { useUnsavedChanges } from "@/components/intranet/ui/UnsavedChanges";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import {
   createAttendanceDay,
@@ -232,6 +233,7 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
     return dayDetail.roster.filter((row) => (localToggles[row.enrollmentId] ?? row.present) !== row.present).length;
   }, [dayDetail, expandedDayId, localToggles]);
   const hasChanges = changedCount > 0;
+  useUnsavedChanges("asistencia", hasChanges, "Asistencia");
 
   useEffect(() => {
     hasChangesRef.current = hasChanges;

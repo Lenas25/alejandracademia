@@ -14,6 +14,7 @@ import { User } from "@/types/user";
 import { normalizeLeadingZero } from "@/utils/numberInput";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { useUnsavedChanges } from "@/components/intranet/ui/UnsavedChanges";
 
 interface RowStudentsProps {
   selectedSection: Section | null;
@@ -59,6 +60,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
   const focusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const changedCount = Object.keys(changedIds).length;
+  useUnsavedChanges("notas", changedCount > 0, "Notas");
 
   const gradesPerActivity = useMemo(() => {
     if (!selectedActivity) return [];

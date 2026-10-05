@@ -20,6 +20,10 @@ import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
 import { useToast } from "@/components/intranet/ui/Toast";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
+import {
+  UnsavedChangesProvider,
+  useUnsavedGuard,
+} from "@/components/intranet/ui/UnsavedChanges";
 
 type TabKey = "estudiantes" | "notas" | "pagos" | "asistencia";
 
@@ -38,8 +42,9 @@ interface SectionDetailProps {
   sectionId: number;
 }
 
-function SectionDetail({ sectionId }: SectionDetailProps) {
+function SectionDetailContent({ sectionId }: SectionDetailProps) {
   const dispatch = useAppDispatch();
+  const { confirmLeave } = useUnsavedGuard();
   const router = useRouter();
   const toast = useToast();
   const section = useAppSelector((state) => state.section?.sectionView);
@@ -200,7 +205,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
               </LoadingButton>
               <button
                 type="button"
-                onClick={() => setShowEditForm(true)}
+                onClick={() => confirmLeave(() => setShowEditForm(true))}
                 className="btn btn-ghost btn-sm min-h-10 bg-white text-black hover:bg-darkpink hover:text-white"
               >
                 <IconPencil size={16} /> Editar
@@ -251,7 +256,11 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                     ? "!bg-darkpink !text-white"
                     : "text-gray-300 hover:!text-white"
                 }`}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  if (tab.key !== activeTab) {
+                    confirmLeave(() => setActiveTab(tab.key));
+                  }
+                }}
               >
                 {tab.label}
               </button>
@@ -287,6 +296,15 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
       )}
       <DeleteSectionDialog section={section} onConfirm={handleDelete} />
     </>
+  );
+}
+
+// The guard provider must wrap the component that calls `confirmLeave`.
+function SectionDetail(props: SectionDetailProps) {
+  return (
+    <UnsavedChangesProvider>
+      <SectionDetailContent {...props} />
+    </UnsavedChangesProvider>
   );
 }
 

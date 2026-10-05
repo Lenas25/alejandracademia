@@ -8,6 +8,7 @@ import {
 } from "@/redux/service/enrollmentService";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { useToast } from "@/components/intranet/ui/Toast";
+import { useUnsavedChanges } from "@/components/intranet/ui/UnsavedChanges";
 import { memo, useCallback, useEffect, useId, useMemo, useState, useSyncExternalStore } from "react";
 import { fetchUsers } from "@/redux/service/userService";
 import { Roles } from "@/types/roles";
@@ -266,6 +267,7 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   }, [selectedIds, savedIds]);
 
   const hasChanges = addedCount > 0 || removedCount > 0;
+  useUnsavedChanges("estudiantes", hasChanges, "Estudiantes");
 
   const handleAddUser = useCallback((userToAdd: User) => {
     setSelectedUsers((prev) =>

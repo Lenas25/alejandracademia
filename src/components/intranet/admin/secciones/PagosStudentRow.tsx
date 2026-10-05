@@ -6,6 +6,7 @@ import { PaymentSectionRow } from "@/types/payment";
 import { normalizeLeadingZero } from "@/utils/numberInput";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 import { PaymentStatusBadge } from "@/components/shared/PaymentStatusBadge";
+import { useUnsavedChanges } from "@/components/intranet/ui/UnsavedChanges";
 
 export interface StudentGroup {
   enrollmentId: number;
@@ -71,6 +72,18 @@ const PagosStudentRow = memo(function PagosStudentRow({
     setFormAmount("");
     setFormDate("");
   };
+
+  // An open Registrar/Editar form counts as dirty only once its values differ
+  // from what startEdit seeded (the installment's stored amount / paid date).
+  const editingInstallment =
+    editingId !== null
+      ? group.installments.find((i) => i.id === editingId)
+      : undefined;
+  const formDirty =
+    !!editingInstallment &&
+    (formAmount !== (editingInstallment.amount != null ? String(editingInstallment.amount) : "") ||
+      formDate !== (editingInstallment.paidDate ?? ""));
+  useUnsavedChanges(`pagos-form-${group.enrollmentId}`, formDirty, "Pagos");
 
   const submit = async (installmentId: number) => {
     const amountValue = Number(formAmount);
