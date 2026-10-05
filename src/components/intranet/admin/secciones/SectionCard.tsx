@@ -103,16 +103,18 @@ function SectionCard({ section, onEdit, onRequestDelete }: SectionCardProps) {
             <button
               type="button"
               onClick={handleEdit}
+              title={`Editar sección ${section.name}`}
               aria-label={`Editar sección ${section.name}`}
-              className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-black text-white hover:bg-darkpink hover:text-white">
-              <IconPencil size={16} />
+              className="size-11 min-h-11 p-0 inline-flex items-center justify-center rounded-lg bg-black text-white transition-colors hover:bg-darkpink">
+              <IconPencil size={22} />
             </button>
             <button
               type="button"
               onClick={handleDeleteClick}
+              title={`Eliminar sección ${section.name}`}
               aria-label={`Eliminar sección ${section.name}`}
-              className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-black text-white hover:bg-darkpink hover:text-white">
-              <IconTrash size={16} />
+              className="size-11 min-h-11 p-0 inline-flex items-center justify-center rounded-lg bg-black text-white transition-colors hover:bg-darkpink">
+              <IconTrash size={22} />
             </button>
           </div>
         )}

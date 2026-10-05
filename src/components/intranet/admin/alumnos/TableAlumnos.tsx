@@ -18,6 +18,7 @@ import { usePagedList } from "@/components/intranet/ui/usePagedList";
 import { useToast } from "@/components/intranet/ui/Toast";
 import { fetchCourses } from "@/redux/service/courseService";
 import { useDebounce } from "@/hooks/useDebounce";
+import { PageHeader, HeaderPrimaryAction, HeaderSecondaryAction } from "@/components/intranet/ui/PageHeader";
 
 type RoleFilter = "todos" | "alumno" | "tutor" | "admin";
 
@@ -116,37 +117,25 @@ export function TableAlumnos() {
 
   return (
     <>
-      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
-        <div className="flex gap-5 items-center">
-          <h1 className="text-2xl font-medium text-white">Usuarios</h1>
-          <span className="p-2 text-xl flex items-center justify-center bg-white text-black font-medium rounded-full size-10">
-            {users?.length || 0}
-          </span>
-        </div>
-        <IconUsers size={30} className="text-white" />
-      </div>
+      <PageHeader
+        icon={<IconUsers size={24} />}
+        title="Usuarios"
+        count={users?.length || 0}
+        countLabel={{ singular: "usuario", plural: "usuarios" }}
+        subtitle="Gestiona usuarios, roles y accesos">
+        <HeaderPrimaryAction onClick={handleModalAdd} icon={<IconPlus size={20} />}>
+          Agregar
+        </HeaderPrimaryAction>
+        <HeaderSecondaryAction
+          onClick={handleModalEdit}
+          icon={<IconPencil size={20} />}
+          disabled={!selectedUser}
+          disabledTitle="Selecciona un elemento para editar">
+          Editar
+        </HeaderSecondaryAction>
+      </PageHeader>
       <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         <div className="flex flex-col gap-5">
-          {/* `flex-col` guarantees a full-width stack on mobile (not
-              wrap-if-it-doesn't-fit) so the pair never overflows the card
-              horizontally regardless of label/icon width; `sm:flex-row`
-              restores the original side-by-side layout at 640px+. */}
-          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-5 md:justify-end sm:flex-wrap">
-            <button
-              type="button"
-              className="btn-ghost btn bg-flamingo text-lg sm:flex-1 h-fit"
-              onClick={handleModalAdd}>
-              Agregar <IconPlus />
-            </button>
-            <button
-              type="button"
-              className={`btn-ghost btn text-lg sm:flex-1 h-fit disabled:cursor-not-allowed disabled:opacity-100 disabled:border disabled:border-gray-300 disabled:bg-gray-200 disabled:text-gray-600 ${selectedUser ? "bg-darkpink" : ""}`}
-              onClick={handleModalEdit}
-              disabled={!selectedUser}>
-              Editar <IconPencil />
-            </button>
-          </div>
-
           <div className="relative">
             <input
               type="text"
@@ -201,7 +190,7 @@ export function TableAlumnos() {
             ))
           )}
         </div>
-        <div className="table-scroll table-scroll-sticky size-full hidden md:block">
+        <div className="table-scroll table-scroll-sticky size-full hidden md:block mt-5">
           <table className="table mb-5 w-full">
             <thead className="text-xs uppercase tracking-wide text-gray-500">
               <tr>

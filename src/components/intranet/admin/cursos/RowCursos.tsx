@@ -13,6 +13,9 @@ interface RowCursosProps {
   variant?: "row" | "card";
 }
 
+const cardIconBtn =
+  "size-11 min-h-11 p-0 inline-flex items-center justify-center rounded-lg transition-colors";
+
 function RowCursos({
   course,
   handleRadioChange,
@@ -60,20 +63,22 @@ function RowCursos({
           </div>
         </div>
         {isAdmin && (
-          <div className="mt-3 flex flex-row flex-wrap gap-2">
+          <div className="mt-3 flex flex-row items-center justify-end gap-2">
             <button
               type="button"
-              aria-label={`Editar a ${course.name}`}
-              className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-flamingo text-black flex items-center justify-center"
+              title={`Editar ${course.name}`}
+              aria-label={`Editar ${course.name}`}
+              className={`${cardIconBtn} bg-flamingo text-black hover:bg-lightpink`}
               onClick={() => onRequestEdit(course)}>
-              <IconPencil />
+              <IconPencil size={22} />
             </button>
             <button
               type="button"
-              className="btn btn-ghost btn-sm min-h-10 bg-black text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-black"
+              title={`Eliminar ${course.name}`}
+              aria-label={`Eliminar ${course.name}`}
+              className={`${cardIconBtn} bg-black text-white hover:bg-darkpink`}
               onClick={() => onRequestDelete(course)}>
-              <IconTrash />
-              Eliminar
+              <IconTrash size={22} />
             </button>
           </div>
         )}

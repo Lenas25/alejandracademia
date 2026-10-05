@@ -15,6 +15,7 @@ import { usePagedList } from "@/components/intranet/ui/usePagedList";
 
 const PAGE_SIZE = 24;
 import { useToast } from "@/components/intranet/ui/Toast";
+import { PageHeader, HeaderPrimaryAction } from "@/components/intranet/ui/PageHeader";
 
 export function TableSecciones() {
   const dispatch = useAppDispatch();
@@ -88,15 +89,20 @@ export function TableSecciones() {
 
   return (
     <>
-      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
-        <div className="flex gap-5 items-center">
-          <h1 className="text-2xl font-medium text-white">Secciones</h1>
-          <span className="p-2 text-xl flex items-center justify-center bg-white text-black font-medium rounded-full size-10">
-            {sections?.length || 0}
-          </span>
-        </div>
-        <IconLayoutGrid size={30} className="text-white" />
-      </div>
+      <PageHeader
+        icon={<IconLayoutGrid size={24} />}
+        title="Secciones"
+        count={sections?.length || 0}
+        countLabel={{ singular: "sección", plural: "secciones" }}
+        subtitle="Secciones, tutores y estados">
+        {userLogin?.role === Roles.ADMIN && !showForm && (
+          <div className="col-span-2 sm:col-span-1">
+            <HeaderPrimaryAction onClick={handleCreate} icon={<IconPlus size={20} />}>
+              Crear sección
+            </HeaderPrimaryAction>
+          </div>
+        )}
+      </PageHeader>
 
       {showForm ? (
         <SectionForm
@@ -108,14 +114,6 @@ export function TableSecciones() {
         <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
           {userLogin?.role === Roles.ADMIN && (
             <div className="flex flex-col gap-5 mb-5">
-              <div className="flex flex-wrap justify-center items-center gap-5 md:justify-end">
-                <button
-                  type="button"
-                  className="btn-ghost btn bg-flamingo text-lg flex-1 h-fit"
-                  onClick={handleCreate}>
-                  Crear Sección <IconPlus />
-                </button>
-              </div>
               <div className="flex gap-3 flex-wrap sm:flex-nowrap">
                 <select
                   value={courseFilter}

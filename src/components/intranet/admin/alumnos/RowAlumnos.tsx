@@ -13,6 +13,9 @@ interface RowAlumnosProps {
   variant?: "row" | "card";
 }
 
+const cardIconBtn =
+  "size-11 min-h-11 p-0 inline-flex items-center justify-center rounded-lg transition-colors";
+
 function RowAlumnos({
   user,
   handleRadioChange,
@@ -48,7 +51,8 @@ function RowAlumnos({
   const roleLabel = `${(user.role ?? "")
     .charAt(0)
     .toUpperCase()}${(user.role ?? "").slice(1)}`;
-  const fullName = `${user.name ?? ""} ${user.lastName ?? ""}`.trim();
+  const fullName =
+    `${user.name ?? ""} ${user.lastName ?? ""}`.trim() || (user.email ?? user.id);
 
   if (variant === "card") {
     return (
@@ -72,34 +76,45 @@ function RowAlumnos({
               </span>
             </div>
             <p className="text-sm break-all">{user.email}</p>
-            <p className="text-xs text-gray-500 break-all">
-              {user.id}
-              {user.phone ? ` · ${user.phone}` : ""}
-            </p>
+            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-600">
+              <span className="min-w-0">
+                <span className="font-semibold text-gray-500">DNI </span>
+                <span className="break-all tabular-nums">{user.id}</span>
+              </span>
+              {user.phone && (
+                <span className="whitespace-nowrap">
+                  <span className="font-semibold text-gray-500">Cel. </span>
+                  <span className="tabular-nums">{user.phone}</span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="mt-3 flex flex-row flex-wrap gap-2">
+        <div className="mt-3 flex flex-row items-center justify-end gap-2">
           {user.role === "alumno" && (
             <Link
               href={`/intranet/admin/alumnos/${user.id}`}
-              className="btn btn-ghost btn-sm min-h-10 bg-darkpink text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-darkpink">
-              <IconHistory />
-              Historial
+              title={`Historial de ${fullName}`}
+              aria-label={`Historial de ${fullName}`}
+              className={`${cardIconBtn} bg-darkpink text-white hover:bg-flamingo hover:text-black`}>
+              <IconHistory size={22} />
             </Link>
           )}
           <button
             type="button"
+            title={`Editar a ${fullName}`}
             aria-label={`Editar a ${fullName}`}
-            className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-flamingo text-black flex items-center justify-center"
+            className={`${cardIconBtn} bg-flamingo text-black hover:bg-lightpink`}
             onClick={() => onRequestEdit(user)}>
-            <IconPencil />
+            <IconPencil size={22} />
           </button>
           <button
             type="button"
-            className="btn btn-ghost btn-sm min-h-10 bg-black text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-black"
+            title={`Eliminar a ${fullName}`}
+            aria-label={`Eliminar a ${fullName}`}
+            className={`${cardIconBtn} bg-black text-white hover:bg-darkpink`}
             onClick={handleModalDelete}>
-            <IconTrash />
-            Eliminar
+            <IconTrash size={22} />
           </button>
         </div>
       </div>
