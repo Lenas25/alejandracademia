@@ -121,13 +121,18 @@ const PagosStudentRow = memo(function PagosStudentRow({
         onClick={() => onToggle(group.enrollmentId)}
         className={`w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 min-h-11 bg-white hover:bg-lightpink/40 transition-colors text-left ${focusRing}`}
       >
-        <span
-          className="font-medium text-black min-w-0 break-words line-clamp-2"
-          title={group.studentName}
-        >
-          {group.studentName}
+        <span className="flex w-full items-start justify-between gap-2 sm:w-auto sm:min-w-0 sm:flex-1 sm:justify-start">
+          <span
+            className="font-medium text-black min-w-0 break-words line-clamp-2"
+            title={group.studentName}
+          >
+            {group.studentName}
+          </span>
+          <span className="shrink-0 sm:hidden" aria-hidden="true">
+            {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+          </span>
         </span>
-        <span className="flex min-w-0 items-center gap-x-2 gap-y-1 flex-wrap sm:justify-end sm:shrink-0">
+        <span className="flex w-full min-w-0 flex-col gap-1 sm:w-auto sm:shrink-0 sm:items-end">
           <span className="flex items-center gap-2 flex-wrap">
             <span
               role="progressbar"
@@ -135,42 +140,34 @@ const PagosStudentRow = memo(function PagosStudentRow({
               aria-valuemin={0}
               aria-valuemax={total}
               aria-label={`${paidCount} de ${total} cuotas pagadas`}
-              className="block h-2 w-20 sm:w-24 rounded-full bg-gray-200 overflow-hidden"
+              className="block h-2 min-w-16 flex-1 rounded-full bg-gray-200 overflow-hidden sm:w-24 sm:flex-none"
             >
               <span
                 className={`block h-full ${allPaid ? "bg-emerald-500" : "bg-darkpink"}`}
                 style={{ width: `${pct}%` }}
               />
             </span>
-            <span className="badge badge-outline">
+            <span className="badge badge-outline whitespace-nowrap">
               {paidCount}/{total} pagadas
             </span>
+            {overdue && (
+              <span className="badge badge-sm font-medium border bg-red-50 text-red-700 border-red-300 whitespace-nowrap">
+                Con vencidas
+              </span>
+            )}
+            {allPaid && (
+              <span className="badge badge-sm gap-1 font-medium border bg-emerald-50 text-emerald-700 border-emerald-300 whitespace-nowrap">
+                Pagos completados
+              </span>
+            )}
           </span>
-          {overdue && (
-            <span className="badge badge-sm font-medium border bg-red-50 text-red-700 border-red-300 whitespace-nowrap">
-              Con vencidas
+          <span className="flex items-center gap-x-3 gap-y-0.5 flex-wrap text-xs text-gray-500">
+            {owed > 0 && <span className="whitespace-nowrap">Por cobrar: {owed.toFixed(2)}</span>}
+            {paidSum > 0 && <span className="whitespace-nowrap">Pagado: {paidSum.toFixed(2)}</span>}
+            <span className="hidden shrink-0 sm:inline" aria-hidden="true">
+              {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
             </span>
-          )}
-          {allPaid && (
-            <span className="badge badge-sm gap-1 font-medium border bg-emerald-50 text-emerald-700 border-emerald-300 whitespace-nowrap">
-              Pagos completados
-            </span>
-          )}
-          {owed > 0 && (
-            <span className="text-xs text-gray-500 whitespace-nowrap">
-              Por cobrar: {owed.toFixed(2)}
-            </span>
-          )}
-          {paidSum > 0 && (
-            <span className="text-xs text-gray-500 whitespace-nowrap">
-              Pagado: {paidSum.toFixed(2)}
-            </span>
-          )}
-          {isExpanded ? (
-            <IconChevronUp size={18} aria-hidden="true" className="shrink-0" />
-          ) : (
-            <IconChevronDown size={18} aria-hidden="true" className="shrink-0" />
-          )}
+          </span>
         </span>
       </button>
 
