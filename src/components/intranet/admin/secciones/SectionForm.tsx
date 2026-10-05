@@ -1,7 +1,7 @@
 "use client";
 
 import { IconAlertTriangle, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { CreateSection, Section, UpdateSection } from "@/types/section";
@@ -21,7 +21,8 @@ interface SectionFormProps {
 interface ActivityFieldValue {
   id?: number;
   name: string;
-  percentage: number;
+  // Empty string while the admin has not typed anything (no misleading 0).
+  percentage: number | "";
 }
 
 interface SectionFormValues {
@@ -40,6 +41,19 @@ interface SectionFormValues {
 function toDateInputValue(value: unknown): string {
   if (!value) return "";
   return String(value).slice(0, 10);
+}
+
+const OPTIONAL_INT_ERROR = "Debe ser un número entero mayor o igual a 1";
+
+// Mirrors CreateActivityDto: percentage > 0, <= 100, max 2 decimals.
+function validatePercentage(value: unknown): true | string {
+  const raw = String(value ?? "").trim();
+  if (raw === "") return "Este campo es requerido";
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) return "Ingresa un número válido con máximo 2 decimales";
+  const n = Number(raw);
+  if (n <= 0) return "Debe ser mayor que 0";
+  if (n > 100) return "No puede ser mayor que 100";
+  return true;
 }
 
 function calculateDurationInMonths(start: Date, end: Date) {
@@ -102,6 +116,8 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
     register,
     handleSubmit,
     control,
+    getValues,
+    trigger,
     formState: { errors },
   } = useForm<SectionFormValues>({
     defaultValues: selectedSection
@@ -125,8 +141,15 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
   // forward to the exact same RHF-bound handler without re-registering the
   // field (which would silently drop the `min` validation rule).
   const installmentsCountField = register("installmentsCount", {
-    min: { value: 0, message: "Debe ser positivo" },
+    // Optional (DTO: IsOptional + IsNumber); when present it must be an integer >= 1.
+    validate: (value) => {
+      const raw = String(value ?? "").trim();
+      if (raw === "") return true;
+      const n = Number(raw);
+      return (Number.isInteger(n) && n >= 1) || OPTIONAL_INT_ERROR;
+    },
   });
+  const addActivityButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const { fields, append, remove } = useFieldArray({ control, name: "activities" });
   const watchedActivities = useWatch({ control, name: "activities" }) || [];
@@ -143,6 +166,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
 
     if (data.activities.length === 0) {
       setValidationError("Agrega al menos una actividad.");
+      addActivityButtonRef.current?.focus();
       return;
     }
 
@@ -201,95 +225,148 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
     }
   };
 
+  const fieldClass = (hasError: boolean) =>
+    `input input-bordered w-full h-11 bg-white text-black text-base ${hasError ? "input-error" : ""}`;
+  const selectClass = (hasError: boolean) =>
+    `select select-bordered w-full h-11 bg-white text-black text-base ${hasError ? "select-error" : ""}`;
+  const labelClass = "block text-sm text-gray-700 mb-1";
+  const errorClass = "text-error text-xs mt-1 pl-1 block";
+
   return (
     <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
       <h2 className="text-2xl font-medium mb-6">
         {selectedSection ? "Editar Sección" : "Crear Sección"}
       </h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 flex-wrap sm:flex-nowrap">
-          <select
-            defaultValue={selectedSection?.course?.id ? String(selectedSection.course.id) : ""}
-            className="select select-bordered w-full bg-white text-black text-base"
-            {...register("id_course", { required: "Este campo es requerido" })}>
-            <option disabled value="">
-              Seleccione un Curso
-            </option>
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.name}
+          <div className="w-full min-w-0">
+            <select
+              defaultValue={selectedSection?.course?.id ? String(selectedSection.course.id) : ""}
+              aria-label="Curso"
+              aria-invalid={errors.id_course ? true : undefined}
+              aria-describedby={errors.id_course ? "section-course-error" : undefined}
+              className={selectClass(!!errors.id_course)}
+              {...register("id_course", { required: "Este campo es requerido" })}>
+              <option disabled value="">
+                Seleccione un Curso
               </option>
-            ))}
-          </select>
-          <select
-            defaultValue={selectedSection?.tutor?.id ? String(selectedSection.tutor.id) : ""}
-            className="select select-bordered w-full bg-white text-black text-base"
-            {...register("id_tutor")}>
-            <option value="">Sin tutor asignado</option>
-            {tutors.map((tutor) => (
-              <option key={tutor.id} value={tutor.id}>
-                {tutor.name} {tutor.lastName}
-              </option>
-            ))}
-          </select>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.name}
+                </option>
+              ))}
+            </select>
+            {errors.id_course && (
+              <span id="section-course-error" className={errorClass}>
+                {errors.id_course.message}
+              </span>
+            )}
+          </div>
+          <div className="w-full min-w-0">
+            <select
+              defaultValue={selectedSection?.tutor?.id ? String(selectedSection.tutor.id) : ""}
+              aria-label="Tutor"
+              className={selectClass(false)}
+              {...register("id_tutor")}>
+              <option value="">Sin tutor asignado</option>
+              {tutors.map((tutor) => (
+                <option key={tutor.id} value={tutor.id}>
+                  {tutor.name} {tutor.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        {errors.id_course && (
-          <span className="text-error text-xs pl-1">{errors.id_course.message}</span>
-        )}
 
-        <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
+        <div>
           <input
             type="text"
-            className="grow"
             placeholder="Nombre de la sección"
+            aria-label="Nombre de la sección"
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? "section-name-error" : undefined}
+            className={fieldClass(!!errors.name)}
             {...register("name", {
               required: "Este campo es requerido",
-              minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
+              validate: (value) =>
+                (value ?? "").trim().length >= 3 || "Debe tener al menos 3 caracteres",
             })}
           />
-        </label>
-        {errors.name && <span className="text-error text-xs pl-1">{errors.name.message}</span>}
+          {errors.name && (
+            <span id="section-name-error" className={errorClass}>
+              {errors.name.message}
+            </span>
+          )}
+        </div>
 
         <div className="flex flex-col sm:flex-row justify-between gap-3">
-          <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
-            <div className="label">
-              <span className="label-text text-base text-gray-700">Inicio</span>
-            </div>
-            {/* `min-w-0` overrides the native date input's intrinsic
-                min-content width — without it, a `grow` flex child can
-                refuse to shrink below that browser default and force the
-                row (and page) wider than the viewport. */}
+          {/* Label stacked above the input (not inline) so the row fits at
+              360px; `min-w-0` overrides the native date input's intrinsic
+              min-content width, which otherwise can force the row wider than
+              the viewport. */}
+          <div className="w-full min-w-0">
+            <label htmlFor="section-initial-date" className={labelClass}>
+              Inicio
+            </label>
             <input
+              id="section-initial-date"
               type="date"
-              className="grow min-w-0 [color-scheme:light]"
-              {...register("initialDate", { required: "Este campo es requerido" })}
+              aria-invalid={errors.initialDate ? true : undefined}
+              aria-describedby={errors.initialDate ? "section-initial-date-error" : undefined}
+              className={`${fieldClass(!!errors.initialDate)} min-w-0 [color-scheme:light]`}
+              {...register("initialDate", {
+                required: "Este campo es requerido",
+                // Re-check the end date when the start changes, but only if it
+                // already has a value (avoids a premature "required" error).
+                onChange: () => {
+                  if (getValues("endDate")) void trigger("endDate");
+                },
+              })}
             />
-          </label>
-          <label className="input input-bordered flex items-center gap-2 w-full bg-white text-black">
-            <div className="label">
-              <span className="label-text text-base text-gray-700">Fin</span>
-            </div>
-            <input
-              type="date"
-              className="grow min-w-0 [color-scheme:light]"
-              {...register("endDate", { required: "Este campo es requerido" })}
-            />
-          </label>
-        </div>
-        {(errors.initialDate || errors.endDate) && (
-          <span className="text-error text-xs pl-1">
-            {errors.initialDate?.message || errors.endDate?.message}
-          </span>
-        )}
-
-        <label className="input input-bordered flex items-center gap-2 w-full max-w-xs bg-white text-black">
-          <div className="label">
-            <span className="label-text text-base text-gray-700">Cuotas</span>
+            {errors.initialDate && (
+              <span id="section-initial-date-error" className={errorClass}>
+                {errors.initialDate.message}
+              </span>
+            )}
           </div>
+          <div className="w-full min-w-0">
+            <label htmlFor="section-end-date" className={labelClass}>
+              Fin
+            </label>
+            <input
+              id="section-end-date"
+              type="date"
+              aria-invalid={errors.endDate ? true : undefined}
+              aria-describedby={errors.endDate ? "section-end-date-error" : undefined}
+              className={`${fieldClass(!!errors.endDate)} min-w-0 [color-scheme:light]`}
+              {...register("endDate", {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  const start = getValues("initialDate");
+                  return !start || !value || value >= start || "La fecha de fin no puede ser anterior a la de inicio";
+                },
+              })}
+            />
+            {errors.endDate && (
+              <span id="section-end-date-error" className={errorClass}>
+                {errors.endDate.message}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full max-w-xs">
+          <label htmlFor="section-installments" className={labelClass}>
+            Cuotas
+          </label>
           <input
+            id="section-installments"
             type="number"
-            min={0}
-            className="grow [color-scheme:light]"
+            min={1}
+            step={1}
+            aria-invalid={errors.installmentsCount ? true : undefined}
+            aria-describedby={errors.installmentsCount ? "section-installments-error" : undefined}
+            className={`${fieldClass(!!errors.installmentsCount)} [color-scheme:light]`}
             placeholder="Opcional"
             {...installmentsCountField}
             onFocus={(e) => e.target.select()}
@@ -300,10 +377,12 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
               installmentsCountField.onChange(e);
             }}
           />
-        </label>
-        {errors.installmentsCount && (
-          <span className="text-error text-xs pl-1">{errors.installmentsCount.message}</span>
-        )}
+          {errors.installmentsCount && (
+            <span id="section-installments-error" className={errorClass}>
+              {errors.installmentsCount.message}
+            </span>
+          )}
+        </div>
 
         <div className="mt-2">
           <div className="flex gap-3 flex-wrap justify-between items-center">
@@ -313,12 +392,13 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
             </span>
             <button
               type="button"
-              onClick={() => append({ name: "", percentage: 0 })}
-              className="btn btn-sm bg-darkpink border-none text-white text-base">
+              ref={addActivityButtonRef}
+              onClick={() => append({ name: "", percentage: "" })}
+              className="btn btn-sm min-h-10 bg-darkpink border-none text-white text-base">
               Agregar <IconPlus size={16} />
             </button>
           </div>
-          <ul className="flex gap-2 flex-col mt-4">
+          <ul className="flex gap-4 flex-col mt-4">
             {fields.map((field, index) => {
               // NOTE: `field.id` here is react-hook-form's own internal
               // field key (an auto-generated string), which SHADOWS our
@@ -327,37 +407,63 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
               // watched form values instead.
               const activityId = watchedActivities[index]?.id;
               const gradeCount = activityId != null ? gradeCounts[activityId] : undefined;
+              const nameError = errors.activities?.[index]?.name;
+              const percentageError = errors.activities?.[index]?.percentage;
+              const nameErrorId = `activity-${index}-name-error`;
+              const percentageErrorId = `activity-${index}-percentage-error`;
               // Same "register once, wrap onChange" pattern as
               // installmentsCountField above — avoids re-registering (and
-              // losing the `required` rule) on every keystroke.
+              // losing the validation rule) on every keystroke.
               const percentageField = register(`activities.${index}.percentage`, {
-                required: "Este campo es requerido",
+                validate: validatePercentage,
               });
               return (
-                <li key={field.id} className="flex flex-col gap-1">
-                  <div className="flex gap-2 items-end flex-wrap">
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text text-gray-700">Nombre</span>
-                      </div>
+                <li key={field.id} className="flex flex-col gap-2 rounded-lg border border-gray-200 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium text-gray-700">Actividad {index + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      aria-label={`Eliminar actividad ${index + 1}`}
+                      className="btn btn-sm btn-error size-10 min-h-10 p-0">
+                      <IconTrash size={16} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_10rem] gap-3">
+                    <div className="min-w-0">
+                      <label htmlFor={`activity-${index}-name`} className={labelClass}>
+                        Nombre
+                      </label>
                       <input
+                        id={`activity-${index}-name`}
                         type="text"
+                        aria-invalid={nameError ? true : undefined}
+                        aria-describedby={nameError ? nameErrorId : undefined}
                         {...register(`activities.${index}.name`, {
                           required: "Este campo es requerido",
+                          validate: (value) => (value ?? "").trim().length > 0 || "Este campo es requerido",
                         })}
-                        className="input input-bordered w-full bg-white text-black"
+                        className={fieldClass(!!nameError)}
                       />
-                    </label>
-                    <label className="form-control w-full max-w-[10rem]">
-                      <div className="label">
-                        <span className="label-text text-gray-700">Porcentaje %</span>
-                      </div>
+                      {nameError && (
+                        <span id={nameErrorId} className={errorClass}>
+                          {nameError.message}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <label htmlFor={`activity-${index}-percentage`} className={labelClass}>
+                        Porcentaje %
+                      </label>
                       <input
+                        id={`activity-${index}-percentage`}
                         type="number"
                         max={100}
-                        min={0}
+                        min={0.01}
                         step={0.01}
                         placeholder="ej. 25"
+                        aria-invalid={percentageError ? true : undefined}
+                        aria-describedby={percentageError ? percentageErrorId : undefined}
                         {...percentageField}
                         onFocus={(e) => e.target.select()}
                         onChange={(e) => {
@@ -366,15 +472,14 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
                           if (normalized !== raw) e.target.value = normalized;
                           percentageField.onChange(e);
                         }}
-                        className="input input-bordered w-full bg-white text-black [color-scheme:light]"
+                        className={`${fieldClass(!!percentageError)} [color-scheme:light]`}
                       />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => remove(index)}
-                      className="btn btn-sm btn-error mb-1">
-                      <IconTrash size={16} />
-                    </button>
+                      {percentageError && (
+                        <span id={percentageErrorId} className={errorClass}>
+                          {percentageError.message}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {gradeCount != null && gradeCount > 0 && (
                     <span className="text-xs text-darkpink flex items-center gap-1">
@@ -393,7 +498,9 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
         </div>
 
         {validationError && (
-          <span className="text-error text-sm mt-1 pl-1">{validationError}</span>
+          <span role="alert" className="text-error text-sm mt-1 pl-1">
+            {validationError}
+          </span>
         )}
 
         <div className="flex gap-3 mt-2">

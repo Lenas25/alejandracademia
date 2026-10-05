@@ -58,13 +58,13 @@ export function AsistenciaCard() {
         </div>
       ) : myAttendanceStatus === "failed" ? (
         <div className="flex-grow flex flex-col items-center justify-center h-full gap-3 text-center py-8">
-          <div className="alert alert-error text-white">
+          <div role="alert" className="alert alert-error text-white">
             <span>{myAttendanceError || "No se pudo cargar la asistencia"}</span>
           </div>
           <button
             type="button"
             onClick={() => enrollmentView && dispatch(fetchMyAttendance(enrollmentView.id))}
-            className="btn btn-sm bg-darkpink text-white border-none hover:bg-black">
+            className="btn btn-sm min-h-10 bg-darkpink text-white border-none hover:bg-black">
             Reintentar
           </button>
         </div>

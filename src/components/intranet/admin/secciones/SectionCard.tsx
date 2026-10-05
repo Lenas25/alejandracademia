@@ -34,6 +34,10 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
   const role = useAppSelector((state) => state.user?.userLogin?.role);
   const isAdmin = role === Roles.ADMIN;
 
+  const tutorLabel = section.tutor
+    ? `${section.tutor.name} ${section.tutor.lastName ?? ""}`.trim()
+    : "Sin tutor asignado";
+
   const handleCardClick = () => {
     router.push(`${pathname}/${section.id}`);
   };
@@ -76,15 +80,19 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-xs text-gray-400 truncate">{section.course?.name}</p>
-          <p className="font-semibold text-lg truncate">{section.name}</p>
+          <p className="text-xs text-gray-400 line-clamp-2 break-words" title={section.course?.name}>
+            {section.course?.name}
+          </p>
+          <p className="font-semibold text-lg line-clamp-2 break-words" title={section.name}>
+            {section.name}
+          </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 text-sm text-gray-600">
-        <IconUser size={16} />
-        <span className="truncate">
-          {section.tutor ? `${section.tutor.name} ${section.tutor.lastName ?? ""}` : "Sin tutor asignado"}
+        <IconUser size={16} className="shrink-0" />
+        <span className="line-clamp-2 break-words min-w-0" title={tutorLabel}>
+          {tutorLabel}
         </span>
       </div>
 
@@ -100,13 +108,15 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
             <button
               type="button"
               onClick={handleEdit}
-              className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
+              aria-label={`Editar sección ${section.name}`}
+              className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-black text-white hover:bg-darkpink hover:text-white">
               <IconPencil size={16} />
             </button>
             <button
               type="button"
               onClick={handleDeleteClick}
-              className="btn btn-ghost btn-xs bg-black text-white hover:bg-darkpink hover:text-white">
+              aria-label={`Eliminar sección ${section.name}`}
+              className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-black text-white hover:bg-darkpink hover:text-white">
               <IconTrash size={16} />
             </button>
           </div>

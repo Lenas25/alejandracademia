@@ -19,22 +19,11 @@ export function TableCursos() {
     active: boolean;
     type: string;
   }>({ active: false, type: "" });
-  const [message, setMessage] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     dispatch(fetchCourses());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage("");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   const filteredCourses = useMemo(() => {
     return (courses || []).filter((course) => {
@@ -110,11 +99,6 @@ export function TableCursos() {
           </div>
         )}
 
-        {message && (
-          <div className={`alert my-5 text-white ${message.includes("Error") ? "alert-error" : "alert-success"}`}>
-            {message}
-          </div>
-        )}
         <div className="table-scroll size-full">
           <table className="table mb-5 min-w-[560px]">
             <thead className="text-black md:text-lg">
@@ -145,7 +129,6 @@ export function TableCursos() {
                   course={course}
                   handleRadioChange={handleRadioChange}
                   selectedCourse={selectedCourse}
-                  setMessage={setMessage}
                 />
               ))
               )}
@@ -155,7 +138,6 @@ export function TableCursos() {
         {isOpenModal.active && isOpenModal.type === "add" && (
           <ModalEditAdd
             selectedCourse={selectedCourse}
-            setMessage={setMessage}
             modalMessage={{
               title: "Agregar Curso",
               message: "Completar para agregar nuevo curso",
@@ -168,7 +150,6 @@ export function TableCursos() {
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
             selectedCourse={selectedCourse}
-            setMessage={setMessage}
             modalMessage={{
               title: "Editar Curso",
               message: "Completa para actualizar",

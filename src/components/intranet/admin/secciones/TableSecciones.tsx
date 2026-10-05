@@ -9,9 +9,11 @@ import { fetchCourses } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
 import SectionCard from "./SectionCard";
 import SectionForm from "./SectionForm";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 export function TableSecciones() {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const sections = useAppSelector((state) => state.section?.sections);
   const sectionStatus = useAppSelector((state) => state.section?.status);
@@ -19,7 +21,6 @@ export function TableSecciones() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
-  const [message, setMessage] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [courseFilter, setCourseFilter] = useState<string>("all");
 
@@ -27,13 +28,6 @@ export function TableSecciones() {
     dispatch(fetchSections());
     dispatch(fetchCourses());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   const filteredSections = useMemo(() => {
     return (sections || []).filter((section) => {
@@ -60,7 +54,7 @@ export function TableSecciones() {
   };
 
   const handleFormSuccess = (successMessage: string) => {
-    setMessage(successMessage);
+    toast.success(successMessage);
     setShowForm(false);
     setEditingSection(null);
   };
@@ -68,7 +62,14 @@ export function TableSecciones() {
   const handleDelete = async (section: Section) => {
     const resultAction = await dispatch(deleteSection(section.id));
     if (deleteSection.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message);
+      const payload = resultAction.payload as { message: string; error?: string };
+      if (payload.error) {
+        toast.error(`Error al eliminar la sección: ${payload.error}`);
+      } else {
+        toast.success(payload.message);
+      }
+    } else {
+      toast.error("No se pudo eliminar la sección. Inténtalo de nuevo.");
     }
   };
 
@@ -83,12 +84,6 @@ export function TableSecciones() {
         </div>
         <IconLayoutGrid size={30} className="text-white" />
       </div>
-
-      {message && (
-        <div className={`alert my-5 text-white ${message.includes("Error") ? "alert-error" : "alert-success"}`}>
-          {message}
-        </div>
-      )}
 
       {showForm ? (
         <SectionForm

@@ -17,10 +17,21 @@ import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/redux/stores";
 import { createUser, updateUser } from "@/redux/service/userService";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { useToast } from "@/components/intranet/ui/Toast";
+
+// Mirrors the backend CreateUserDto (MinLength + IsEmail). Values are trimmed
+// before measuring because the API trims name/lastName/email/username.
+// UpdateUserDto is PartialType(CreateUserDto), so in edit mode a minimum only
+// applies to values the admin changed: `original` (edit mode) lets unchanged
+// legacy values through.
+const minTrimmed = (min: number, label: string, original?: string) => (value: unknown) => {
+  const v = String(value ?? "");
+  if (original !== undefined && v === original) return true;
+  return v.trim().length >= min || `${label} debe tener al menos ${min} caracteres`;
+};
 
 interface ModalEditAddProps {
   selectedUser: User | null;
-  setMessage: (message: string) => void;
   setOpenModal: (isOpen: { active: boolean; type: string }) => void;
   setSelectedUser: (user: User | null) => void;
   isOpenModal: { active: boolean; type: string };
@@ -29,7 +40,6 @@ interface ModalEditAddProps {
 
 function ModalEditAdd({
   selectedUser,
-  setMessage,
   setOpenModal,
   isOpenModal,
   modalMessage,
@@ -54,10 +64,15 @@ function ModalEditAdd({
       : {},
   });
 
+  const isEdit = isOpenModal.type === "edit";
+  const orig = (v: string | undefined) => (isEdit ? v ?? "" : undefined);
+
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: User) => {
+    setError(null);
     try {
       let resultAction: PayloadAction<{
         message: string;
@@ -86,8 +101,14 @@ function ModalEditAdd({
           data: CreateUser;
         }>;
       }
+      const payload = resultAction.payload as { message: string; error?: string };
+      if (payload?.error) {
+        // Thunk fulfilled with a Spanish `error`: keep the modal open.
+        setError(payload.error);
+        return;
+      }
       setSelectedUser(null);
-      setMessage((resultAction.payload as { message: string }).message);
+      toast.success(payload.message);
       setOpenModal({ active: false, type: "" });
     } catch (error) {
       console.error(error);
@@ -123,7 +144,7 @@ function ModalEditAdd({
           </span>
         </div>
         <p className="mb-6 text-gray-400">{modalMessage.message}</p>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
           {/* Contenedor principal para todos los campos del formulario */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* --- CAMPO DNI (SOLO EN MODO AÑADIR) --- */}
@@ -135,11 +156,17 @@ function ModalEditAdd({
                     type="text"
                     className="grow"
                     placeholder="DNI"
-                    {...register("id", { required: "El DNI es requerido" })}
+                    aria-label="DNI"
+                    aria-invalid={errors.id ? true : undefined}
+                    aria-describedby={errors.id ? "user-id-error" : undefined}
+                    {...register("id", {
+                      required: "El DNI es requerido",
+                      validate: (v) => String(v ?? "").trim().length > 0 || "El DNI es requerido",
+                    })}
                   />
                 </label>
                 {errors.id && (
-                  <span className="text-error text-xs mt-1 pl-1">
+                  <span id="user-id-error" className="text-error text-xs mt-1 pl-1">
                     {errors.id.message}
                   </span>
                 )}
@@ -154,6 +181,9 @@ function ModalEditAdd({
               <select
                 defaultValue={selectedUser ? selectedUser.role : ""}
                 className="select select-bordered"
+                aria-label="Rol"
+                aria-invalid={errors.role ? true : undefined}
+                aria-describedby={errors.role ? "user-role-error" : undefined}
                 {...register("role", { required: "El rol es requerido" })}>
                 <option disabled value="">
                   Seleccione un Rol
@@ -165,7 +195,7 @@ function ModalEditAdd({
                 ))}
               </select>
               {errors.role && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-role-error" className="text-error text-xs mt-1 pl-1">
                   {errors.role.message}
                 </span>
               )}
@@ -179,11 +209,17 @@ function ModalEditAdd({
                   type="text"
                   className="grow"
                   placeholder="Nombre"
-                  {...register("name", { required: "El nombre es requerido" })}
+                  aria-label="Nombre"
+                  aria-invalid={errors.name ? true : undefined}
+                  aria-describedby={errors.name ? "user-name-error" : undefined}
+                  {...register("name", {
+                    required: "El nombre es requerido",
+                    validate: minTrimmed(3, "El nombre", orig(selectedUser?.name)),
+                  })}
                 />
               </label>
               {errors.name && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-name-error" className="text-error text-xs mt-1 pl-1">
                   {errors.name.message}
                 </span>
               )}
@@ -196,13 +232,17 @@ function ModalEditAdd({
                   type="text"
                   className="grow"
                   placeholder="Apellido"
+                  aria-label="Apellido"
+                  aria-invalid={errors.lastName ? true : undefined}
+                  aria-describedby={errors.lastName ? "user-lastname-error" : undefined}
                   {...register("lastName", {
                     required: "El apellido es requerido",
+                    validate: minTrimmed(3, "El apellido", orig(selectedUser?.lastName)),
                   })}
                 />
               </label>
               {errors.lastName && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-lastname-error" className="text-error text-xs mt-1 pl-1">
                   {errors.lastName.message}
                 </span>
               )}
@@ -216,17 +256,21 @@ function ModalEditAdd({
                   type="email"
                   className="grow"
                   placeholder="Email"
+                  aria-label="Email"
+                  aria-invalid={errors.email ? true : undefined}
+                  aria-describedby={errors.email ? "user-email-error" : undefined}
                   {...register("email", {
                     required: "El email es requerido",
                     pattern: {
-                      value: /^\S+@\S+$/i,
+                      value: /^\S+@\S+\.\S+$/i,
                       message: "Formato de email inválido",
                     },
+                    validate: minTrimmed(10, "El email", orig(selectedUser?.email)),
                   })}
                 />
               </label>
               {errors.email && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-email-error" className="text-error text-xs mt-1 pl-1">
                   {errors.email.message}
                 </span>
               )}
@@ -240,13 +284,17 @@ function ModalEditAdd({
                   type="tel"
                   className="grow"
                   placeholder="Teléfono"
+                  aria-label="Teléfono"
+                  aria-invalid={errors.phone ? true : undefined}
+                  aria-describedby={errors.phone ? "user-phone-error" : undefined}
                   {...register("phone", {
                     required: "El teléfono es requerido",
+                    validate: minTrimmed(9, "El teléfono", orig(selectedUser?.phone)),
                   })}
                 />
               </label>
               {errors.phone && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-phone-error" className="text-error text-xs mt-1 pl-1">
                   {errors.phone.message}
                 </span>
               )}
@@ -260,13 +308,17 @@ function ModalEditAdd({
                   type="text"
                   className="grow"
                   placeholder="Username"
+                  aria-label="Username"
+                  aria-invalid={errors.username ? true : undefined}
+                  aria-describedby={errors.username ? "user-username-error" : undefined}
                   {...register("username", {
                     required: "El username es requerido",
+                    validate: minTrimmed(3, "El username", orig(selectedUser?.username)),
                   })}
                 />
               </label>
               {errors.username && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-username-error" className="text-error text-xs mt-1 pl-1">
                   {errors.username.message}
                 </span>
               )}
@@ -284,6 +336,9 @@ function ModalEditAdd({
                       ? "Nueva contraseña (opcional)"
                       : "Contraseña"
                   }
+                  aria-label="Contraseña"
+                  aria-invalid={errors.password ? true : undefined}
+                  aria-describedby={errors.password ? "user-password-error" : undefined}
                   {...register("password", {
                     required:
                       isOpenModal.type === "add"
@@ -293,14 +348,18 @@ function ModalEditAdd({
                 />
               </label>
               {errors.password && (
-                <span className="text-error text-xs mt-1 pl-1">
+                <span id="user-password-error" className="text-error text-xs mt-1 pl-1">
                   {errors.password.message}
                 </span>
               )}
             </div>
           </div>
 
-          {error && <span className="text-error text-center">{error}</span>}
+          {error && (
+            <span role="alert" className="text-error text-center">
+              {error}
+            </span>
+          )}
 
           <button
             type="submit"

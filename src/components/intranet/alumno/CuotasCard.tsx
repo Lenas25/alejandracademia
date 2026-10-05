@@ -60,7 +60,7 @@ export function CuotasCard() {
           // the "Sin cuotas registradas" empty state so a fetch failure
           // is never read as "you have no installments".
           <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-8">
-            <div className="alert alert-error text-white">
+            <div role="alert" className="alert alert-error text-white">
               <span>
                 {loadErrorMessage || "No se pudieron cargar las cuotas"}
               </span>
@@ -71,7 +71,7 @@ export function CuotasCard() {
                 enrollmentView &&
                 dispatch(fetchMyInstallments(enrollmentView.id))
               }
-              className="btn btn-sm bg-darkpink text-white border-none hover:bg-black"
+              className="btn btn-sm min-h-10 bg-darkpink text-white border-none hover:bg-black"
             >
               Reintentar
             </button>

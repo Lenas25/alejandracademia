@@ -16,13 +16,22 @@ export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const onSubmit = async (data: Login) => {
+    setError(null);
     const logeado = await login(data.username, data.password);
     if (logeado.error) {
       setError(logeado.message);
       return;
     }
-    const user = await getMe(localStorage.getItem("token") as string);
-    const role = user?.role === Roles.TUTOR ? Roles.ADMIN : user?.role;
+    // getMe swallows its own errors and returns null (bad token, network
+    // failure, missing user), so a null/role-less result must not reach the
+    // router as `/intranet/undefined`.
+    const token = localStorage.getItem("token");
+    const user = token ? await getMe(token) : null;
+    if (!user?.role) {
+      setError("No se pudo cargar tu perfil. Inténtalo de nuevo.");
+      return;
+    }
+    const role = user.role === Roles.TUTOR ? Roles.ADMIN : user.role;
     router.push(`/intranet/${role}`);
   };
 
@@ -40,13 +49,15 @@ export function LoginForm() {
               : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
           aria-label="Usuario"
+          aria-invalid={errors.username ? true : undefined}
+          aria-describedby={errors.username ? "login-username-error" : undefined}
           {...register("username", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },
           })}
         />
         {errors.username && (
-          <p className="text-red-700 font-semibold pt-2">
+          <p id="login-username-error" className="text-red-700 font-semibold pt-2">
             {errors.username.message}
           </p>
         )}
@@ -61,17 +72,23 @@ export function LoginForm() {
               : "focus:ring-2 focus:ring-black bg-flamingo"
           }`}
           aria-label="Contraseña"
+          aria-invalid={errors.password ? true : undefined}
+          aria-describedby={errors.password ? "login-password-error" : undefined}
           {...register("password", {
             required: "Este campo es obligatorio",
             minLength: { value: 3, message: "Minimo 3 caracteres" },
           })}
         />
         {errors.password && (
-          <p className="text-red-700 font-semibold pt-2">
+          <p id="login-password-error" className="text-red-700 font-semibold pt-2">
             {errors.password.message}
           </p>
         )}
-        {error && <p className="text-red-700 font-semibold pt-2">{error}</p>}
+        {error && (
+          <p role="alert" className="text-red-700 font-semibold pt-2">
+            {error}
+          </p>
+        )}
       </div>
       <button
         type="submit"

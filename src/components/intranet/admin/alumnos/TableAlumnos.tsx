@@ -33,7 +33,6 @@ export function TableAlumnos() {
     active: boolean;
     type: string;
   }>({ active: false, type: "" });
-  const [message, setMessage] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("todos");
   const debouncedSearch = useDebounce(searchTerm, 300);
@@ -55,16 +54,6 @@ export function TableAlumnos() {
       );
     });
   }, [users, debouncedSearch, roleFilter]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage("");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   const handleRadioChange = (user: User) => {
     setSelectedUser(user);
@@ -144,9 +133,6 @@ export function TableAlumnos() {
           </div>
         </div>
 
-        {message && (
-          <div className="alert alert-success my-5 text-white">{message}</div>
-        )}
         {/* Below md: card list. md and up: table. */}
         <div className="md:hidden flex flex-col gap-3 my-5">
           {userStatus === "loading" ? (
@@ -165,7 +151,6 @@ export function TableAlumnos() {
                 user={user}
                 handleRadioChange={handleRadioChange}
                 selectedUser={selectedUser}
-                setMessage={setMessage}
               />
             ))
           )}
@@ -204,7 +189,6 @@ export function TableAlumnos() {
                   user={user}
                   handleRadioChange={handleRadioChange}
                   selectedUser={selectedUser}
-                  setMessage={setMessage}
                 />
               ))
               )}
@@ -218,7 +202,6 @@ export function TableAlumnos() {
               message: "Completar para agregar nuevo usuario",
             }}
             selectedUser={selectedUser}
-            setMessage={setMessage}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
             setSelectedUser={setSelectedUser}
@@ -231,7 +214,6 @@ export function TableAlumnos() {
               message: "Completa para actualizar",
             }}
             selectedUser={selectedUser}
-            setMessage={setMessage}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
             setSelectedUser={setSelectedUser}

@@ -12,7 +12,7 @@ function ModalDelete({
 }) {
   return (
     <dialog id={`delete_${info}`} className="modal backdrop-blur-sm">
-      <div className="modal-box text-white max-h-[90vh] overflow-y-auto">
+      <div className="modal-box text-white max-h-[90dvh] overflow-y-auto">
         <form method="dialog">
           <button
             type="submit"

@@ -6,21 +6,21 @@ import Image from "next/image";
 import { deleteCourse } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
 import { deleteImage, extractImageId } from "@/utils/api";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 interface RowCursosProps {
   course: Course;
   handleRadioChange: (course: Course) => void;
   selectedCourse: Course | null;
-  setMessage: (message: string) => void;
 }
 
 function RowCursos({
   course,
   handleRadioChange,
   selectedCourse,
-  setMessage,
 }: RowCursosProps) {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const handleModalDelete = () => {
     (
@@ -33,7 +33,7 @@ function RowCursos({
     if (deleteCourse.fulfilled.match(resultAction)) {
       const payload = resultAction.payload;
       if ("error" in payload && payload.error) {
-        setMessage(`Error al eliminar el curso: ${payload.error}`);
+        toast.error(`Error al eliminar el curso: ${payload.error}`);
       } else {
         if (course?.imageUrl !== "") {
           const publicId = course?.imageUrl ? extractImageId(course.imageUrl) : "";
@@ -41,8 +41,10 @@ function RowCursos({
             await deleteImage(publicId);
           }
         }
-        setMessage(payload.message);
+        toast.success(payload.message);
       }
+    } else {
+      toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
     }
     (
       document.getElementById(`delete_${course.id}`) as HTMLDialogElement

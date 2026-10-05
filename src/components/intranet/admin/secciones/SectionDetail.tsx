@@ -18,6 +18,7 @@ import FinishSectionDialog from "./FinishSectionDialog";
 import NotasTab from "./NotasTab";
 import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 type TabKey = "estudiantes" | "notas" | "pagos" | "asistencia";
 
@@ -39,6 +40,7 @@ interface SectionDetailProps {
 function SectionDetail({ sectionId }: SectionDetailProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const toast = useToast();
   const section = useAppSelector((state) => state.section?.sectionView);
   const sectionStatus = useAppSelector((state) => state.section?.status);
   const role = useAppSelector((state) => state.user?.userLogin?.role);
@@ -51,7 +53,6 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
 
   const [activeTab, setActiveTab] = useState<TabKey>(tabs[0].key);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [message, setMessage] = useState<string>("");
   const [finishLoading, setFinishLoading] = useState(false);
   const isFinished = section?.isActive === false;
 
@@ -65,22 +66,18 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
     dispatch(fetchSectionById(sectionId));
   }, [dispatch, sectionId]);
 
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
   const handleDelete = async () => {
     const resultAction = await dispatch(deleteSection(sectionId));
     if (deleteSection.fulfilled.match(resultAction)) {
       const payload = resultAction.payload;
       if ("error" in payload && payload.error) {
-        setMessage(`Error al eliminar la sección: ${payload.error}`);
+        toast.error(`Error al eliminar la sección: ${payload.error}`);
       } else {
+        toast.success(payload.message);
         router.push("..");
       }
+    } else {
+      toast.error("No se pudo eliminar la sección. Inténtalo de nuevo.");
     }
   };
 
@@ -93,9 +90,9 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
     const resultAction = await dispatch(thunk({ courseId: sectionId }));
     const payload = resultAction.payload as { message?: string; error?: string };
     if (payload.error) {
-      setMessage(`Error al ${isFinished ? "reabrir" : "finalizar"} la sección: ${payload.error}`);
+      toast.error(`Error al ${isFinished ? "reabrir" : "finalizar"} la sección: ${payload.error}`);
     } else {
-      setMessage(payload.message ?? (isFinished ? "Sección reabierta" : "Sección finalizada"));
+      toast.success(payload.message ?? (isFinished ? "Sección reabierta" : "Sección finalizada"));
       dispatch(fetchSectionById(sectionId));
     }
     setFinishLoading(false);
@@ -123,7 +120,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         selectedSection={section}
         onCancel={() => setShowEditForm(false)}
         onSuccess={(successMessage) => {
-          setMessage(successMessage);
+          toast.success(successMessage);
           setShowEditForm(false);
         }}
       />
@@ -133,15 +130,15 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
   return (
     <>
       <div className="flex flex-col gap-2 mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-gray-400 min-w-0 break-words">
           <Link href=".." className="hover:text-white">
             Secciones
           </Link>{" "}
           / {section.course?.name}
         </div>
         <div className="flex gap-5 items-center justify-between flex-wrap">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-medium text-white">{section.name}</h1>
+          <div className="flex items-center gap-3 flex-wrap min-w-0">
+            <h1 className="text-2xl font-medium text-white min-w-0 break-words">{section.name}</h1>
             {isFinished && (
               <span className="badge bg-yellow text-black border-none font-semibold">
                 Finalizada
@@ -159,7 +156,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                     ) as HTMLDialogElement
                   )?.showModal()
                 }
-                className="btn btn-ghost btn-sm bg-white text-black hover:bg-darkpink hover:text-white disabled:bg-gray-300 disabled:text-gray-500"
+                className="btn btn-ghost btn-sm min-h-10 bg-white text-black hover:bg-darkpink hover:text-white disabled:bg-gray-300 disabled:text-gray-500"
                 disabled={finishLoading}
               >
                 {isFinished ? (
@@ -175,7 +172,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
               <button
                 type="button"
                 onClick={() => setShowEditForm(true)}
-                className="btn btn-ghost btn-sm bg-white text-black hover:bg-darkpink hover:text-white"
+                className="btn btn-ghost btn-sm min-h-10 bg-white text-black hover:bg-darkpink hover:text-white"
               >
                 <IconPencil size={16} /> Editar
               </button>
@@ -188,7 +185,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
                     ) as HTMLDialogElement
                   )?.showModal()
                 }
-                className="btn btn-ghost btn-sm bg-white text-black hover:bg-error hover:text-white"
+                className="btn btn-ghost btn-sm min-h-10 bg-white text-black hover:bg-error hover:text-white"
               >
                 <IconTrash size={16} /> Eliminar
               </button>
@@ -196,14 +193,6 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
           )}
         </div>
       </div>
-
-      {message && (
-        <div
-          className={`alert my-5 text-white ${message.includes("Error") ? "alert-error" : "alert-success"}`}
-        >
-          {message}
-        </div>
-      )}
 
       <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         {/* Horizontally scrollable tab bar for narrow screens (~360-430px):

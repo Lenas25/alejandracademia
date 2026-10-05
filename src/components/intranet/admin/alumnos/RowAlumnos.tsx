@@ -4,12 +4,12 @@ import Link from "next/link";
 import ModalDelete from "./ModalDelete";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { deleteUser } from "@/redux/service/userService";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 interface RowAlumnosProps {
   user: User;
   handleRadioChange: (user: User) => void;
   selectedUser: User | null;
-  setMessage: (message: string) => void;
   variant?: "row" | "card";
 }
 
@@ -17,10 +17,10 @@ function RowAlumnos({
   user,
   handleRadioChange,
   selectedUser,
-  setMessage,
   variant = "row",
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const currentUser = useAppSelector((state) => state.user?.userLogin);
 
   let classRole = "bg-black";
@@ -51,7 +51,14 @@ function RowAlumnos({
   const handleDelete = async () => {
     const resultAction = await dispatch(deleteUser(user.id.toString()));
     if (deleteUser.fulfilled.match(resultAction)) {
-      setMessage(resultAction.payload.message);
+      const payload = resultAction.payload as { message: string; error?: string };
+      if (payload.error) {
+        toast.error(`Error al eliminar el usuario: ${payload.error}`);
+      } else {
+        toast.success(payload.message);
+      }
+    } else {
+      toast.error("No se pudo eliminar el usuario. Inténtalo de nuevo.");
     }
     (
       document.getElementById(dialogId) as HTMLDialogElement

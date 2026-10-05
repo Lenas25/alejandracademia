@@ -9,6 +9,7 @@ import { getConstanciaPreviewDataUrl } from "@/utils/generateConstanciaPdf";
 import { InstitutionConfig } from "@/types/institutionConfig";
 import { SectionReport } from "@/types/report";
 import { IconPlus, IconTrash, IconDeviceFloppy } from "@tabler/icons-react";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 // Sample section report used only to render the live PDF preview — one
 // active student with two graded activities is enough for the admin to see
@@ -89,12 +90,12 @@ function toConfigPayload(values: ConstanciaFormValues): Partial<Omit<Institution
 // is guaranteed to match the real output.
 function ConstanciaConfigurator() {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const config = useAppSelector((state) => state.institutionConfig.config);
   const loading = useAppSelector((state) => state.institutionConfig.loading);
   const saving = useAppSelector((state) => state.institutionConfig.saving);
   const errorMessage = useAppSelector((state) => state.institutionConfig.errorMessage);
 
-  const [saveMessage, setSaveMessage] = useState<string>("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const previewRequestId = useRef(0);
@@ -164,16 +165,24 @@ function ConstanciaConfigurator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedValues]);
 
+  // Load/save failures live in Redux (`errorMessage` is reset to null when a
+  // new request starts), so surface each one as a toast.
+  // An error already in the store at mount is stale (Redux persists it across
+  // navigation), so skip it until the value is cleared by a new request.
+  const staleError = useRef(errorMessage);
   useEffect(() => {
-    if (!saveMessage) return;
-    const timer = setTimeout(() => setSaveMessage(""), 4000);
-    return () => clearTimeout(timer);
-  }, [saveMessage]);
+    if (!errorMessage) {
+      staleError.current = null;
+      return;
+    }
+    if (errorMessage === staleError.current) return;
+    toast.error(errorMessage);
+  }, [errorMessage, toast]);
 
   const onSubmit = handleSubmit(async (values) => {
     const resultAction = await dispatch(updateInstitutionConfig(toConfigPayload(values)));
     if (updateInstitutionConfig.fulfilled.match(resultAction)) {
-      setSaveMessage(resultAction.payload.message || "Configuración guardada correctamente");
+      toast.success(resultAction.payload.message || "Configuración guardada correctamente");
     }
   });
 
@@ -183,9 +192,6 @@ function ConstanciaConfigurator() {
         <h2 className="text-xl md:text-2xl font-semibold text-black">Configurar Constancia de Calificaciones</h2>
       </div>
 
-      {errorMessage && <div className="alert alert-error text-white">{errorMessage}</div>}
-      {saveMessage && <div className="alert alert-success text-white">{saveMessage}</div>}
-
       {loading && !config ? (
         <div className="flex justify-center py-10">
           <span className="loading loading-spinner loading-lg text-darkpink" />
@@ -194,9 +200,19 @@ function ConstanciaConfigurator() {
         <div className="flex flex-col lg:flex-row gap-6">
           <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full lg:w-1/2">
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-500">Nombre de la academia</label>
-              <input className="input-search" {...register("academyName", { required: true })} />
-              {errors.academyName && <span className="text-error text-xs">Este campo es requerido</span>}
+              <label htmlFor="constancia-academy-name" className="text-sm font-medium text-gray-500">Nombre de la academia</label>
+              <input
+                id="constancia-academy-name"
+                className="input-search"
+                aria-invalid={errors.academyName ? true : undefined}
+                aria-describedby={errors.academyName ? "constancia-academy-name-error" : undefined}
+                {...register("academyName", { required: true })}
+              />
+              {errors.academyName && (
+                <span id="constancia-academy-name-error" className="text-error text-xs">
+                  Este campo es requerido
+                </span>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -210,7 +226,7 @@ function ConstanciaConfigurator() {
                     disabled={fields.length === 1}
                     aria-label="Eliminar línea"
                     title={fields.length === 1 ? "Debe quedar al menos una línea de encabezado" : undefined}
-                    className="btn btn-sm btn-square bg-white text-black border border-grey hover:bg-darkpink hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-black">
+                    className="btn btn-sm btn-square size-10 min-h-10 bg-white text-black border border-grey hover:bg-darkpink hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-black">
                     <IconTrash size={16} />
                   </button>
                 </div>
@@ -218,7 +234,7 @@ function ConstanciaConfigurator() {
               <button
                 type="button"
                 onClick={() => append({ value: "" })}
-                className="btn btn-sm self-start bg-darkpink text-white border-none hover:bg-black">
+                className="btn btn-sm min-h-10 self-start bg-darkpink text-white border-none hover:bg-black">
                 <IconPlus size={16} />
                 Agregar línea
               </button>
@@ -257,15 +273,22 @@ function ConstanciaConfigurator() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-500">Calificación mínima aprobatoria</label>
+                <label htmlFor="constancia-min-approving" className="text-sm font-medium text-gray-500">Calificación mínima aprobatoria</label>
                 <input
+                  id="constancia-min-approving"
+                  aria-invalid={errors.minApproving ? true : undefined}
+                  aria-describedby={errors.minApproving ? "constancia-min-approving-error" : undefined}
                   type="number"
                   min={0}
                   max={20}
                   className="input-search"
                   {...register("minApproving", { valueAsNumber: true, min: 0, max: 20, required: true })}
                 />
-                {errors.minApproving && <span className="text-error text-xs">Debe estar entre 0 y 20</span>}
+                {errors.minApproving && (
+                  <span id="constancia-min-approving-error" className="text-error text-xs">
+                    Debe estar entre 0 y 20
+                  </span>
+                )}
               </div>
             </div>
 
@@ -291,7 +314,7 @@ function ConstanciaConfigurator() {
 
           <div className="flex flex-col gap-2 w-full lg:w-1/2">
             <span className="text-sm font-medium text-gray-500">Vista previa</span>
-            {previewError && <div className="alert alert-error text-white text-sm">{previewError}</div>}
+            {previewError && <div role="alert" className="alert alert-error text-white text-sm">{previewError}</div>}
             <div className="relative w-full h-[70vh] lg:h-[calc(100vh-220px)] border border-grey rounded-lg overflow-hidden bg-white">
               {previewUrl ? (
                 <iframe src={previewUrl} title="Vista previa de la constancia" className="w-full h-full" />

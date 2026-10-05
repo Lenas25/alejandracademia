@@ -16,13 +16,13 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { Course, CreateCourse } from "@/types/course";
 import { createCourse, updateCourse } from "@/redux/service/courseService";
 import { deleteImage, extractImageId, uploadImage } from "@/utils/api";
+import { useToast } from "@/components/intranet/ui/Toast";
 
 // Cursos admin manages the catalog `Course` only (name/description/image) —
 // tutor, dates, duration, activities and active/finish state moved to
 // `Section` (see Secciones admin module, PR4).
 interface ModalEditAddProps {
   selectedCourse: Course | null;
-  setMessage: (message: string) => void;
   setOpenModal: (isOpen: { active: boolean; type: string }) => void;
   setSelectedCourse: (course: Course | null) => void;
   isOpenModal: { active: boolean; type: string };
@@ -31,7 +31,6 @@ interface ModalEditAddProps {
 
 function ModalEditAdd({
   selectedCourse,
-  setMessage,
   setOpenModal,
   setSelectedCourse,
   isOpenModal,
@@ -53,6 +52,7 @@ function ModalEditAdd({
   });
 
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
@@ -63,6 +63,8 @@ function ModalEditAdd({
       message: "Debe tener al menos 3 caracteres",
     },
   });
+  const descriptionErrorId = "course-description-error";
+  const nameErrorId = "course-name-error";
 
   // Applies a markdown transform to the current selection (or cursor
   // position) in the description textarea, then syncs the result back into
@@ -118,6 +120,7 @@ function ModalEditAdd({
   };
 
   const onSubmit = async (data: Course) => {
+    setError(null);
     try {
       let resultAction: PayloadAction<{
         message: string;
@@ -147,8 +150,15 @@ function ModalEditAdd({
           data: CreateCourse;
         }>;
       }
+      const payload = resultAction.payload as { message: string; error?: string };
+      if (payload?.error) {
+        // The thunk fulfills with a Spanish `error`; keep the modal open so
+        // the user can fix the data without losing their input.
+        setError(payload.error);
+        return;
+      }
       setSelectedCourse(null);
-      setMessage((resultAction.payload as { message: string }).message);
+      toast.success(payload.message);
       setOpenModal({ active: false, type: "" });
     } catch (error) {
       console.error(error);
@@ -209,18 +219,19 @@ function ModalEditAdd({
                 type="text"
                 className="grow"
                 placeholder="Nombre Curso"
+                aria-label="Nombre del curso"
+                aria-invalid={errors.name ? true : undefined}
+                aria-describedby={errors.name ? nameErrorId : undefined}
                 {...register("name", {
                   required: "Este campo es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "Debe tener al menos 3 caracteres",
-                  },
+                  validate: (value) =>
+                    (value ?? "").trim().length >= 3 || "Debe tener al menos 3 caracteres",
                 })}
               />
             </label>
           </div>
           {errors.name && (
-            <span className="text-error text-xs mt-1 pl-1">
+            <span id={nameErrorId} className="text-error text-xs mt-1 pl-1">
               {errors?.name?.message}
             </span>
           )}
@@ -231,7 +242,7 @@ function ModalEditAdd({
                   type="button"
                   onClick={applyBold}
                   aria-label="Negrita"
-                  className="btn btn-xs btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
+                  className="btn btn-sm min-h-10 btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
                   <IconBold size={14} />
                   Negrita
                 </button>
@@ -243,7 +254,7 @@ function ModalEditAdd({
                   type="button"
                   onClick={applyList}
                   aria-label="Lista"
-                  className="btn btn-xs btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
+                  className="btn btn-sm min-h-10 btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
                   <IconList size={14} />
                   Lista
                 </button>
@@ -255,7 +266,7 @@ function ModalEditAdd({
                   type="button"
                   onClick={applyLink}
                   aria-label="Enlace"
-                  className="btn btn-xs btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
+                  className="btn btn-sm min-h-10 btn-ghost text-darkpink hover:bg-darkpink hover:text-white">
                   <IconLink size={14} />
                   Enlace
                 </button>
@@ -265,6 +276,7 @@ function ModalEditAdd({
                 data-tip="Seleccioná texto y usá los botones para darle formato. Enter crea un salto de línea.">
                 <IconHelpCircle
                   size={16}
+                  role="img"
                   aria-label="Ayuda de formato"
                   className="text-gray-400 hover:text-white" />
               </div>
@@ -273,6 +285,9 @@ function ModalEditAdd({
               defaultValue={selectedCourse ? selectedCourse.description : ""}
               className="textarea textarea-bordered w-full text-base h-32"
               placeholder="Descripcion"
+              aria-label="Descripción del curso"
+              aria-invalid={errors.description ? true : undefined}
+              aria-describedby={errors.description ? descriptionErrorId : undefined}
               {...descriptionField}
               ref={(element) => {
                 descriptionFieldRef(element);
@@ -285,12 +300,14 @@ function ModalEditAdd({
             </span>
           </div>
           {errors.description && (
-            <span className="text-error text-xs mt-1 pl-1">
+            <span id={descriptionErrorId} className="text-error text-xs mt-1 pl-1">
               {errors?.description?.message}
             </span>
           )}
           {error && (
-            <span className="text-error text-xs mt-1 pl-1">{error}</span>
+            <span role="alert" className="text-error text-xs mt-1 pl-1">
+              {error}
+            </span>
           )}
           <button
             type="submit"
