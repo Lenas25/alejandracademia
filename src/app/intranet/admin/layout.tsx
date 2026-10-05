@@ -3,6 +3,7 @@
 import { Sidebar } from "@/components";
 import RequireAuth from "@/components/intranet/RequireAuth";
 import { ToastProvider } from "@/components/intranet/ui/Toast";
+import { UnsavedChangesProvider } from "@/components/intranet/ui/UnsavedChanges";
 import { usePathname } from "next/navigation";
 
 export default function Layout({
@@ -15,6 +16,9 @@ export default function Layout({
   return (
     <RequireAuth>
       <ToastProvider>
+      {/* Single guard provider for the whole shell: wraps the Sidebar (logout)
+          and the page (forms, tabs) so one set of listeners guards both. */}
+      <UnsavedChangesProvider>
       <div className="relative p-3 sm:p-5 md:p-7 md:min-h-screen overflow-x-clip">
         <Sidebar pathname={pathname} />
         {/* `pt-16` clears the fixed mobile hamburger button (Sidebar);
@@ -26,6 +30,7 @@ export default function Layout({
         {children}
         </div>
       </div>
+      </UnsavedChangesProvider>
       </ToastProvider>
     </RequireAuth>
   );

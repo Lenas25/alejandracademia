@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation"; // Cambia esto a next/navigation
 import { useEffect, useState } from "react";
 import SidebarLink from "./SidebarLink";
+import { useUnsavedGuard } from "@/components/intranet/ui/UnsavedChanges";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { setUser } from "@/redux/slices/userSlice";
 import { Roles } from "@/types/roles";
@@ -22,6 +23,7 @@ export function Sidebar({ pathname }: { pathname: string }) {
   const user = useAppSelector((state) => state.user.userLogin);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { confirmLeave } = useUnsavedGuard();
   const role = user?.role === Roles.TUTOR ? Roles.ADMIN : user?.role;
   const path = pathname.replace(`/intranet/${role}`, "");
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -45,6 +47,9 @@ export function Sidebar({ pathname }: { pathname: string }) {
     dispatch(setUser(null));
     router.replace("/intranet");
   };
+
+  // Logging out discards any unsaved form state, so ask first when dirty.
+  const requestLogout = () => confirmLeave(() => userLogout());
 
   const getRoutesByRole = (role: string | undefined) => {
     switch (role) {
@@ -125,7 +130,11 @@ export function Sidebar({ pathname }: { pathname: string }) {
         <div className="p-3 border-t border-white/10">
           <button
             type="button"
-            onClick={userLogout}
+            onClick={() => {
+              // Close the drawer so the confirm dialog is not shown over it.
+              setIsMobileNavOpen(false);
+              requestLogout();
+            }}
             className="flex items-center gap-3 w-full rounded-lg px-4 py-3 text-base font-medium text-white/80 hover:bg-rose hover:text-white transition-colors">
             <IconLogout2 size={22} className="shrink-0" />
             Salir
@@ -167,7 +176,7 @@ export function Sidebar({ pathname }: { pathname: string }) {
         <div className="w-full px-1.5 shrink-0">
           <button
             type="button"
-            onClick={userLogout}
+            onClick={requestLogout}
             aria-label="Salir"
             className="flex flex-col items-center justify-center gap-1 w-full min-h-14 rounded-xl px-1 py-2 text-white/80 hover:bg-rose hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
             <IconLogout2 size={24} className="shrink-0" />

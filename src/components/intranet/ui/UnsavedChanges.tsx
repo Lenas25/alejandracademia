@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -22,8 +22,13 @@ import { IconAlertTriangle } from "@tabler/icons-react";
 //    asks the user first),
 //  - warns on reload / tab close (`beforeunload`) while dirty,
 //  - intercepts same-origin <a> clicks while dirty and routes them through
-//    `confirmLeave`.
-// Browser Back is intentionally NOT intercepted (see note near the listeners).
+//    `confirmLeave`,
+//  - best-effort guards browser Back with a sentinel history entry (see the
+//    long note above the popstate effect for the mechanics and limitations).
+//
+// Mount ONE provider for the whole shell (admin/alumno layouts) so the Sidebar
+// (logout) and the pages share it; nested providers would double-register the
+// document/window listeners.
 
 interface UnsavedStore {
   set: (key: string, label?: string) => void;
@@ -125,6 +130,7 @@ function buildMessage(labels: string[]): string {
 
 export function UnsavedChangesProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [store] = useState(createStore);
   const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, () => "[0]");
 
@@ -172,13 +178,66 @@ export function UnsavedChangesProvider({ children }: { children: React.ReactNode
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [isDirty]);
 
+  // Browser Back (best effort, only while dirty).
+  //
+  // The Next App Router has no `beforeNavigate` hook and `popstate` cannot be
+  // cancelled: by the time it fires the browser has already moved. The trick:
+  //  1. When the form becomes dirty, push ONE sentinel entry with the same URL
+  //     and the SAME history.state (keeps Next's router state intact). The
+  //     stack is now [..., prev, A, A'] and we sit on A'.
+  //  2. Back lands on A (same URL, so the page does not change) and fires
+  //     `popstate`. We re-push a sentinel (pushState does not fire popstate, so
+  //     no loop) to be on top again, and ask for confirmation. Stack: [prev, A, A''].
+  //  3. "Seguir editando": nothing else to do, the user is still on the page.
+  //     "Descartar y salir": flags are cleared (listeners go away) and we
+  //     history.go(-2) (over A'' and A) to land on `prev`.
+  //
+  // Limitations: when the form is saved/cleaned the extra entry stays (we do
+  // not history.back() to remove it, which could race with other navigation),
+  // so the next Back press lands on the same URL once, harmlessly. The Forward
+  // button is not guarded (re-pushing drops forward entries). If the page was
+  // the first entry of the tab, go(-2) has nowhere to go and the user stays
+  // (with the changes already discarded).
+  const backSentinelPushed = useRef(false);
+  const leavingViaBack = useRef(false);
+
+  // The sentinel stays valid for as long as we are on the same route, so it is
+  // NOT reset when the form becomes clean (that would push one more entry per
+  // dirty cycle, e.g. every failed save). A route change makes it stale.
+  useEffect(() => {
+    backSentinelPushed.current = false;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    leavingViaBack.current = false;
+    if (!backSentinelPushed.current) {
+      backSentinelPushed.current = true;
+      window.history.pushState(window.history.state, "", window.location.href);
+    }
+
+    const leaveViaBack = () => {
+      leavingViaBack.current = true;
+      const here = window.location.href;
+      window.history.go(-2);
+      // If the page was the first entry of the tab, go(-2) is a no-op and we
+      // stay mounted: re-arm the popstate handler.
+      window.setTimeout(() => {
+        if (window.location.href === here) leavingViaBack.current = false;
+      }, 400);
+    };
+    const onPopState = () => {
+      // Ignore the popstate caused by our own go(-2), and stale events.
+      if (leavingViaBack.current || store.size() === 0) return;
+      window.history.pushState(window.history.state, "", window.location.href);
+      confirmLeave(leaveViaBack);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [isDirty, store, confirmLeave]);
+
   // In-app link clicks (sidebar, breadcrumbs, ...). Capture phase on document
   // runs before React's root listener, so next/link never sees the click.
-  //
-  // Browser Back/Forward is deliberately not guarded: in the App Router the
-  // only way to veto popstate is to push sentinel history entries and fight
-  // the router's own history state, which is fragile. `beforeunload` still
-  // covers reload/close, and in-app links + tab switches are confirmed.
   useEffect(() => {
     if (!isDirty) return;
     const onClick = (e: MouseEvent) => {

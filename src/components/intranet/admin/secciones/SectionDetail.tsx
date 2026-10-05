@@ -20,10 +20,7 @@ import PagosTab from "./PagosTab";
 import SectionForm from "./SectionForm";
 import { useToast } from "@/components/intranet/ui/Toast";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
-import {
-  UnsavedChangesProvider,
-  useUnsavedGuard,
-} from "@/components/intranet/ui/UnsavedChanges";
+import { useUnsavedGuard } from "@/components/intranet/ui/UnsavedChanges";
 
 type TabKey = "estudiantes" | "notas" | "pagos" | "asistencia";
 
@@ -42,7 +39,7 @@ interface SectionDetailProps {
   sectionId: number;
 }
 
-function SectionDetailContent({ sectionId }: SectionDetailProps) {
+function SectionDetail({ sectionId }: SectionDetailProps) {
   const dispatch = useAppDispatch();
   const { confirmLeave } = useUnsavedGuard();
   const router = useRouter();
@@ -296,15 +293,6 @@ function SectionDetailContent({ sectionId }: SectionDetailProps) {
       )}
       <DeleteSectionDialog section={section} onConfirm={handleDelete} />
     </>
-  );
-}
-
-// The guard provider must wrap the component that calls `confirmLeave`.
-function SectionDetail(props: SectionDetailProps) {
-  return (
-    <UnsavedChangesProvider>
-      <SectionDetailContent {...props} />
-    </UnsavedChangesProvider>
   );
 }
 
