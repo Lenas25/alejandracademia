@@ -14,6 +14,9 @@ const paymentSlice = createSlice({
     {
       // Admin Pagos tab: flat list, grouped by `enrollmentId` in the component.
       sectionInstallments: [] as PaymentSectionRow[],
+      // Section the `sectionInstallments` list belongs to (guards against stale
+      // lists / out-of-order responses after switching sections).
+      sectionInstallmentsSectionId: null as number | null,
       // Alumno CuotasCard: read-only, single enrollment.
       myInstallments: [] as Payment[],
       message: null as string | null,
@@ -29,11 +32,19 @@ const paymentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchSectionInstallments.pending, (state) => {
+    .addCase(fetchSectionInstallments.pending, (state, action) => {
       state.status = 'loading';
+      // Switching sections: drop the previous section's rows. A refetch of the
+      // same section keeps them so the list does not flash away.
+      if (state.sectionInstallmentsSectionId !== action.meta.arg) {
+        state.sectionInstallments = [];
+        state.sectionInstallmentsSectionId = action.meta.arg;
+      }
       state.errorMessage = null;
     })
     .addCase(fetchSectionInstallments.fulfilled, (state, action) => {
+      // Ignore a late response for a section that is no longer the current one.
+      if (state.sectionInstallmentsSectionId !== action.meta.arg) return;
       state.status = 'succeeded';
       state.sectionInstallments = action.payload.data;
       state.errorMessage = null;
@@ -64,6 +75,13 @@ const paymentSlice = createSlice({
     });
     builder.addCase(setSectionInstallmentDueDate.fulfilled, (state, action) => {
       state.message = action.payload.message;
+      // Ignore the payload if it is for a section other than the loaded one.
+      if (action.meta.arg.sectionId !== state.sectionInstallmentsSectionId) return;
+      // The endpoint returns the full updated section row list: replace it so
+      // the Pagos tab needs no refetch after each due-date edit.
+      if (Array.isArray(action.payload.data)) {
+        state.sectionInstallments = action.payload.data;
+      }
     });
   }
 });
