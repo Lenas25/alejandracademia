@@ -22,7 +22,9 @@ import {
   IconChevronUp,
   IconSearch,
   IconTrash,
+  IconX,
 } from "@tabler/icons-react";
+import { SegmentedToggle } from "@/components/intranet/ui/SegmentedToggle";
 import TabHeader from "./TabHeader";
 
 interface AsistenciaTabProps {
@@ -34,6 +36,14 @@ type ViewMode = "registro" | "metricas";
 // Below this attendance percentage the Métricas table flags the row in
 // yellow — informational only (spec: "informational only, do not block").
 const LOW_ATTENDANCE_THRESHOLD = 70;
+
+// Debounce for the day-list search box.
+const DAY_SEARCH_DEBOUNCE_MS = 200;
+
+const VIEW_OPTIONS = [
+  { value: "registro", label: "Registro" },
+  { value: "metricas", label: "Métricas" },
+];
 
 // How long the "just added" ring stays on a freshly created day.
 const HIGHLIGHT_MS = 2200;
@@ -95,6 +105,60 @@ function formatMonthLabel(dateStr: string): string {
   return `${MONTHS_LONG[parts.month - 1]} ${parts.year}`;
 }
 
+// Lowercases and strips accents so "miércoles"/"mie" and "MAR" all compare.
+function normalizeText(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+// Searchable text of a day: short label ("mié 12 ago 2026"), ISO date and the
+// long month name, so "12", "ago", "agosto", "2026" and "2026-08-12" all hit.
+function buildDaySearchText(day: AttendanceDaySummary): string {
+  const parts = parseDateParts(day.date);
+  const longMonth = parts ? MONTHS_LONG[parts.month - 1] : "";
+  return normalizeText(`${formatDayLabel(day.date)} ${day.date} ${longMonth}`);
+}
+
+// Every whitespace-separated token of the (already normalized) term must match.
+function dayMatchesSearch(day: AttendanceDaySummary, term: string): boolean {
+  if (!term) return true;
+  const haystack = buildDaySearchText(day);
+  return term.split(/\s+/).every((token) => haystack.includes(token));
+}
+
+interface DayFilters {
+  term: string;
+  month: string;
+  onlyAbsences: boolean;
+}
+
+function filterDays(days: AttendanceDaySummary[], filters: DayFilters): AttendanceDaySummary[] {
+  const { term, month, onlyAbsences } = filters;
+  if (!term && !month && !onlyAbsences) return days;
+  return days.filter(
+    (day) =>
+      (!month || day.date.slice(0, 7) === month) &&
+      (!onlyAbsences || day.presentCount < day.totalCount) &&
+      dayMatchesSearch(day, term),
+  );
+}
+
+function groupByMonth(sortedDays: AttendanceDaySummary[]): MonthGroup[] {
+  const groups: MonthGroup[] = [];
+  for (const day of sortedDays) {
+    const key = day.date.slice(0, 7);
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) {
+      last.days.push(day);
+    } else {
+      groups.push({ key, label: formatMonthLabel(day.date), days: [day] });
+    }
+  }
+  return groups;
+}
+
 interface MonthGroup {
   key: string;
   label: string;
@@ -117,6 +181,13 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
   const status = useAppSelector((state) => state.attendance.status);
 
   const [viewMode, setViewMode] = useState<ViewMode>("registro");
+
+  // Day-list filters (Registro view). `searchInput` is the live text,
+  // `searchTerm` its debounced, normalized twin used for matching.
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [monthFilter, setMonthFilter] = useState("");
+  const [onlyAbsences, setOnlyAbsences] = useState(false);
 
   const [newDayDate, setNewDayDate] = useState<string>(getTodayLocalDateString());
   const [isAddingDay, setIsAddingDay] = useState(false);
@@ -172,6 +243,10 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
     setPendingNav(null);
     setConfirmDeleteDayId(null);
     setRosterSearchTerm("");
+    setSearchInput("");
+    setSearchTerm("");
+    setMonthFilter("");
+    setOnlyAbsences(false);
     dispatch(clearAttendanceDayDetail());
     return () => {
       daysRequest.current?.abort();
@@ -208,25 +283,58 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
     }
   }, [dayDetail, expandedDayId]);
 
-  // Newest first, grouped under month headers. The backend order is left
-  // untouched; sorting happens here on the YYYY-MM-DD strings.
-  const monthGroups = useMemo<MonthGroup[]>(() => {
-    const sorted = [...days].sort((a, b) => {
-      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
-      return b.id - a.id;
-    });
-    const groups: MonthGroup[] = [];
-    for (const day of sorted) {
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchTerm(normalizeText(searchInput.trim())), DAY_SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Newest first. The backend order is left untouched; sorting happens here
+  // on the YYYY-MM-DD strings.
+  const sortedDays = useMemo(
+    () =>
+      [...days].sort((a, b) => {
+        if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+        return b.id - a.id;
+      }),
+    [days],
+  );
+
+  // Months present in the data, newest first (sortedDays is already ordered).
+  const monthOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const options: { key: string; label: string }[] = [];
+    for (const day of sortedDays) {
       const key = day.date.slice(0, 7);
-      const last = groups[groups.length - 1];
-      if (last && last.key === key) {
-        last.days.push(day);
-      } else {
-        groups.push({ key, label: formatMonthLabel(day.date), days: [day] });
-      }
+      if (seen.has(key)) continue;
+      seen.add(key);
+      options.push({ key, label: formatMonthLabel(day.date) });
     }
-    return groups;
-  }, [days]);
+    return options;
+  }, [sortedDays]);
+
+  // A stored month that vanished from the data (deleted day / new section)
+  // must not silently hide everything.
+  const effectiveMonth = monthOptions.some((o) => o.key === monthFilter) ? monthFilter : "";
+  const hasActiveFilters = searchInput.trim() !== "" || effectiveMonth !== "" || onlyAbsences;
+
+  // Filters apply BEFORE month grouping, so headers only exist for months
+  // with visible days. The open day is always kept visible: hiding it would
+  // strand its unsaved edits behind a filter.
+  const visibleDays = useMemo(() => {
+    const filtered = new Set(
+      filterDays(sortedDays, { term: searchTerm, month: effectiveMonth, onlyAbsences }).map((d) => d.id),
+    );
+    return sortedDays.filter((d) => filtered.has(d.id) || d.id === expandedDayId);
+  }, [sortedDays, searchTerm, effectiveMonth, onlyAbsences, expandedDayId]);
+
+  const monthGroups = useMemo(() => groupByMonth(visibleDays), [visibleDays]);
+
+  const clearFilters = useCallback(() => {
+    setSearchInput("");
+    setSearchTerm("");
+    setMonthFilter("");
+    setOnlyAbsences(false);
+  }, []);
 
   const changedCount = useMemo(() => {
     if (!dayDetail || dayDetail.id !== expandedDayId) return 0;
@@ -347,6 +455,9 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
         if (sectionIdRef.current !== sectionId) return;
         const newId = resultAction.payload.data?.id;
         if (typeof newId === "number") {
+          // The new day may be hidden by an active filter (its counts are
+          // not known yet), so reset them before expanding / scrolling to it.
+          clearFilters();
           setScrollToId(newId);
           requestNav(newId);
         }
@@ -419,26 +530,13 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
   return (
     <div className="flex flex-col gap-5">
       <TabHeader title="Asistencia">
-        <button
-          type="button"
-          onClick={() => setViewMode("registro")}
-          className={`btn btn-sm flex-1 md:flex-none border-none ${
-            viewMode === "registro"
-              ? "bg-darkpink text-white hover:bg-black"
-              : "btn-ghost bg-white text-black hover:bg-darkpink hover:text-white"
-          }`}>
-          Registro
-        </button>
-        <button
-          type="button"
-          onClick={() => setViewMode("metricas")}
-          className={`btn btn-sm flex-1 md:flex-none border-none ${
-            viewMode === "metricas"
-              ? "bg-darkpink text-white hover:bg-black"
-              : "btn-ghost bg-white text-black hover:bg-darkpink hover:text-white"
-          }`}>
-          Métricas
-        </button>
+        <SegmentedToggle
+          variant="radio"
+          ariaLabel="Vista de asistencia"
+          options={VIEW_OPTIONS}
+          value={viewMode}
+          onChange={(v) => setViewMode(v as ViewMode)}
+        />
       </TabHeader>
 
       {viewMode === "registro" ? (
@@ -476,6 +574,65 @@ function AsistenciaTab({ selectedSection }: AsistenciaTabProps) {
             <p className="text-center py-10 text-gray-400">Aún no hay días de asistencia registrados</p>
           ) : (
             <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                  <div className="relative md:flex-1">
+                    <input
+                      type="search"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                      placeholder="Buscar día (ej. lun, agosto, 2026-08-12)..."
+                      aria-label="Buscar día"
+                      className="input input-bordered h-11 w-full bg-white pr-10 text-black [&::-webkit-search-cancel-button]:hidden"
+                    />
+                    <IconSearch
+                      size={16}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                  </div>
+                  <select
+                    aria-label="Filtrar por mes"
+                    value={effectiveMonth}
+                    onChange={(e) => setMonthFilter(e.target.value)}
+                    className="select select-bordered h-11 w-full bg-white text-black md:w-52">
+                    <option value="">Todos los meses</option>
+                    {monthOptions.map((option) => (
+                      <option key={option.key} value={option.key}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    aria-pressed={onlyAbsences}
+                    onClick={() => setOnlyAbsences((v) => !v)}
+                    className={`btn h-11 min-h-11 w-full whitespace-nowrap md:w-auto ${
+                      onlyAbsences
+                        ? "border-none bg-darkpink text-white hover:bg-black"
+                        : "btn-ghost border border-grey bg-white text-black hover:bg-lightpink"
+                    }`}>
+                    Solo con ausencias
+                  </button>
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="btn btn-ghost h-11 min-h-11 w-full whitespace-nowrap bg-white text-gray-600 md:w-auto">
+                      <IconX size={16} aria-hidden="true" />
+                      Limpiar filtros
+                    </button>
+                  )}
+                </div>
+                <p className="text-sm text-gray-500" aria-live="polite">
+                  Mostrando {visibleDays.length} de {days.length} {days.length === 1 ? "día" : "días"}
+                </p>
+              </div>
+
+              {monthGroups.length === 0 && (
+                <p className="text-center py-10 text-gray-400">No hay días que coincidan con los filtros</p>
+              )}
+
               {monthGroups.map((group) => (
                 <section key={group.key} aria-label={group.label} className="flex flex-col gap-3">
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{group.label}</h3>

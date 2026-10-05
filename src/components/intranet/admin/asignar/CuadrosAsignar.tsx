@@ -14,6 +14,7 @@ import { fetchUsers } from "@/redux/service/userService";
 import { Roles } from "@/types/roles";
 import { User } from "@/types/user";
 import { IconUserPlus, IconX, IconSearch } from "@tabler/icons-react";
+import { SegmentedToggle } from "@/components/intranet/ui/SegmentedToggle";
 import TabHeader from "@/components/intranet/admin/secciones/TabHeader";
 
 interface CuadrosAsignarProps {
@@ -323,9 +324,9 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
     [allUsers, selectedIds],
   );
 
-  const tabs: { key: PanelKind; label: string; count: number }[] = [
-    { key: "available", label: "Disponibles", count: availableUsers.length },
-    { key: "assigned", label: "Asignados", count: selectedUsers.length },
+  const tabs = [
+    { value: "available", label: "Disponibles", count: availableUsers.length },
+    { value: "assigned", label: "Asignados", count: selectedUsers.length },
   ];
 
   const availablePanel = (scrollable: boolean) => (
@@ -375,37 +376,17 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
 
           {!isLg ? (
             <div className="flex flex-col gap-4">
-              <div
-                role="tablist"
-                aria-label="Listas de estudiantes"
-                className="grid grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1"
-              >
-                {tabs.map((tab) => {
-                  const selected = activeTab === tab.key;
-                  return (
-                    <button
-                      key={tab.key}
-                      type="button"
-                      role="tab"
-                      id={`tab-${tab.key}`}
-                      aria-selected={selected}
-                      aria-controls={`panel-${tab.key}`}
-                      onClick={() => setActiveTab(tab.key)}
-                      className={`min-h-11 rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-darkpink ${
-                        selected
-                          ? "bg-white text-black shadow-sm"
-                          : "text-gray-500 hover:text-black"
-                      }`}
-                    >
-                      {tab.label} ({tab.count})
-                    </button>
-                  );
-                })}
-              </div>
+              <SegmentedToggle
+                ariaLabel="Listas de estudiantes"
+                idPrefix="asignar"
+                options={tabs}
+                value={activeTab}
+                onChange={(v) => setActiveTab(v as PanelKind)}
+              />
               <div
                 role="tabpanel"
-                id={`panel-${activeTab}`}
-                aria-labelledby={`tab-${activeTab}`}
+                id={`asignar-panel-${activeTab}`}
+                aria-labelledby={`asignar-tab-${activeTab}`}
               >
                 {activeTab === "available"
                   ? availablePanel(false)

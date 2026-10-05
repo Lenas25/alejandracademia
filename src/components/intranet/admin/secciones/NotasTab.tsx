@@ -16,6 +16,7 @@ import { Activity } from "@/types/activity";
 import { IconFileDownload } from "@tabler/icons-react";
 import RowStudents from "../notas/RowStudents";
 import { TableStudents } from "../notas/TableStudents";
+import { SegmentedToggle } from "@/components/intranet/ui/SegmentedToggle";
 import TabHeader from "./TabHeader";
 
 interface NotasTabProps {
@@ -23,6 +24,11 @@ interface NotasTabProps {
 }
 
 type ViewMode = "input" | "view";
+
+const VIEW_OPTIONS = [
+  { value: "input", label: "Calificar" },
+  { value: "view", label: "Notas" },
+];
 
 // Notas Tab (section-detail grading flow), used by both admin and tutor.
 // Mirrors PagosTab's self-contained shape: owns its own fetches keyed on
@@ -140,29 +146,13 @@ function NotasTab({ selectedSection }: NotasTabProps) {
     <div className="flex flex-col gap-5">
       <TabHeader title={viewMode === "input" ? "Calificar Notas" : "Ver Notas"}>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
-          {/* View-mode toggle */}
-          <div className="flex gap-2 flex-1 sm:flex-none">
-            <button
-              type="button"
-              onClick={() => setViewMode("input")}
-              className={`btn btn-sm flex-1 sm:flex-none border-none ${
-                viewMode === "input"
-                  ? "bg-darkpink text-white hover:bg-black"
-                  : "btn-ghost bg-white text-black hover:bg-darkpink hover:text-white"
-              }`}>
-              Calificar
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("view")}
-              className={`btn btn-sm flex-1 sm:flex-none border-none ${
-                viewMode === "view"
-                  ? "bg-darkpink text-white hover:bg-black"
-                  : "btn-ghost bg-white text-black hover:bg-darkpink hover:text-white"
-              }`}>
-              Notas
-            </button>
-          </div>
+          <SegmentedToggle
+            variant="radio"
+            ariaLabel="Modo de vista de notas"
+            options={VIEW_OPTIONS}
+            value={viewMode}
+            onChange={(v) => setViewMode(v as ViewMode)}
+          />
           {/* One-shot action, kept in the header toolbar. `disabled:` color
               overrides are required because daisyUI's `.btn:disabled` rule
               otherwise repaints the button grey with faint text (unreadable)

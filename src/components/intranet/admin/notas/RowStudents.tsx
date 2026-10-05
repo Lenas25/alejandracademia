@@ -310,8 +310,8 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
           {/* Responsive "table": one DOM node per field (each grade input
               registers exactly once via `originalIndex`) that is laid out
               as a real table on md+ screens and as compact rows on mobile
-              (<768px: name / DNI + promedio on the left, grade input on the
-              right), purely via `md:table*` display utilities — avoids
+              (<768px: 2-column grid; name / DNI on the left, grade input with
+              its error and a "Prom." caption stacked on the right), purely via `md:table*` display utilities — avoids
               binding the same react-hook-form field to two different DOM
               nodes across breakpoints, which would desync the field's
               tracked value. */}
@@ -368,7 +368,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                     <div
                       key={gr.id_enrollment}
                       role="row"
-                      className={`grid grid-cols-[auto_minmax(0,1fr)_6rem] items-center gap-x-3 gap-y-0.5 rounded-lg border p-3 bg-white md:table-row md:border-0 md:rounded-none md:p-0 md:bg-transparent md:hover:bg-lightpink/40 ${
+                      className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 rounded-lg border p-3 bg-white md:table-row md:border-0 md:rounded-none md:p-0 md:bg-transparent md:hover:bg-lightpink/40 ${
                         error ? "border-red-300" : "border-grey"
                       }`}
                     >
@@ -385,7 +385,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                       </div>
                       <div
                         role="cell"
-                        className={`col-span-2 col-start-1 row-start-1 min-w-0 ${cellBase}`}
+                        className={`col-start-1 row-start-1 min-w-0 ${cellBase}`}
                       >
                         <span className="block break-words font-medium text-black md:font-normal">
                           {userInfo?.name} {userInfo?.lastName}
@@ -393,7 +393,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                       </div>
                       <div
                         role="cell"
-                        className={`col-start-3 row-span-2 row-start-1 flex flex-col items-end gap-1 ${cellBase}`}
+                        className={`col-start-2 row-start-1 flex flex-col items-end gap-1 ${cellBase}`}
                       >
                         <label htmlFor={inputId} className="sr-only">
                           Nota de {userInfo?.name} {userInfo?.lastName}
@@ -448,12 +448,11 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
                       </div>
                       <div
                         role="cell"
-                        className={`col-start-2 row-start-2 min-w-0 ${cellBase}`}
+                        className={`col-start-2 row-start-2 text-right ${cellBase} md:text-left`}
                       >
-                        <span className="text-xs text-gray-500 md:hidden">
-                          Promedio actual:{" "}
-                        </span>
-                        <span className="text-xs text-gray-500 tabular-nums md:text-sm md:text-gray-400">
+                        <span className="whitespace-nowrap text-xs text-gray-500 tabular-nums md:text-sm md:text-gray-400">
+                          <span aria-hidden="true" className="md:hidden">Prom. </span>
+                          <span className="sr-only md:hidden">Promedio actual: </span>
                           {gr.enrollment.final_grade != null
                             ? Number(gr.enrollment.final_grade).toFixed(2)
                             : "—"}
