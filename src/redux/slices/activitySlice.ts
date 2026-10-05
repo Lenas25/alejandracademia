@@ -17,6 +17,8 @@ const activitySlice = createSlice({
     builder
     .addCase(fetchActivity.pending, (state) => {
       state.status = 'loading';
+      // Drop the previous section's activities so consumers never act on a stale list.
+      state.activities = [];
     })
     .addCase(fetchActivity.fulfilled, (state, action) => {
       state.status = 'succeeded';
