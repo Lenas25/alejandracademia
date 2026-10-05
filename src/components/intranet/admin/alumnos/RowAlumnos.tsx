@@ -1,16 +1,15 @@
 import { User } from "@/types/user";
-import { IconHistory, IconTrash } from "@tabler/icons-react";
+import { IconHistory, IconPencil, IconTrash } from "@tabler/icons-react";
 import Link from "next/link";
-import { useState } from "react";
-import ModalDelete from "./ModalDelete";
-import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { deleteUser } from "@/redux/service/userService";
+import { useAppSelector } from "@/redux/stores";
 import { useToast } from "@/components/intranet/ui/Toast";
 
 interface RowAlumnosProps {
   user: User;
   handleRadioChange: (user: User) => void;
   selectedUser: User | null;
+  onRequestDelete: (user: User) => void;
+  onRequestEdit: (user: User) => void;
   variant?: "row" | "card";
 }
 
@@ -18,12 +17,12 @@ function RowAlumnos({
   user,
   handleRadioChange,
   selectedUser,
+  onRequestDelete,
+  onRequestEdit,
   variant = "row",
 }: RowAlumnosProps) {
-  const dispatch = useAppDispatch();
-  const toast = useToast();
-  const [deleting, setDeleting] = useState(false);
   const currentUser = useAppSelector((state) => state.user?.userLogin);
+  const toast = useToast();
 
   let classRole = "bg-black";
   switch (user.role) {
@@ -38,39 +37,12 @@ function RowAlumnos({
       break;
   }
 
-  // Card and table row both mount in the DOM (CSS toggles which is visible),
-  // so each needs its own dialog id.
-  const dialogId = `delete_${variant === "card" ? "card_" : ""}${user.id}`;
-
   const handleModalDelete = () => {
-    if (currentUser?.id !== user.id) {
-      (
-        document.getElementById(dialogId) as HTMLDialogElement
-      )?.showModal();
+    if (currentUser?.id === user.id) {
+      toast.error("No puedes eliminar tu propia cuenta.");
+      return;
     }
-  };
-
-  const handleDelete = async () => {
-    if (deleting) return;
-    setDeleting(true);
-    try {
-    const resultAction = await dispatch(deleteUser(user.id.toString()));
-    if (deleteUser.fulfilled.match(resultAction)) {
-      const payload = resultAction.payload as { message: string; error?: string };
-      if (payload.error) {
-        toast.error(`Error al eliminar el usuario: ${payload.error}`);
-      } else {
-        toast.success(payload.message);
-      }
-    } else {
-      toast.error("No se pudo eliminar el usuario. Inténtalo de nuevo.");
-    }
-    } finally {
-      setDeleting(false);
-    }
-    (
-      document.getElementById(dialogId) as HTMLDialogElement
-    )?.close();
+    onRequestDelete(user);
   };
 
   const roleLabel = `${(user.role ?? "")
@@ -117,13 +89,19 @@ function RowAlumnos({
           )}
           <button
             type="button"
+            aria-label={`Editar a ${fullName}`}
+            className="btn btn-ghost btn-sm min-h-10 min-w-10 bg-flamingo text-black flex items-center justify-center"
+            onClick={() => onRequestEdit(user)}>
+            <IconPencil />
+          </button>
+          <button
+            type="button"
             className="btn btn-ghost btn-sm min-h-10 bg-black text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-black"
             onClick={handleModalDelete}>
             <IconTrash />
             Eliminar
           </button>
         </div>
-        <ModalDelete handleDelete={handleDelete} pending={deleting} info={`${variant === "card" ? "card_" : ""}${user.id}`} name={fullName} />
       </div>
     );
   }
@@ -166,6 +144,14 @@ function RowAlumnos({
       </td>
       <th>
         <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            aria-label={`Editar a ${fullName}`}
+            className="btn btn-ghost btn-xs bg-flamingo text-black py-2 min-h-10 flex items-center justify-center gap-2 flex-nowrap text-sm md:text-lg h-auto"
+            onClick={() => onRequestEdit(user)}>
+            <IconPencil />
+            Editar
+          </button>
           {user.role === "alumno" && (
             <Link
               href={`/intranet/admin/alumnos/${user.id}`}
@@ -182,7 +168,6 @@ function RowAlumnos({
             Eliminar
           </button>
         </div>
-        <ModalDelete handleDelete={handleDelete} pending={deleting} info={user.id.toString()} name={`${user.name ?? ''} ${user.lastName ?? ''}`.trim()} />
       </th>
     </tr>
   );

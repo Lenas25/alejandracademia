@@ -6,12 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/stores";
 import { Section } from "@/types/section";
 import { Roles } from "@/types/roles";
-import DeleteSectionDialog from "./DeleteSectionDialog";
 
 interface SectionCardProps {
   section: Section;
   onEdit: (section: Section) => void;
-  onDelete: (section: Section) => void | Promise<void>;
+  onRequestDelete: (section: Section) => void;
 }
 
 // Keep in sync with `images.remotePatterns` in next.config.ts. next/image
@@ -28,7 +27,7 @@ function isAllowedImageHost(url: string): boolean {
   }
 }
 
-function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
+function SectionCard({ section, onEdit, onRequestDelete }: SectionCardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const role = useAppSelector((state) => state.user?.userLogin?.role);
@@ -49,11 +48,7 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
 
   const handleDeleteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    (document.getElementById(`delete_section_${section.id}`) as HTMLDialogElement)?.showModal();
-  };
-
-  const handleConfirmDelete = () => {
-    return onDelete(section);
+    onRequestDelete(section);
   };
 
   return (
@@ -122,7 +117,6 @@ function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
           </div>
         )}
       </div>
-      {isAdmin && <DeleteSectionDialog section={section} onConfirm={handleConfirmDelete} />}
     </div>
   );
 }

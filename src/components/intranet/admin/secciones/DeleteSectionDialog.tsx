@@ -1,7 +1,7 @@
 "use client";
 
 import { IconAlertTriangle } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Section } from "@/types/section";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
@@ -12,38 +12,62 @@ import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 // "Section Deletion" — matrículas, notas y actividades se eliminan
 // permanentemente), so this dialog additionally requires typing a
 // confirmation word before the destructive action is enabled.
+// One instance per list: `section` is the one pending deletion (null = closed).
 interface DeleteSectionDialogProps {
-  section: Section;
-  onConfirm: () => void | Promise<void>;
+  section: Section | null;
+  /**
+   * Controlled mode (list): provide `onClose`; the dialog opens while `section`
+   * is non-null. Legacy mode (SectionDetail): omit `onClose`; the dialog stays
+   * mounted for one section and is opened via showModal() on
+   * `#delete_section_<id>`.
+   */
+  onClose?: () => void;
+  onConfirm: (section: Section) => void | Promise<void>;
 }
 
 const CONFIRM_WORD = "ELIMINAR";
 
-function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
+function DeleteSectionDialog({ section, onClose, onConfirm }: DeleteSectionDialogProps) {
   const [confirmText, setConfirmText] = useState("");
   const [pending, setPending] = useState(false);
-  const dialogId = `delete_section_${section.id}`;
+  const ref = useRef<HTMLDialogElement>(null);
+  const controlled = onClose !== undefined;
+  const open = section !== null;
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog || !controlled) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+    if (open) setConfirmText("");
+  }, [controlled, open, section?.id]);
 
   const handleClose = () => {
+    if (pending) return;
     setConfirmText("");
-    (document.getElementById(dialogId) as HTMLDialogElement)?.close();
+    if (onClose) onClose();
+    else ref.current?.close();
   };
 
   const handleConfirm = async () => {
-    if (pending || confirmText.trim().toUpperCase() !== CONFIRM_WORD) return;
+    if (!section || pending || confirmText.trim().toUpperCase() !== CONFIRM_WORD) return;
     setPending(true);
     try {
-      await onConfirm();
+      await onConfirm(section);
     } finally {
       setPending(false);
     }
-    handleClose();
+    setConfirmText("");
+    if (onClose) onClose();
+    else ref.current?.close();
   };
 
   return (
     <dialog
-      id={dialogId}
+      ref={ref}
+      id={controlled || !section ? undefined : `delete_section_${section.id}`}
       className="modal backdrop-blur-sm"
+      onClose={controlled ? handleClose : () => setConfirmText("")}
       onCancel={(e) => {
         if (pending) e.preventDefault();
       }}
@@ -64,7 +88,7 @@ function DeleteSectionDialog({ section, onConfirm }: DeleteSectionDialogProps) {
         </div>
         <p className="py-4 text-base">
           Vas a eliminar permanentemente la sección{" "}
-          <strong>{section.name}</strong>, junto con:
+          <strong className="break-words">{section?.name}</strong>, junto con:
         </p>
         <ul className="list-disc list-inside text-base text-gray-300 mb-2">
           <li>Todas las matrículas de estudiantes de esta sección</li>

@@ -5,12 +5,20 @@ import RowCursos from "./RowCursos";
 import { useEffect, useMemo, useState } from "react";
 import { Course } from "@/types/course";
 import { IconBook, IconPencil, IconPlus, IconSearch } from "@tabler/icons-react";
-import { fetchCourses } from "@/redux/service/courseService";
+import { deleteCourse, fetchCourses } from "@/redux/service/courseService";
 import ModalEditAdd from "./ModalEditAdd";
 import { Roles } from "@/types/roles";
+import ModalDelete from "./ModalDelete";
+import { deleteImage, extractImageId } from "@/utils/api";
+import { ShowMore } from "@/components/intranet/ui/ShowMore";
+import { usePagedList } from "@/components/intranet/ui/usePagedList";
+import { useToast } from "@/components/intranet/ui/Toast";
+
+const PAGE_SIZE = 20;
 
 export function TableCursos() {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
   const courseStatus = useAppSelector((state) => state.course?.status);
@@ -20,6 +28,9 @@ export function TableCursos() {
     type: string;
   }>({ active: false, type: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  // Single shared delete dialog: the course pending deletion (null = closed).
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCourses());
@@ -34,6 +45,12 @@ export function TableCursos() {
       );
     });
   }, [courses, searchTerm]);
+
+  const { visible, total, shown, remaining, showMore } = usePagedList(
+    filteredCourses,
+    PAGE_SIZE,
+    searchTerm
+  );
 
   const handleRadioChange = (course: Course) => {
     setSelectedCourse(course);
@@ -50,6 +67,40 @@ export function TableCursos() {
     }
   };
 
+  const handleRequestEdit = (course: Course) => {
+    setSelectedCourse(course);
+    setOpenModal({ active: true, type: "edit" });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleting || !courseToDelete) return;
+    const course = courseToDelete;
+    setDeleting(true);
+    try {
+      const resultAction = await dispatch(deleteCourse(course.id));
+      if (deleteCourse.fulfilled.match(resultAction)) {
+        const payload = resultAction.payload;
+        if ("error" in payload && payload.error) {
+          toast.error(`Error al eliminar el curso: ${payload.error}`);
+        } else {
+          if (course.imageUrl) {
+            const publicId = extractImageId(course.imageUrl);
+            if (publicId) {
+              await deleteImage(publicId);
+            }
+          }
+          toast.success(payload.message);
+          if (selectedCourse?.id === course.id) setSelectedCourse(null);
+        }
+      } else {
+        toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
+      }
+    } finally {
+      setDeleting(false);
+    }
+    setCourseToDelete(null);
+  };
+
   return (
     <>
       <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
@@ -61,7 +112,7 @@ export function TableCursos() {
         </div>
         <IconBook size={30} className="text-white" />
       </div>
-      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         {userLogin?.role === Roles.ADMIN && (
           <div className="flex flex-col gap-5">
             {/* `flex-col` guarantees a full-width stack on mobile (not
@@ -99,42 +150,83 @@ export function TableCursos() {
           </div>
         )}
 
-        <div className="table-scroll size-full">
-          <table className="table mb-5 min-w-[560px]">
+        {/* Below md: card list. md and up: table. */}
+        <div className="md:hidden flex flex-col gap-3 my-5">
+          {courseStatus === "loading" ? (
+            <div className="text-center py-10">
+              <span className="loading loading-spinner loading-lg text-darkpink" />
+            </div>
+          ) : filteredCourses.length === 0 && courseStatus === "succeeded" ? (
+            <p className="text-center py-10 text-gray-400">No hay cursos registrados</p>
+          ) : (
+            visible.map((course) => (
+              <RowCursos
+                key={course.id}
+                variant="card"
+                course={course}
+                handleRadioChange={handleRadioChange}
+                selectedCourse={selectedCourse}
+                onRequestDelete={setCourseToDelete}
+                onRequestEdit={handleRequestEdit}
+              />
+            ))
+          )}
+        </div>
+        <div className="table-scroll size-full hidden md:block">
+          <table className="table mb-5 lg:min-w-[560px]">
             <thead className="text-black md:text-lg">
               <tr>
                 {userLogin?.role === Roles.ADMIN && <th />}
                 <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Descripcion</th>
+                {userLogin?.role === Roles.ADMIN && <th />}
               </tr>
             </thead>
             <tbody className="md:text-lg">
-              {courseStatus === 'loading' ? (
+              {courseStatus === "loading" ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-10">
+                  <td colSpan={5} className="text-center py-10">
                     <span className="loading loading-spinner loading-lg text-darkpink" />
                   </td>
                 </tr>
-              ) : filteredCourses.length === 0 && courseStatus === 'succeeded' ? (
+              ) : filteredCourses.length === 0 && courseStatus === "succeeded" ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-10 text-gray-400">
+                  <td colSpan={5} className="text-center py-10 text-gray-400">
                     No hay cursos registrados
                   </td>
                 </tr>
               ) : (
-                filteredCourses.map((course) => (
-                <RowCursos
-                  key={course.id}
-                  course={course}
-                  handleRadioChange={handleRadioChange}
-                  selectedCourse={selectedCourse}
-                />
-              ))
+                visible.map((course) => (
+                  <RowCursos
+                    key={course.id}
+                    course={course}
+                    handleRadioChange={handleRadioChange}
+                    selectedCourse={selectedCourse}
+                    onRequestDelete={setCourseToDelete}
+                    onRequestEdit={handleRequestEdit}
+                  />
+                ))
               )}
             </tbody>
           </table>
         </div>
+        <ShowMore
+          shown={shown}
+          total={total}
+          remaining={remaining}
+          onClick={showMore}
+          className="mb-5"
+        />
+        <ModalDelete
+          open={courseToDelete !== null}
+          onClose={() => {
+            if (!deleting) setCourseToDelete(null);
+          }}
+          handleDelete={handleConfirmDelete}
+          pending={deleting}
+          name={courseToDelete?.name ?? ""}
+        />
         {isOpenModal.active && isOpenModal.type === "add" && (
           <ModalEditAdd
             selectedCourse={selectedCourse}

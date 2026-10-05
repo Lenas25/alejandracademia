@@ -1,22 +1,38 @@
 import { IconTrashFilled } from "@tabler/icons-react";
-import React from "react";
+import { useEffect, useRef } from "react";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
 
+/**
+ * Single controlled delete dialog rendered once per list. `open` drives
+ * showModal()/close(); native closes (Esc, form method=dialog) call `onClose`.
+ */
 function ModalDelete({
+  open,
+  onClose,
   handleDelete,
-  info,
   name,
   pending = false,
 }: {
+  open: boolean;
+  onClose: () => void;
   handleDelete: () => void | Promise<void>;
-  info: number | undefined;
   name?: string;
   pending?: boolean;
 }) {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
+
   return (
     <dialog
-      id={`delete_${info}`}
+      ref={ref}
       className="modal backdrop-blur-sm"
+      onClose={onClose}
       onCancel={(e) => {
         if (pending) e.preventDefault();
       }}>
@@ -35,7 +51,7 @@ function ModalDelete({
         </div>
         <p className="py-4 text-base">
           ¿Estás seguro que deseas eliminar{" "}
-          <strong>{name ?? `#${info}`}</strong>?
+          <strong className="break-words">{name}</strong>?
         </p>
         <div className="w-full flex justify-end gap-3">
           <form method="dialog">

@@ -11,11 +11,17 @@ import {
 } from "@tabler/icons-react";
 import ModalEditAdd from "./ModalEditAdd";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
-import { fetchUsers } from "@/redux/service/userService";
+import { deleteUser, fetchUsers } from "@/redux/service/userService";
+import ModalDelete from "./ModalDelete";
+import { ShowMore } from "@/components/intranet/ui/ShowMore";
+import { usePagedList } from "@/components/intranet/ui/usePagedList";
+import { useToast } from "@/components/intranet/ui/Toast";
 import { fetchCourses } from "@/redux/service/courseService";
 import { useDebounce } from "@/hooks/useDebounce";
 
 type RoleFilter = "todos" | "alumno" | "tutor" | "admin";
+
+const PAGE_SIZE = 30;
 
 const ROLE_FILTERS: { key: RoleFilter; label: string }[] = [
   { key: "todos", label: "Todos" },
@@ -26,6 +32,7 @@ const ROLE_FILTERS: { key: RoleFilter; label: string }[] = [
 
 export function TableAlumnos() {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const users = useAppSelector((state) => state.user?.users);
   const userStatus = useAppSelector((state) => state.user?.status);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -36,6 +43,9 @@ export function TableAlumnos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("todos");
   const debouncedSearch = useDebounce(searchTerm, 300);
+  // Single shared delete dialog: the user pending deletion (null = closed).
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -55,6 +65,12 @@ export function TableAlumnos() {
     });
   }, [users, debouncedSearch, roleFilter]);
 
+  const { visible, total, shown, remaining, showMore } = usePagedList(
+    filteredUsers,
+    PAGE_SIZE,
+    `${debouncedSearch}|${roleFilter}`
+  );
+
   const handleRadioChange = (user: User) => {
     setSelectedUser(user);
   };
@@ -68,6 +84,34 @@ export function TableAlumnos() {
     if (selectedUser) {
       setOpenModal({ active: true, type: "edit" });
     }
+  };
+
+  const handleRequestEdit = (user: User) => {
+    setSelectedUser(user);
+    setOpenModal({ active: true, type: "edit" });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleting || !userToDelete) return;
+    const user = userToDelete;
+    setDeleting(true);
+    try {
+      const resultAction = await dispatch(deleteUser(user.id.toString()));
+      if (deleteUser.fulfilled.match(resultAction)) {
+        const payload = resultAction.payload as { message: string; error?: string };
+        if (payload.error) {
+          toast.error(`Error al eliminar el usuario: ${payload.error}`);
+        } else {
+          toast.success(payload.message);
+          if (selectedUser?.id === user.id) setSelectedUser(null);
+        }
+      } else {
+        toast.error("No se pudo eliminar el usuario. Inténtalo de nuevo.");
+      }
+    } finally {
+      setDeleting(false);
+    }
+    setUserToDelete(null);
   };
 
   return (
@@ -144,13 +188,15 @@ export function TableAlumnos() {
               No hay usuarios registrados
             </p>
           ) : (
-            filteredUsers.map((user) => (
+            visible.map((user) => (
               <RowAlumnos
                 key={user.id}
                 variant="card"
                 user={user}
                 handleRadioChange={handleRadioChange}
                 selectedUser={selectedUser}
+                onRequestDelete={setUserToDelete}
+                onRequestEdit={handleRequestEdit}
               />
             ))
           )}
@@ -183,18 +229,40 @@ export function TableAlumnos() {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                visible.map((user) => (
                 <RowAlumnos
                   key={user.id}
                   user={user}
                   handleRadioChange={handleRadioChange}
                   selectedUser={selectedUser}
+                  onRequestDelete={setUserToDelete}
+                  onRequestEdit={handleRequestEdit}
                 />
               ))
               )}
             </tbody>
           </table>
         </div>
+        <ShowMore
+          shown={shown}
+          total={total}
+          remaining={remaining}
+          onClick={showMore}
+          className="mb-5"
+        />
+        <ModalDelete
+          open={userToDelete !== null}
+          onClose={() => {
+            if (!deleting) setUserToDelete(null);
+          }}
+          handleDelete={handleConfirmDelete}
+          pending={deleting}
+          name={
+            userToDelete
+              ? `${userToDelete.name ?? ""} ${userToDelete.lastName ?? ""}`.trim()
+              : ""
+          }
+        />
         {isOpenModal.active && isOpenModal.type === "add" && (
           <ModalEditAdd
             modalMessage={{

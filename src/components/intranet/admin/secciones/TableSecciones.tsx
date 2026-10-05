@@ -9,6 +9,11 @@ import { fetchCourses } from "@/redux/service/courseService";
 import { Roles } from "@/types/roles";
 import SectionCard from "./SectionCard";
 import SectionForm from "./SectionForm";
+import DeleteSectionDialog from "./DeleteSectionDialog";
+import { ShowMore } from "@/components/intranet/ui/ShowMore";
+import { usePagedList } from "@/components/intranet/ui/usePagedList";
+
+const PAGE_SIZE = 24;
 import { useToast } from "@/components/intranet/ui/Toast";
 
 export function TableSecciones() {
@@ -23,6 +28,8 @@ export function TableSecciones() {
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [courseFilter, setCourseFilter] = useState<string>("all");
+  // Single shared delete dialog: the section pending deletion (null = closed).
+  const [sectionToDelete, setSectionToDelete] = useState<Section | null>(null);
 
   useEffect(() => {
     dispatch(fetchSections());
@@ -37,6 +44,12 @@ export function TableSecciones() {
       return matchesCourse && matchesSearch;
     });
   }, [sections, courseFilter, searchTerm]);
+
+  const { visible, total, shown, remaining, showMore } = usePagedList(
+    filteredSections,
+    PAGE_SIZE,
+    `${searchTerm}|${courseFilter}`
+  );
 
   const handleCreate = () => {
     setEditingSection(null);
@@ -137,15 +150,31 @@ export function TableSecciones() {
             <p className="text-center py-10 text-gray-400">No hay secciones registradas</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredSections.map((section) => (
+              {visible.map((section) => (
                 <SectionCard
                   key={section.id}
                   section={section}
                   onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onRequestDelete={setSectionToDelete}
                 />
               ))}
             </div>
+          )}
+          {sectionStatus !== "loading" && (
+            <ShowMore
+              shown={shown}
+              total={total}
+              remaining={remaining}
+              onClick={showMore}
+              className="mt-5"
+            />
+          )}
+          {userLogin?.role === Roles.ADMIN && (
+            <DeleteSectionDialog
+              section={sectionToDelete}
+              onClose={() => setSectionToDelete(null)}
+              onConfirm={handleDelete}
+            />
           )}
         </div>
       )}
