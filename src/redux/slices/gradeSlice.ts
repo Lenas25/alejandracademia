@@ -36,7 +36,7 @@ const gradeSlice = createSlice({
     });
     builder
       // Clear the previous course's grades on switch — otherwise
-      // PromedioCard/NotasCard/CursoCard render stale cross-course data
+      // SummaryTiles/NotasCard/CursoCard render stale cross-course data
       // until the new fetch resolves (or forever if it fails).
       .addCase(gradeByEnrollment.pending, (state) => {
         state.status = 'loading';

@@ -4,10 +4,7 @@ import { fetchMyAttendance } from "@/redux/service/attendanceService";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { IconCalendarCheck, IconClipboardX } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { usePagedList } from "../ui/usePagedList";
-import { ShowMore } from "../ui/ShowMore";
-
-const PAGE_SIZE = 8;
+import { AsistenciaGrid, formatDayDate } from "./AsistenciaGrid";
 
 // Alumno Read-Only Mi Asistencia. Follows `NotasCard`/`CuotasCard`'s
 // conventions exactly (card shell, spinner, icon empty state) and the same
@@ -18,16 +15,6 @@ const PAGE_SIZE = 8;
 // controls are rendered.
 
 const LOW_ATTENDANCE_THRESHOLD = 70;
-
-// `days[].date` is a raw YYYY-MM-DD string — never route it through
-// `new Date()` (timezone-corruption anti-pattern documented in
-// `ContextStrip.tsx`/`src/types/attendance.ts`). Format by plain string
-// manipulation instead.
-function formatDayDate(value: string): string {
-  const [year, month, day] = value.slice(0, 10).split("-");
-  if (!year || !month || !day) return value;
-  return `${day}/${month}/${year}`;
-}
 
 export function AsistenciaCard() {
   const dispatch = useAppDispatch();
@@ -43,7 +30,7 @@ export function AsistenciaCard() {
   }, [dispatch, enrollmentView]);
 
   const days = myAttendance?.days ?? [];
-  const paged = usePagedList(days, PAGE_SIZE, String(enrollmentView?.id ?? ""));
+  const absences = days.filter((d) => !d.present);
 
   const hasData = myAttendance !== null && myAttendance.totalDays > 0;
   const heroColor = !hasData
@@ -80,7 +67,7 @@ export function AsistenciaCard() {
           <IconClipboardX size={40} className="text-gray-200" />
           <div>
             <p className="font-medium text-gray-500">Sin asistencia registrada aún</p>
-            <p className="text-sm text-gray-400 mt-1">Tu asistencia aparecerá aquí cuando esté disponible.</p>
+            <p className="text-sm text-gray-500 mt-1">Tu asistencia aparecerá aquí cuando esté disponible.</p>
           </div>
         </div>
       ) : (
@@ -94,29 +81,28 @@ export function AsistenciaCard() {
             </p>
           </div>
 
-          <div className="grid-scroll flex flex-col gap-2 lg:max-h-72 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
-            {paged.visible.map((day) => (
-              <div
-                key={day.date}
-                className="flex justify-between items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">{formatDayDate(day.date)}</span>
-                <span
-                  className={`badge badge-sm border-none font-medium ${
-                    day.present ? "bg-lightpink text-darkpink" : "bg-red-50 text-red-500"
-                  }`}>
-                  {day.present ? "Presente" : "Ausente"}
-                </span>
-              </div>
-            ))}
+          <AsistenciaGrid days={days} resetKey={String(enrollmentView?.id ?? "")} />
+
+          <div className="flex flex-col gap-2">
+            {absences.length === 0 ? (
+              <p className="rounded-lg bg-emerald-50 p-3 text-sm font-medium text-emerald-700">
+                Sin ausencias. ¡Sigue así!
+              </p>
+            ) : (
+              <>
+                <h4 className="text-sm font-medium text-gray-700">Ausencias ({absences.length})</h4>
+                <ul className="flex flex-wrap gap-2">
+                  {absences.map((d) => (
+                    <li
+                      key={d.date}
+                      className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-sm text-red-700">
+                      {formatDayDate(d.date)}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
-          {paged.total > PAGE_SIZE && (
-            <ShowMore
-              shown={paged.shown}
-              total={paged.total}
-              remaining={paged.remaining}
-              onClick={paged.showMore}
-            />
-          )}
         </div>
       )}
     </div>

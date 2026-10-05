@@ -1,22 +1,18 @@
 "use client";
 
 import { useAppSelector } from "@/redux/stores";
-import { IconHeart } from "@tabler/icons-react";
 
 export function Bienvenida() {
   const user = useAppSelector((state) => state.user.userLogin);
 
   return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-800">
-          Bienvenida, {user?.name ? user.name : '...'}!
-        </h1>
-      <p className="text-gray-500 mt-1">
+    <div>
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+        Hola, {user?.name ? user.name : "..."}
+      </h1>
+      <p className="text-gray-500 mt-0.5 text-sm md:text-base">
         Aquí tienes un resumen de tu progreso y actividades.
       </p>
-      </div>
-      <IconHeart className="text-darkpink mt-4 shrink-0" size={32} />
     </div>
   );
 }

@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import { IconCalendarEvent, IconUser } from "@tabler/icons-react";
+import { formatLongDate } from "./summaryHelpers";
 
 // Selected-course header/hero. The course selector (chevrons that used to
 // live here) moved out to `CourseSelector.tsx`, which is the single source
@@ -31,15 +33,21 @@ export function CursoCard() {
     if (sectionId) dispatch(fetchActivity(sectionId));
   }, [dispatch, sectionId]);
 
+  const startDate = formatLongDate(section?.initialDate);
+  const endDate = formatLongDate(section?.endDate);
+  const isFinished = enrollmentView?.active === false;
+  // Tutor is only shown when the enrollment payload already carries it.
+  const tutorName = [section?.tutor?.name, section?.tutor?.lastName].filter(Boolean).join(" ");
+
   const totalActivities = activities.length;
   const completedActivities = gradesUser.length;
   const progressPct =
     totalActivities > 0 ? Math.min(Math.round((completedActivities / totalActivities) * 100), 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 h-full flex flex-col overflow-x-clip">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col overflow-x-clip">
       <h3 className="font-semibold text-gray-800">Curso Actual</h3>
-      <div className="flex-grow flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-4">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-4">
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex-shrink-0">
           <Image
             src={course?.imageUrl || "/photos/makeup.webp"}
@@ -56,6 +64,26 @@ export function CursoCard() {
               {section?.name ? (
                 <p className="text-sm text-rose font-medium mt-0.5 break-words">{section.name}</p>
               ) : null}
+              <div className="mt-2 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1 text-sm text-gray-600">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    isFinished ? "bg-gray-100 text-gray-500" : "bg-lightpink text-darkpink"
+                  }`}>
+                  {isFinished ? "Finalizada" : "Activa"}
+                </span>
+                {startDate && endDate ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconCalendarEvent size={16} className="text-darkpink shrink-0" aria-hidden />
+                    Duración: {startDate} – {endDate}
+                  </span>
+                ) : null}
+                {tutorName ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconUser size={16} className="text-darkpink shrink-0" aria-hidden />
+                    Tutor: {tutorName}
+                  </span>
+                ) : null}
+              </div>
               <div className="md-content text-gray-600 mt-2 text-sm sm:text-base break-words">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                   {course?.description ?? ""}
@@ -84,7 +112,7 @@ export function CursoCard() {
           ) : (
             <div className="space-y-1">
               <p className="text-gray-500 font-medium">Sin cursos activos</p>
-              <p className="text-sm text-gray-400">Cuando te matricules en un curso aparecerá aquí.</p>
+              <p className="text-sm text-gray-500">Cuando te matricules en un curso aparecerá aquí.</p>
             </div>
           )}
         </div>

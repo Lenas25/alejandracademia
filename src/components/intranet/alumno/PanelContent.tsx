@@ -2,27 +2,35 @@
 
 import { useAppSelector } from "@/redux/stores";
 import { useEffect, useState } from "react";
+
 import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { AsistenciaCard } from "./AsistenciaCard";
 import { Bienvenida } from "./Bienvenida";
-import { ContextStrip } from "./ContextStrip";
 import { CourseSelector } from "./CourseSelector";
 import { CuotasCard } from "./CuotasCard";
 import { CursoCard } from "./CursoCard";
 import { NotasCard } from "./NotasCard";
-import { PromedioCard } from "./PromedioCard";
+import { SummaryTiles } from "./SummaryTiles";
+import { SegmentedToggle } from "../ui/SegmentedToggle";
+
+const DETAIL_TABS = [
+  { value: "notas", label: "Notas" },
+  { value: "asistencia", label: "Asistencia" },
+  { value: "cuotas", label: "Cuotas" },
+];
 
 export function PanelContent() {
   const userLogin = useAppSelector((state) => state.user.userLogin);
   const enrollmentsUser = useAppSelector((state) => state.enrollment.enrollmentsUser);
   // A finished enrollment has `active === false` (set by the admin's
-  // "Finalizar sección" action). Same flag PromedioCard uses to switch its
-  // caption to the final verdict; here it drives an explicit banner so the
-  // student clearly sees the course has ended (the ring caption alone is
-  // too subtle).
+  // "Finalizar sección" action). It drives an explicit banner so the student
+  // clearly sees the course has ended (the tile chip alone is too subtle).
   const enrollmentView = useAppSelector((state) => state.enrollment.enrollmentView);
   const isCourseFinished = enrollmentView?.active === false;
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("notas");
+  // Below lg only the active detail panel is visible; at lg+ every panel is.
+  const panelClass = (tab: string) => (activeTab === tab ? "" : "hidden lg:block");
 
   // Cuando userLogin no está disponible aún (Redux no hidratado) mantenemos skeleton.
   // Cuando userLogin está presente y enrollmentsUser ya fue cargado (puede ser [])
@@ -39,28 +47,25 @@ export function PanelContent() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-pulse">
+      <div className="space-y-4 sm:space-y-6 animate-pulse">
         {/* Bienvenida skeleton */}
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <div className="h-9 bg-gray-200 rounded-lg w-72" />
-            <div className="h-4 bg-gray-100 rounded w-64" />
-          </div>
-          <div className="h-8 w-8 bg-gray-200 rounded-full" />
+        <div className="space-y-2">
+          <div className="h-8 bg-gray-200 rounded-lg w-56" />
+          <div className="h-4 bg-gray-100 rounded w-64 max-w-full" />
         </div>
 
-        {/* CursoCard + PromedioCard skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-gray-200 rounded-2xl h-48" />
-          <div className="lg:col-span-1 bg-gray-200 rounded-2xl h-48" />
+        {/* Tiles skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-200 rounded-2xl h-24" />
+          ))}
         </div>
 
-        {/* ContextStrip skeleton */}
-        <div className="bg-gray-200 rounded-2xl h-14" />
+        {/* CursoCard skeleton */}
+        <div className="bg-gray-200 rounded-2xl h-36" />
 
-        {/* NotasCard + AsistenciaCard + CuotasCard skeleton */}
+        {/* Detail cards skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-gray-200 rounded-2xl h-64" />
           <div className="bg-gray-200 rounded-2xl h-64" />
           <div className="bg-gray-200 rounded-2xl h-64" />
         </div>
@@ -69,7 +74,7 @@ export function PanelContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Bienvenida */}
       <Bienvenida />
 
@@ -92,28 +97,43 @@ export function PanelContent() {
         </div>
       )}
 
-      {/* Header del curso seleccionado + Promedio en curso (hero) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <CursoCard />
-        </div>
-        <div className="lg:col-span-1">
-          <PromedioCard />
-        </div>
-      </div>
+      {/* KPI tiles — derived from the same Redux state the detail cards fill.
+          Only rendered with a selected enrollment: without one no card
+          dispatches a fetch, so the tiles would sit in a loading state
+          forever. CursoCard shows the "Sin cursos activos" message instead. */}
+      {enrollmentView && <SummaryTiles />}
 
-      {/* Contexto compacto: fechas de la sección + próxima cuota */}
-      <ContextStrip />
+      <CursoCard />
 
-      {/* Notas, Asistencia y Cuotas — orden de lectura: Notas → Asistencia →
-          Cuotas (agrupación académica). En `lg:grid-cols-2` esto arma
-          fila 1 = Notas | Asistencia y fila 2 = Cuotas, preservando el
-          mismo orden al colapsar a una columna en mobile. */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <NotasCard />
-        <AsistenciaCard />
-        <CuotasCard />
-      </div>
+      {enrollmentView && (
+        <>
+        {/* Below lg: tabs so the page isn't endlessly long. All three cards
+            stay MOUNTED (inactive ones are only hidden with CSS): they own the
+            fetches that feed SummaryTiles, so unmounting would refetch on every
+            tab switch and leave the tiles without data. */}
+        <SegmentedToggle
+          className="lg:hidden"
+          ariaLabel="Detalle del curso"
+          options={DETAIL_TABS}
+          value={activeTab}
+          onChange={setActiveTab}
+          idPrefix="alumno-detail"
+        />
+
+        {/* lg+: Notas | Asistencia side by side, Cuotas full width below. */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div role="tabpanel" id="alumno-detail-panel-notas" aria-labelledby="alumno-detail-tab-notas" className={panelClass("notas")}>
+            <NotasCard />
+          </div>
+          <div role="tabpanel" id="alumno-detail-panel-asistencia" aria-labelledby="alumno-detail-tab-asistencia" className={panelClass("asistencia")}>
+            <AsistenciaCard />
+          </div>
+          <div role="tabpanel" id="alumno-detail-panel-cuotas" aria-labelledby="alumno-detail-tab-cuotas" className={`lg:col-span-2 ${panelClass("cuotas")}`}>
+            <CuotasCard />
+          </div>
+        </div>
+        </>
+      )}
     </div>
   );
 }
