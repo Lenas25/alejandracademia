@@ -23,6 +23,9 @@ const activitySlice = createSlice({
     .addCase(fetchActivity.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.activities = action.payload.data;
+    })
+    .addCase(fetchActivity.rejected, (state) => {
+      state.status = 'failed';
     });
   }
 });
