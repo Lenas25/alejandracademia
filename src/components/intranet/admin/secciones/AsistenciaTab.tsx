@@ -722,7 +722,7 @@ function MetricasTable({ metrics, isLoading }: MetricasTableProps) {
   const cellClass = "flex flex-col gap-0.5 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle";
 
   return (
-    <div className="table-scroll">
+    <div className="table-scroll table-scroll-sticky">
       <div role="table" aria-label="Métricas de asistencia por estudiante" className="w-full md:table">
         <div role="rowgroup" className="hidden md:table-header-group">
           <div role="row" className="md:table-row text-xs uppercase tracking-wide text-gray-500 whitespace-nowrap">

@@ -172,7 +172,7 @@ export function TableCursos() {
             ))
           )}
         </div>
-        <div className="table-scroll size-full hidden md:block">
+        <div className="table-scroll table-scroll-sticky size-full hidden md:block">
           <table className="table mb-5 lg:min-w-[560px]">
             <thead className="text-black md:text-lg">
               <tr>

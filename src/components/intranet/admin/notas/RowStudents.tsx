@@ -313,7 +313,7 @@ function RowStudents({ selectedSection, selectedActivity }: RowStudentsProps) {
               binding the same react-hook-form field to two different DOM
               nodes across breakpoints, which would desync the field's
               tracked value. */}
-          <div className="table-scroll">
+          <div className="table-scroll table-scroll-sticky">
             <div
               role="table"
               aria-label="Notas por estudiante"

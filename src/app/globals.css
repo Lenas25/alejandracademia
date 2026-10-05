@@ -79,6 +79,31 @@ input[type="number"] {
   border-radius: 999px;
 }
 
+/*
+ * Sticky-header modifier for .table-scroll. From lg up the wrapper stops being
+ * a scroll container (`overflow-x: clip` + `overflow-y: visible` does not
+ * create one), so header cells stick to the PAGE scroll. Below lg the base
+ * `overflow-x: auto` behavior is untouched. Only use it on tables that fit
+ * without horizontal scroll at lg+ (clip would hide any overflow). Every
+ * ancestor up to the layout must be overflow visible/clip, never auto/hidden.
+ * Header backgrounds are opaque so rows never show through.
+ */
+@media (min-width: 1024px) {
+  .table-scroll.table-scroll-sticky {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+
+  .table-scroll-sticky thead th,
+  .table-scroll-sticky [role="columnheader"] {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f0f0f0; /* opaque equivalent of grey/40 on white */
+    box-shadow: inset 0 -1px 0 #d9d9d9;
+  }
+}
+
 /* Vertical variant of .table-scroll — used by grids that grow downward
    (e.g. the Notas/Asignar course-section picker) instead of sideways. */
 .grid-scroll {

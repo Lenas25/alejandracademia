@@ -201,7 +201,7 @@ export function TableAlumnos() {
             ))
           )}
         </div>
-        <div className="table-scroll size-full hidden md:block">
+        <div className="table-scroll table-scroll-sticky size-full hidden md:block">
           <table className="table mb-5 min-w-[640px]">
             <thead className="text-black md:text-lg">
               <tr>

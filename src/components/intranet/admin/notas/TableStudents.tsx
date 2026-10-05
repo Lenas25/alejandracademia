@@ -25,7 +25,7 @@ export function TableStudents() {
         </span>
       </div>
 
-      <div className="table-scroll">
+      <div className="table-scroll table-scroll-sticky">
         <div role="table" aria-label="Notas finales por estudiante" className="w-full md:table">
           <div role="rowgroup" className="hidden md:table-header-group">
             <div role="row" className="md:table-row text-xs uppercase tracking-wide text-gray-500 whitespace-nowrap">
