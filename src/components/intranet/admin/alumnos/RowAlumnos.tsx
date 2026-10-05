@@ -10,6 +10,7 @@ interface RowAlumnosProps {
   handleRadioChange: (user: User) => void;
   selectedUser: User | null;
   setMessage: (message: string) => void;
+  variant?: "row" | "card";
 }
 
 function RowAlumnos({
@@ -17,6 +18,7 @@ function RowAlumnos({
   handleRadioChange,
   selectedUser,
   setMessage,
+  variant = "row",
 }: RowAlumnosProps) {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.user?.userLogin);
@@ -34,10 +36,14 @@ function RowAlumnos({
       break;
   }
 
+  // Card and table row both mount in the DOM (CSS toggles which is visible),
+  // so each needs its own dialog id.
+  const dialogId = `delete_${variant === "card" ? "card_" : ""}${user.id}`;
+
   const handleModalDelete = () => {
     if (currentUser?.id !== user.id) {
       (
-        document.getElementById(`delete_${user.id}`) as HTMLDialogElement
+        document.getElementById(dialogId) as HTMLDialogElement
       )?.showModal();
     }
   };
@@ -48,9 +54,64 @@ function RowAlumnos({
       setMessage(resultAction.payload.message);
     }
     (
-      document.getElementById(`delete_${user.id}`) as HTMLDialogElement
+      document.getElementById(dialogId) as HTMLDialogElement
     )?.close();
   };
+
+  const roleLabel = `${(user.role ?? "")
+    .charAt(0)
+    .toUpperCase()}${(user.role ?? "").slice(1)}`;
+  const fullName = `${user.name ?? ""} ${user.lastName ?? ""}`.trim();
+
+  if (variant === "card") {
+    return (
+      <div className="rounded-lg border border-grey bg-white p-3 text-black">
+        <div className="flex items-start gap-3">
+          <input
+            type="radio"
+            name="users-mobile"
+            aria-label={`Seleccionar ${fullName}`}
+            className="radio border-black mt-1 shrink-0"
+            value={user.id}
+            checked={selectedUser?.id === user.id}
+            onChange={() => handleRadioChange(user)}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-semibold break-words">{fullName}</span>
+              <span
+                className={`badge badge-ghost text-white border-none font-semibold ${classRole}`}>
+                {roleLabel}
+              </span>
+            </div>
+            <p className="text-sm break-all">{user.email}</p>
+            <p className="text-xs text-gray-500 break-all">
+              {user.id}
+              {user.phone ? ` · ${user.phone}` : ""}
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 flex flex-row flex-wrap gap-2">
+          {user.role === "alumno" && (
+            <Link
+              href={`/intranet/admin/alumnos/${user.id}`}
+              className="btn btn-ghost btn-sm min-h-10 bg-darkpink text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-darkpink">
+              <IconHistory />
+              Historial
+            </Link>
+          )}
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm min-h-10 bg-black text-white flex items-center justify-center gap-2 flex-nowrap text-sm hover:text-black"
+            onClick={handleModalDelete}>
+            <IconTrash />
+            Eliminar
+          </button>
+        </div>
+        <ModalDelete handleDelete={handleDelete} info={`${variant === "card" ? "card_" : ""}${user.id}`} name={fullName} />
+      </div>
+    );
+  }
 
   return (
     <tr>
@@ -78,7 +139,7 @@ function RowAlumnos({
         </div>
       </td>
       <td className="hidden xl:table-cell">{user.username}</td>
-      <td className="max-w-[180px] truncate" title={user.email}>
+      <td className="max-w-[180px] truncate lg:max-w-none lg:whitespace-normal lg:break-all" title={user.email}>
         {user.email}
       </td>
       <td className="hidden xl:table-cell">{user.phone}</td>

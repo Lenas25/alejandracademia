@@ -74,7 +74,7 @@ export function TableSecciones() {
 
   return (
     <>
-      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
+      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
         <div className="flex gap-5 items-center">
           <h1 className="text-2xl font-medium text-white">Secciones</h1>
           <span className="p-2 text-xl flex items-center justify-center bg-white text-black font-medium rounded-full size-10">
@@ -97,7 +97,7 @@ export function TableSecciones() {
           onSuccess={handleFormSuccess}
         />
       ) : (
-        <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+        <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
           {userLogin?.role === Roles.ADMIN && (
             <div className="flex flex-col gap-5 mb-5">
               <div className="flex flex-wrap justify-center items-center gap-5 md:justify-end">

@@ -39,7 +39,7 @@ function FinishSectionDialog({
       className="modal backdrop-blur-sm"
       onClick={(event) => event.stopPropagation()}
     >
-      <div className="modal-box text-white max-h-[90vh] overflow-y-auto">
+      <div className="modal-box text-white max-h-[90dvh] overflow-y-auto">
         <form method="dialog">
           <button
             type="submit"

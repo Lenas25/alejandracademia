@@ -102,7 +102,7 @@ function ModalEditAdd({
 
   return (
     <dialog open={isOpenModal.active} className="modal backdrop-blur-sm">
-      <div className="modal-box text-white max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="modal-box text-white max-w-lg max-h-[90dvh] overflow-y-auto">
         {" "}
         {/* Ligeramente más angosto para mejor legibilidad */}
         <form method="dialog" onSubmit={reset}>

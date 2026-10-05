@@ -103,7 +103,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
 
   if (!section || section.id !== sectionId) {
     return (
-      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         {sectionStatus === "loading" ? (
           <div className="flex justify-center py-10">
             <span className="loading loading-spinner loading-lg text-darkpink" />
@@ -132,7 +132,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-2 mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
+      <div className="flex flex-col gap-2 mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
         <div className="text-sm text-gray-400">
           <Link href=".." className="hover:text-white">
             Secciones
@@ -205,7 +205,7 @@ function SectionDetail({ sectionId }: SectionDetailProps) {
         </div>
       )}
 
-      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         {/* Horizontally scrollable tab bar for narrow screens (~360-430px):
             reuses the `.table-scroll` convention (themed pink scrollbar)
             instead of a bare `overflow-x-auto` so the scrollability itself

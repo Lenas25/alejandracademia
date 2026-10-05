@@ -83,7 +83,7 @@ export function TableAlumnos() {
 
   return (
     <>
-      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-6 md:p-8">
+      <div className="flex gap-5 items-center justify-between mb-5 bg-black rounded-lg shadow relative p-4 sm:p-6 md:p-8">
         <div className="flex gap-5 items-center">
           <h1 className="text-2xl font-medium text-white">Usuarios</h1>
           <span className="p-2 text-xl flex items-center justify-center bg-white text-black font-medium rounded-full size-10">
@@ -92,7 +92,7 @@ export function TableAlumnos() {
         </div>
         <IconUsers size={30} className="text-white" />
       </div>
-      <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+      <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         <div className="flex flex-col gap-5">
           {/* `flex-col` guarantees a full-width stack on mobile (not
               wrap-if-it-doesn't-fit) so the pair never overflows the card
@@ -147,7 +147,30 @@ export function TableAlumnos() {
         {message && (
           <div className="alert alert-success my-5 text-white">{message}</div>
         )}
-        <div className="table-scroll size-full">
+        {/* Below md: card list. md and up: table. */}
+        <div className="md:hidden flex flex-col gap-3 my-5">
+          {userStatus === "loading" ? (
+            <div className="text-center py-10">
+              <span className="loading loading-spinner loading-lg text-darkpink" />
+            </div>
+          ) : filteredUsers.length === 0 && userStatus === "succeeded" ? (
+            <p className="text-center py-10 text-gray-400">
+              No hay usuarios registrados
+            </p>
+          ) : (
+            filteredUsers.map((user) => (
+              <RowAlumnos
+                key={user.id}
+                variant="card"
+                user={user}
+                handleRadioChange={handleRadioChange}
+                selectedUser={selectedUser}
+                setMessage={setMessage}
+              />
+            ))
+          )}
+        </div>
+        <div className="table-scroll size-full hidden md:block">
           <table className="table mb-5 min-w-[640px]">
             <thead className="text-black md:text-lg">
               <tr>
@@ -158,18 +181,19 @@ export function TableAlumnos() {
                 <th>Email</th>
                 <th className="hidden xl:table-cell">Celular</th>
                 <th>Rol</th>
+                <th />
               </tr>
             </thead>
             <tbody className="md:text-lg">
               {userStatus === 'loading' ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-10">
+                  <td colSpan={8} className="text-center py-10">
                     <span className="loading loading-spinner loading-lg text-darkpink" />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 && userStatus === 'succeeded' ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-10 text-gray-400">
+                  <td colSpan={8} className="text-center py-10 text-gray-400">
                     No hay usuarios registrados
                   </td>
                 </tr>

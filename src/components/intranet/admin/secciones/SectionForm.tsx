@@ -202,7 +202,7 @@ function SectionForm({ selectedSection, onCancel, onSuccess }: SectionFormProps)
   };
 
   return (
-    <div className="overflow-hidden bg-white rounded-lg shadow relative p-6 md:p-10">
+    <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
       <h2 className="text-2xl font-medium mb-6">
         {selectedSection ? "Editar Sección" : "Crear Sección"}
       </h2>

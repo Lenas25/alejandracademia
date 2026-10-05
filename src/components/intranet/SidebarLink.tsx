@@ -9,7 +9,7 @@ interface SidebarLinkProps {
   /** "icon" (default) = the desktop circular icon-only pill button, used by
    * the fixed left sidebar — unchanged. "row" = a full-width icon+label row,
    * used by the mobile hamburger drawer (see Sidebar.tsx). */
-  variant?: "icon" | "row";
+  variant?: "icon" | "row" | "rail";
   /** Called after a real navigation click (not on the current/active link)
    * so the mobile drawer can close itself on link tap. */
   onNavigate?: () => void;
@@ -28,12 +28,28 @@ const SidebarLink = ({
       <Link
         href={href}
         aria-label={label}
+        aria-current={isActive ? "page" : undefined}
         onClick={onNavigate}
         className={`flex items-center gap-3 w-full rounded-lg px-4 py-3 text-base font-medium transition-colors ${
           isActive ? "bg-darkpink text-white" : "text-white/80 hover:bg-rose hover:text-white"
         }`}>
         <span className="shrink-0">{icon}</span>
         <span className="truncate">{label}</span>
+      </Link>
+    );
+  }
+
+  if (variant === "rail") {
+    return (
+      <Link
+        href={href}
+        aria-label={label}
+        aria-current={isActive ? "page" : undefined}
+        className={`flex flex-col items-center justify-center gap-1 w-full min-h-14 rounded-xl px-1 py-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+          isActive ? "bg-rose text-white" : "text-white/80 hover:bg-rose hover:text-white"
+        }`}>
+        {icon}
+        <span className="text-[11px] leading-none font-medium max-w-full truncate">{label}</span>
       </Link>
     );
   }

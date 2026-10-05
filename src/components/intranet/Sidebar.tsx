@@ -133,45 +133,48 @@ export function Sidebar({ pathname }: { pathname: string }) {
         </div>
       </div>
 
-      {/* ---- DESKTOP (md+): fixed left sidebar, unchanged ---- */}
-      <div className="hidden md:block md:fixed md:z-50 md:p-5 md:left-0 md:top-0 md:w-[9rem] md:h-full">
-        <div className="relative flex flex-col gap-5 py-3 md:p-5 bg-black text-white shadow-lg h-full rounded-full">
-          <div className="hidden w-full md:flex justify-center items-center">
-            <Image
-              src="/brand/logoSpa.webp"
-              alt="logoSpa"
-              width={200}
-              height={200}
-              className="size-full"
-            />
-          </div>
-          <ul className="flex md:flex-col gap-3 justify-center md:justify-between h-full items-center px-4 md:px-0 md:py-5 overflow-x-auto md:overflow-visible">
-            <div className="flex flex-nowrap gap-3 md:flex-col md:gap-5">
-              {routes.map((route) => (
+      {/* ---- DESKTOP (md+): slim fixed rail (w-20 = 80px) ---- */}
+      {/* Icon + always-visible 11px label per item. Worst case is 5 items
+          (admin) + logo + logout ~ 430px, so it fits 700-800px viewport
+          heights; the nav list scrolls (hidden scrollbar) if it ever doesn't.
+          Layouts offset content with md:pl-[84px] / md:pl-[72px] (see
+          the admin and alumno layout files) — keep in sync if the width changes. */}
+      <aside
+        aria-label="Navegación principal"
+        className="hidden md:flex md:fixed md:z-50 md:left-4 md:top-4 md:bottom-4 md:w-20 flex-col items-center gap-3 py-4 bg-black text-white shadow-lg rounded-2xl">
+        <Image
+          src="/brand/logoSpa.webp"
+          alt="logoSpa"
+          width={120}
+          height={120}
+          className="w-12 h-auto shrink-0"
+        />
+        <nav aria-label="Secciones" className="flex-1 min-h-0 w-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <ul className="flex flex-col items-center gap-1.5 px-1.5">
+            {routes.map((route) => (
+              <li key={route.id} className="w-full">
                 <SidebarLink
-                  key={route.id}
+                  variant="rail"
                   href={route.href}
-                  icon={<route.icon size={30} className="md:size-10" />}
+                  icon={<route.icon size={24} />}
                   label={route.label}
                   isActive={path === route.pathRoute || path.startsWith(`${route.pathRoute}/`)}
                 />
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={userLogout}
-              aria-label="Salir"
-              className="relative flex items-center justify-center shrink-0 min-w-11 min-h-11 text-lg font-semibold cursor-pointer rounded-full transition-all delay-150 ease-in-out hover:bg-rose p-2 md:p-4 md:min-w-0 md:min-h-0 group">
-              <IconLogout2 size={30} className="md:size-10" />
-              {/* Desktop-only tooltip — see SidebarLink for why it's hidden
-                  on mobile (no hover state on touch, odd flash position). */}
-              <span className="hidden md:block absolute md:left-full md:top-1/2 ml-2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 bg-black text-white text-sm rounded px-2 py-1 transition-opacity duration-300">
-                Salir
-              </span>
-            </button>
+              </li>
+            ))}
           </ul>
+        </nav>
+        <div className="w-full px-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={userLogout}
+            aria-label="Salir"
+            className="flex flex-col items-center justify-center gap-1 w-full min-h-14 rounded-xl px-1 py-2 text-white/80 hover:bg-rose hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <IconLogout2 size={24} className="shrink-0" />
+            <span className="text-[11px] leading-none font-medium">Salir</span>
+          </button>
         </div>
-      </div>
+      </aside>
     </>
   );
 }
