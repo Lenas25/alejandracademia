@@ -6,8 +6,6 @@ import { useToast } from "@/components/intranet/ui/Toast";
 
 interface RowAlumnosProps {
   user: User;
-  handleRadioChange: (user: User) => void;
-  selectedUser: User | null;
   onRequestDelete: (user: User) => void;
   onRequestEdit: (user: User) => void;
   variant?: "row" | "card";
@@ -18,8 +16,6 @@ const cardIconBtn =
 
 function RowAlumnos({
   user,
-  handleRadioChange,
-  selectedUser,
   onRequestDelete,
   onRequestEdit,
   variant = "row",
@@ -58,15 +54,6 @@ function RowAlumnos({
     return (
       <div className="rounded-lg border border-grey bg-white p-3 text-black">
         <div className="flex items-start gap-3">
-          <input
-            type="radio"
-            name="users-mobile"
-            aria-label={`Seleccionar ${fullName}`}
-            className="radio border-black mt-1 shrink-0"
-            value={user.id}
-            checked={selectedUser?.id === user.id}
-            onChange={() => handleRadioChange(user)}
-          />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-semibold break-words">{fullName}</span>
@@ -121,39 +108,17 @@ function RowAlumnos({
     );
   }
 
-  const isSelected = selectedUser?.id === user.id;
   const initials =
     `${(user.name ?? "").charAt(0)}${(user.lastName ?? "").charAt(0)}`.toUpperCase() || "?";
   const avatarClass =
     user.role === "tutor" ? "bg-flamingo text-black" : `${classRole} text-white`;
 
-  // Row click selects; clicks on inner buttons/links must not toggle selection.
-  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
-    if ((e.target as HTMLElement).closest("a,button")) return;
-    handleRadioChange(user);
-  };
-  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleRadioChange(user);
-    }
-  };
-
   const iconBtn =
     "btn btn-ghost btn-sm size-10 min-h-10 p-0 flex items-center justify-center";
 
   return (
-    <tr
-      tabIndex={0}
-      aria-current={isSelected ? "true" : undefined}
-      onClick={handleRowClick}
-      onKeyDown={handleRowKeyDown}
-      className={`cursor-pointer text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-darkpink ${
-        isSelected ? "!bg-lightpink/70" : ""
-      }`}>
-      <td
-        className={`py-3 ${isSelected ? "shadow-[inset_3px_0_0_#a16361]" : ""}`}>
+    <tr className="text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50">
+      <td className="py-3">
         <div className="flex items-center gap-3 min-w-0">
           <span
             aria-hidden="true"

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import RowCursos from "./RowCursos";
 import { useEffect, useMemo, useState } from "react";
 import { Course } from "@/types/course";
-import { IconBook, IconPencil, IconPlus, IconSearch } from "@tabler/icons-react";
+import { IconBook, IconPlus, IconSearch } from "@tabler/icons-react";
 import { deleteCourse, fetchCourses } from "@/redux/service/courseService";
 import ModalEditAdd from "./ModalEditAdd";
 import { Roles } from "@/types/roles";
@@ -13,7 +13,7 @@ import { deleteImage, extractImageId } from "@/utils/api";
 import { ShowMore } from "@/components/intranet/ui/ShowMore";
 import { usePagedList } from "@/components/intranet/ui/usePagedList";
 import { useToast } from "@/components/intranet/ui/Toast";
-import { PageHeader, HeaderPrimaryAction, HeaderSecondaryAction } from "@/components/intranet/ui/PageHeader";
+import { PageHeader, HeaderPrimaryAction } from "@/components/intranet/ui/PageHeader";
 
 const PAGE_SIZE = 20;
 
@@ -23,7 +23,8 @@ export function TableCursos() {
   const userLogin = useAppSelector((state) => state.user?.userLogin);
   const courses = useAppSelector((state) => state.course?.courses);
   const courseStatus = useAppSelector((state) => state.course?.status);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  // Course being edited (null in add mode). Passed to the modal's edit-mode props.
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
     type: string;
@@ -53,23 +54,13 @@ export function TableCursos() {
     searchTerm
   );
 
-  const handleRadioChange = (course: Course) => {
-    setSelectedCourse(course);
-  };
-
   const handleModalAdd = () => {
-    setSelectedCourse(null);
+    setEditingCourse(null);
     setOpenModal({ active: true, type: "add" });
   };
 
-  const handleModalEdit = () => {
-    if (selectedCourse) {
-      setOpenModal({ active: true, type: "edit" });
-    }
-  };
-
   const handleRequestEdit = (course: Course) => {
-    setSelectedCourse(course);
+    setEditingCourse(course);
     setOpenModal({ active: true, type: "edit" });
   };
 
@@ -91,7 +82,6 @@ export function TableCursos() {
             }
           }
           toast.success(payload.message);
-          if (selectedCourse?.id === course.id) setSelectedCourse(null);
         }
       } else {
         toast.error("No se pudo eliminar el curso. Inténtalo de nuevo.");
@@ -115,13 +105,6 @@ export function TableCursos() {
             <HeaderPrimaryAction onClick={handleModalAdd} icon={<IconPlus size={20} />}>
               Agregar
             </HeaderPrimaryAction>
-            <HeaderSecondaryAction
-              onClick={handleModalEdit}
-              icon={<IconPencil size={20} />}
-              disabled={!selectedCourse}
-              disabledTitle="Selecciona un elemento para editar">
-              Editar
-            </HeaderSecondaryAction>
           </>
         )}
       </PageHeader>
@@ -155,8 +138,6 @@ export function TableCursos() {
                 key={course.id}
                 variant="card"
                 course={course}
-                handleRadioChange={handleRadioChange}
-                selectedCourse={selectedCourse}
                 onRequestDelete={setCourseToDelete}
                 onRequestEdit={handleRequestEdit}
               />
@@ -193,8 +174,6 @@ export function TableCursos() {
                   <RowCursos
                     key={course.id}
                     course={course}
-                    handleRadioChange={handleRadioChange}
-                    selectedCourse={selectedCourse}
                     onRequestDelete={setCourseToDelete}
                     onRequestEdit={handleRequestEdit}
                   />
@@ -221,24 +200,24 @@ export function TableCursos() {
         />
         {isOpenModal.active && isOpenModal.type === "add" && (
           <ModalEditAdd
-            selectedCourse={selectedCourse}
+            selectedCourse={editingCourse}
             modalMessage={{
               title: "Agregar Curso",
               message: "Completar para agregar nuevo curso",
             }}
-            setSelectedCourse={setSelectedCourse}
+            setSelectedCourse={setEditingCourse}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
           />
         )}
         {isOpenModal.active && isOpenModal.type === "edit" && (
           <ModalEditAdd
-            selectedCourse={selectedCourse}
+            selectedCourse={editingCourse}
             modalMessage={{
               title: "Editar Curso",
               message: "Completa para actualizar",
             }}
-            setSelectedCourse={setSelectedCourse}
+            setSelectedCourse={setEditingCourse}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
           />

@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import RowAlumnos from "./RowAlumnos";
 import { User } from "@/types/user";
 import {
-  IconPencil,
   IconPlus,
   IconSearch,
   IconUsers,
@@ -18,7 +17,7 @@ import { usePagedList } from "@/components/intranet/ui/usePagedList";
 import { useToast } from "@/components/intranet/ui/Toast";
 import { fetchCourses } from "@/redux/service/courseService";
 import { useDebounce } from "@/hooks/useDebounce";
-import { PageHeader, HeaderPrimaryAction, HeaderSecondaryAction } from "@/components/intranet/ui/PageHeader";
+import { PageHeader, HeaderPrimaryAction } from "@/components/intranet/ui/PageHeader";
 
 type RoleFilter = "todos" | "alumno" | "tutor" | "admin";
 
@@ -36,7 +35,8 @@ export function TableAlumnos() {
   const toast = useToast();
   const users = useAppSelector((state) => state.user?.users);
   const userStatus = useAppSelector((state) => state.user?.status);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  // User being edited (null in add mode). Passed to the modal's edit-mode props.
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isOpenModal, setOpenModal] = useState<{
     active: boolean;
     type: string;
@@ -72,23 +72,13 @@ export function TableAlumnos() {
     `${debouncedSearch}|${roleFilter}`
   );
 
-  const handleRadioChange = (user: User) => {
-    setSelectedUser(user);
-  };
-
   const handleModalAdd = () => {
-    setSelectedUser(null);
+    setEditingUser(null);
     setOpenModal({ active: true, type: "add" });
   };
 
-  const handleModalEdit = () => {
-    if (selectedUser) {
-      setOpenModal({ active: true, type: "edit" });
-    }
-  };
-
   const handleRequestEdit = (user: User) => {
-    setSelectedUser(user);
+    setEditingUser(user);
     setOpenModal({ active: true, type: "edit" });
   };
 
@@ -104,7 +94,6 @@ export function TableAlumnos() {
           toast.error(payload.error);
         } else {
           toast.success(payload.message);
-          if (selectedUser?.id === user.id) setSelectedUser(null);
         }
       } else {
         toast.error("No se pudo eliminar el usuario. Inténtalo de nuevo.");
@@ -126,13 +115,6 @@ export function TableAlumnos() {
         <HeaderPrimaryAction onClick={handleModalAdd} icon={<IconPlus size={20} />}>
           Agregar
         </HeaderPrimaryAction>
-        <HeaderSecondaryAction
-          onClick={handleModalEdit}
-          icon={<IconPencil size={20} />}
-          disabled={!selectedUser}
-          disabledTitle="Selecciona un elemento para editar">
-          Editar
-        </HeaderSecondaryAction>
       </PageHeader>
       <div className="overflow-x-clip bg-white rounded-lg shadow relative p-3 sm:p-6 md:p-10">
         <div className="flex flex-col gap-5">
@@ -182,8 +164,6 @@ export function TableAlumnos() {
                 key={user.id}
                 variant="card"
                 user={user}
-                handleRadioChange={handleRadioChange}
-                selectedUser={selectedUser}
                 onRequestDelete={setUserToDelete}
                 onRequestEdit={handleRequestEdit}
               />
@@ -222,8 +202,6 @@ export function TableAlumnos() {
                 <RowAlumnos
                   key={user.id}
                   user={user}
-                  handleRadioChange={handleRadioChange}
-                  selectedUser={selectedUser}
                   onRequestDelete={setUserToDelete}
                   onRequestEdit={handleRequestEdit}
                 />
@@ -258,10 +236,10 @@ export function TableAlumnos() {
               title: "Agregar Usuario",
               message: "Completar para agregar nuevo usuario",
             }}
-            selectedUser={selectedUser}
+            selectedUser={editingUser}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
-            setSelectedUser={setSelectedUser}
+            setSelectedUser={setEditingUser}
           />
         )}
         {isOpenModal.active && isOpenModal.type === "edit" && (
@@ -270,10 +248,10 @@ export function TableAlumnos() {
               title: "Editar Usuario",
               message: "Completa para actualizar",
             }}
-            selectedUser={selectedUser}
+            selectedUser={editingUser}
             isOpenModal={isOpenModal}
             setOpenModal={setOpenModal}
-            setSelectedUser={setSelectedUser}
+            setSelectedUser={setEditingUser}
           />
         )}
       </div>

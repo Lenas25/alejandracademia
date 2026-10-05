@@ -6,8 +6,6 @@ import { Roles } from "@/types/roles";
 
 interface RowCursosProps {
   course: Course;
-  handleRadioChange: (course: Course) => void;
-  selectedCourse: Course | null;
   onRequestDelete: (course: Course) => void;
   onRequestEdit: (course: Course) => void;
   variant?: "row" | "card";
@@ -18,8 +16,6 @@ const cardIconBtn =
 
 function RowCursos({
   course,
-  handleRadioChange,
-  selectedCourse,
   onRequestDelete,
   onRequestEdit,
   variant = "row",
@@ -31,17 +27,6 @@ function RowCursos({
     return (
       <div className="rounded-lg border border-grey bg-white p-3 text-black">
         <div className="flex items-start gap-3">
-          {isAdmin && (
-            <input
-              type="radio"
-              name="courses-mobile"
-              aria-label={`Seleccionar ${course.name}`}
-              className="radio border-black mt-3 shrink-0"
-              value={course.id}
-              checked={selectedCourse?.id === course.id}
-              onChange={() => handleRadioChange(course)}
-            />
-          )}
           <div className="size-12 shrink-0 flex justify-center items-center">
             {course.imageUrl !== "" ? (
               <Image
@@ -86,35 +71,12 @@ function RowCursos({
     );
   }
 
-  const isSelected = selectedCourse?.id === course.id;
-
-  // Row click selects (admin only); clicks on inner buttons must not toggle it.
-  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>) => {
-    if (!isAdmin || (e.target as HTMLElement).closest("a,button")) return;
-    handleRadioChange(course);
-  };
-  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
-    if (!isAdmin || e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleRadioChange(course);
-    }
-  };
-
   const iconBtn =
     "btn btn-ghost btn-sm size-10 min-h-10 p-0 flex items-center justify-center";
 
   return (
-    <tr
-      tabIndex={isAdmin ? 0 : undefined}
-      aria-current={isAdmin && isSelected ? "true" : undefined}
-      onClick={handleRowClick}
-      onKeyDown={handleRowKeyDown}
-      className={`text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-darkpink ${
-        isAdmin ? "cursor-pointer" : ""
-      } ${isSelected && isAdmin ? "!bg-lightpink/70" : ""}`}>
-      <td
-        className={`py-3 ${isSelected && isAdmin ? "shadow-[inset_3px_0_0_#a16361]" : ""}`}>
+    <tr className="text-base transition-colors odd:bg-gray-50/60 hover:bg-lightpink/50">
+      <td className="py-3">
         <div className="flex items-center gap-4 min-w-0">
           <div className="size-14 shrink-0 flex items-center justify-center rounded-xl bg-gray-100 overflow-hidden">
             {course.imageUrl !== "" ? (
