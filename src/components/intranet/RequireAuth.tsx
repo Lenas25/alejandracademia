@@ -32,6 +32,15 @@ function RequireAuth({
       const token = localStorage.getItem("token");
       if (token && !isTokenExpired(token)) {
         const user = await getMe(token);
+        if (!user) {
+          // The token is valid but its user is gone (deleted, DB reseeded) or the
+          // profile request failed: drop the session instead of crashing.
+          localStorage.removeItem("token");
+          dispatch(setUser(null));
+          setShowPage(false);
+          router.replace("/intranet");
+          return;
+        }
         dispatch(setUser(user));
 
         const userRole = user.role;
