@@ -14,7 +14,12 @@ function ModalDelete({
   pending?: boolean;
 }) {
   return (
-    <dialog id={`delete_${info}`} className="modal backdrop-blur-sm">
+    <dialog
+      id={`delete_${info}`}
+      className="modal backdrop-blur-sm"
+      onCancel={(e) => {
+        if (pending) e.preventDefault();
+      }}>
       <div className="modal-box text-white max-h-[90dvh] overflow-y-auto">
         <form method="dialog">
           <button

@@ -180,7 +180,10 @@ function ModalEditAdd({
           ? isOpenModal.type
           : `edit${selectedCourse?.id}`
       }
-      className="modal backdrop-blur-sm">
+      className="modal backdrop-blur-sm"
+      onCancel={(e) => {
+        if (isSubmitting) e.preventDefault();
+      }}>
       <div className="modal-box text-white max-w-xl max-h-[90dvh] overflow-y-auto overflow-x-clip">
         <form method="dialog" onSubmit={reset}>
           <button

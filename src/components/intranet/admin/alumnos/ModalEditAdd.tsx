@@ -123,7 +123,12 @@ function ModalEditAdd({
   };
 
   return (
-    <dialog open={isOpenModal.active} className="modal backdrop-blur-sm">
+    <dialog
+      open={isOpenModal.active}
+      className="modal backdrop-blur-sm"
+      onCancel={(e) => {
+        if (isSubmitting) e.preventDefault();
+      }}>
       <div className="modal-box text-white max-w-lg max-h-[90dvh] overflow-y-auto">
         {" "}
         {/* Ligeramente más angosto para mejor legibilidad */}

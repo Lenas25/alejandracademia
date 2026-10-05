@@ -49,13 +49,12 @@ export function TableStudents() {
                 <div
                   key={enrollment.id}
                   role="row"
-                  className="flex flex-col gap-3 border border-grey rounded-lg p-3 bg-white md:table-row md:border-0 md:rounded-none md:p-0 md:bg-transparent md:hover:bg-lightpink/40">
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 rounded-lg border border-grey bg-white p-3 md:table-row md:border-0 md:rounded-none md:p-0 md:bg-transparent md:hover:bg-lightpink/40">
                   <div
                     role="cell"
-                    className="flex items-center justify-between gap-2 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle">
-                    <span className="text-xs text-gray-500 md:hidden">DNI</span>
+                    className="col-start-1 row-start-2 min-w-0 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle">
                     <span
-                      className="text-black truncate block max-w-[8rem] md:max-w-[9rem]"
+                      className="block break-all text-xs text-gray-500 md:text-base md:text-black md:break-normal"
                       title={String(user?.id ?? "")}
                     >
                       {user?.id}
@@ -63,17 +62,16 @@ export function TableStudents() {
                   </div>
                   <div
                     role="cell"
-                    className="flex items-center justify-between gap-2 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle">
-                    <span className="text-xs text-gray-500 md:hidden">Nombre</span>
-                    <span className="text-black break-words text-right md:text-left">
+                    className="col-start-1 row-start-1 min-w-0 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle">
+                    <span className="block break-words font-medium text-black md:font-normal">
                       {user?.name} {user?.lastName}
                     </span>
                   </div>
                   <div
                     role="cell"
-                    className="flex items-center justify-between gap-2 md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:align-middle">
-                    <span className="text-xs text-gray-500 md:hidden">Nota Final</span>
-                    <span className="font-semibold text-black tabular-nums">
+                    className="col-start-2 row-span-2 row-start-1 text-right md:table-cell md:border-b md:border-grey md:px-3 md:py-3 md:text-left md:align-middle">
+                    <span className="sr-only md:hidden">Nota final </span>
+                    <span className="text-lg font-semibold text-black tabular-nums md:text-base">
                       {Number.isFinite(grade) ? grade.toFixed(2) : "—"}
                     </span>
                   </div>

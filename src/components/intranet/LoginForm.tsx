@@ -22,17 +22,20 @@ export function LoginForm() {
     if (submitting) return;
     setSubmitting(true);
     setError(null);
+    let redirected = false;
     try {
-      await doLogin(data);
+      redirected = await doLogin(data);
     } finally {
-      setSubmitting(false);
+      // Keep the form locked while the router navigates away.
+      if (!redirected) setSubmitting(false);
     }
   };
-  const doLogin = async (data: Login) => {
+  // Resolves true only when a redirect was started.
+  const doLogin = async (data: Login): Promise<boolean> => {
     const logeado = await login(data.username, data.password);
     if (logeado.error) {
       setError(logeado.message);
-      return;
+      return false;
     }
     // getMe swallows its own errors and returns null (bad token, network
     // failure, missing user), so a null/role-less result must not reach the
@@ -41,10 +44,11 @@ export function LoginForm() {
     const user = token ? await getMe(token) : null;
     if (!user?.role) {
       setError("No se pudo cargar tu perfil. Inténtalo de nuevo.");
-      return;
+      return false;
     }
     const role = user.role === Roles.TUTOR ? Roles.ADMIN : user.role;
     router.push(`/intranet/${role}`);
+    return true;
   };
 
   return (

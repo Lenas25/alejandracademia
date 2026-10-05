@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
+import { useToast } from "@/components/intranet/ui/Toast";
 import {
   fetchSectionInstallments,
   payInstallment,
@@ -46,7 +47,7 @@ const FILTERS: { key: StudentFilter; label: string }[] = [
 // installment list once and groups it client-side by `enrollmentId` into a
 // per-student accordion — no wide table, so it stacks cleanly at 390px
 // (standing responsive rule). Inline Registrar/Editar/Desmarcar forms per
-// installment, refetch-on-mutation, alert-error/alert-success feedback with
+// installment, refetch-on-mutation, toast feedback with
 // the real backend reason via extractErrorMessage (thunk layer). Due dates
 // are a per-section-per-cuota setting (product change) — set once per
 // installment number in the "Vencimientos por cuota" panel above the
@@ -54,6 +55,7 @@ const FILTERS: { key: StudentFilter; label: string }[] = [
 // badge read-only.
 function PagosTab({ selectedSection }: PagosTabProps) {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const sectionInstallments = useAppSelector(
     (state) => state.payment.sectionInstallments,
   );
@@ -62,7 +64,6 @@ function PagosTab({ selectedSection }: PagosTabProps) {
     (state) => state.payment.errorMessage,
   );
 
-  const [message, setMessage] = useState<string>("");
   const [expandedEnrollmentId, setExpandedEnrollmentId] = useState<
     number | null
   >(null);
@@ -76,13 +77,6 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       dispatch(fetchSectionInstallments(selectedSection.id));
     }
   }, [dispatch, selectedSection?.id]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   const studentGroups = useMemo<StudentGroup[]>(() => {
     const groups = new Map<number, StudentGroup>();
@@ -199,8 +193,8 @@ function PagosTab({ selectedSection }: PagosTabProps) {
   }, []);
 
   const handleInvalidForm = useCallback(() => {
-    setMessage("Error: ingresa un monto mayor a 0 y una fecha válida");
-  }, []);
+    toast.error("Ingresa un monto mayor a 0 y una fecha válida");
+  }, [toast]);
 
   const handlePay = useCallback(
     async (installmentId: number, amount: number, paidDate: string) => {
@@ -208,35 +202,31 @@ function PagosTab({ selectedSection }: PagosTabProps) {
         payInstallment({ id: installmentId, data: { amount, paidDate } }),
       );
       if (payInstallment.fulfilled.match(resultAction)) {
-        setMessage(
+        toast.success(
           resultAction.payload.message || "Cuota registrada correctamente",
         );
         refetch();
         return true;
       }
-      setMessage(
-        `Error: ${resultAction.payload ?? "no se pudo registrar la cuota"}`,
-      );
+      toast.error(resultAction.payload ?? "No se pudo registrar la cuota");
       return false;
     },
-    [dispatch, refetch],
+    [dispatch, refetch, toast],
   );
 
   const handleUnmark = useCallback(
     async (installmentId: number) => {
       const resultAction = await dispatch(unmarkInstallment(installmentId));
       if (unmarkInstallment.fulfilled.match(resultAction)) {
-        setMessage(
+        toast.success(
           resultAction.payload.message || "Cuota revertida a pendiente",
         );
         refetch();
       } else {
-        setMessage(
-          `Error: ${resultAction.payload ?? "no se pudo revertir la cuota"}`,
-        );
+        toast.error(resultAction.payload ?? "No se pudo revertir la cuota");
       }
     },
-    [dispatch, refetch],
+    [dispatch, refetch, toast],
   );
 
   // Admin sets/clears a cuota's due date at the SECTION level (applies to
@@ -250,17 +240,17 @@ function PagosTab({ selectedSection }: PagosTabProps) {
         setSectionInstallmentDueDate({ sectionId, installmentNumber, dueDate }),
       );
       if (setSectionInstallmentDueDate.fulfilled.match(resultAction)) {
-        setMessage(
+        toast.success(
           resultAction.payload.message || "Fecha de vencimiento actualizada",
         );
         return true;
       }
-      setMessage(
-        `Error: ${resultAction.payload ?? "no se pudo actualizar la fecha de vencimiento"}`,
+      toast.error(
+        resultAction.payload ?? "No se pudo actualizar la fecha de vencimiento",
       );
       return false;
     },
-    [dispatch, sectionId],
+    [dispatch, sectionId, toast],
   );
 
   // Load-Failure State (verify-report WARNING) — checked before the
@@ -312,14 +302,6 @@ function PagosTab({ selectedSection }: PagosTabProps) {
     <div className="flex flex-col gap-5">
       <TabHeader title="Pagos" />
 
-      {message && (
-        <div
-          className={`alert ${message.includes("Error") ? "alert-error" : "alert-success"} text-white`}
-        >
-          {message}
-        </div>
-      )}
-
       {cuotaDueDates.length > 0 && (
         <DueDatesPanel
           items={cuotaDueDates}
@@ -334,7 +316,7 @@ function PagosTab({ selectedSection }: PagosTabProps) {
       )}
 
       {studentGroups.length > 0 && (
-        <div className="sticky top-0 z-10 -mx-1 flex flex-col gap-3 border-b border-grey bg-white/95 px-1 py-2 backdrop-blur">
+        <div className="sticky top-16 md:top-0 z-10 -mx-1 flex flex-col gap-3 border-b border-grey bg-white/95 px-1 py-2 backdrop-blur">
           <div className="relative">
             <label htmlFor="pagos-search" className="sr-only">
               Buscar estudiante

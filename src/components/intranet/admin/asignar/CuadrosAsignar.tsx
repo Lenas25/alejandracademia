@@ -7,6 +7,7 @@ import {
   updateEnrollment,
 } from "@/redux/service/enrollmentService";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
+import { useToast } from "@/components/intranet/ui/Toast";
 import { memo, useCallback, useEffect, useId, useMemo, useState, useSyncExternalStore } from "react";
 import { fetchUsers } from "@/redux/service/userService";
 import { Roles } from "@/types/roles";
@@ -195,6 +196,7 @@ function UserPanel({
 
 function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   const dispatch = useAppDispatch();
+  const toast = useToast();
 
   const allEnrollments = useAppSelector(
     (state) => state.enrollment.enrollments,
@@ -206,7 +208,6 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   // Ids of the last saved/loaded assignment, used to compute pending changes.
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
-  const [message, setMessage] = useState<string>("");
   const [activeTab, setActiveTab] = useState<PanelKind>("available");
   const [saving, setSaving] = useState(false);
   const isLg = useIsLg();
@@ -242,13 +243,6 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
     setSelectedUsers(enrolledUsersFromBackend);
     setSavedIds(new Set(enrolledUsersFromBackend.map((u) => String(u.id))));
   }, [enrolledUsersFromBackend]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   const selectedIds = useMemo(
     () => new Set(selectedUsers.map((u) => String(u.id))),
@@ -305,11 +299,12 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
         !("error" in resultAction.payload)
       ) {
         setSavedIds(new Set(selectedUsers.map((u) => String(u.id))));
-        setMessage(
+        toast.success(
           resultAction.payload.message || "Cambios guardados con éxito",
         );
       } else if (updateEnrollment.fulfilled.match(resultAction)) {
-        setMessage(`Error: ${resultAction.payload.message}`);
+        const payload = resultAction.payload as { message?: string; error?: string };
+        toast.error(payload.error || payload.message || "No se pudieron guardar los cambios");
       }
       } finally {
         setSaving(false);
@@ -375,17 +370,6 @@ function CuadrosAsignar({ selectedSection }: CuadrosAsignarProps) {
           <p className="text-sm text-gray-500 break-words">
             {selectedSection.name}
           </p>
-
-          {message && (
-            <div
-              role="status"
-              className={`alert ${
-                message.includes("Error") ? "alert-error" : "alert-success"
-              } text-white`}
-            >
-              {message}
-            </div>
-          )}
 
           {!isLg ? (
             <div className="flex flex-col gap-4">

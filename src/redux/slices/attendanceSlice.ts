@@ -48,6 +48,8 @@ const attendanceSlice = createSlice({
         state.days = action.payload.data;
       })
       .addCase(fetchAttendanceDays.rejected, (state, action) => {
+        // Aborted = superseded by a newer request; it owns the status now.
+        if (action.meta.aborted) return;
         state.status = 'failed';
         state.message = action.payload ?? "No se pudieron cargar los días de asistencia";
       });
@@ -71,6 +73,7 @@ const attendanceSlice = createSlice({
         state.dayDetail = action.payload.data;
       })
       .addCase(fetchAttendanceDay.rejected, (state, action) => {
+        if (action.meta.aborted) return;
         state.message = action.payload ?? "No se pudo cargar el día de asistencia";
       });
 

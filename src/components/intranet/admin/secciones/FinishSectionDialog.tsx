@@ -39,6 +39,9 @@ function FinishSectionDialog({
     <dialog
       id={dialogId}
       className="modal backdrop-blur-sm"
+      onCancel={(e) => {
+        if (loading) e.preventDefault();
+      }}
       onClick={(event) => event.stopPropagation()}
     >
       <div className="modal-box text-white max-h-[90dvh] overflow-y-auto">

@@ -108,11 +108,14 @@ const PagosStudentRow = memo(function PagosStudentRow({
         onClick={() => onToggle(group.enrollmentId)}
         className={`w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-3 min-h-11 bg-white hover:bg-lightpink/40 transition-colors text-left ${focusRing}`}
       >
-        <span className="font-medium text-black min-w-0 truncate">
+        <span
+          className="font-medium text-black min-w-0 break-words line-clamp-2"
+          title={group.studentName}
+        >
           {group.studentName}
         </span>
-        <span className="flex items-center gap-2 flex-wrap sm:justify-end shrink-0">
-          <span className="flex items-center gap-2">
+        <span className="flex min-w-0 items-center gap-x-2 gap-y-1 flex-wrap sm:justify-end sm:shrink-0">
+          <span className="flex items-center gap-2 flex-wrap">
             <span
               role="progressbar"
               aria-valuenow={paidCount}
@@ -150,7 +153,11 @@ const PagosStudentRow = memo(function PagosStudentRow({
               Pagado: {paidSum.toFixed(2)}
             </span>
           )}
-          {isExpanded ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+          {isExpanded ? (
+            <IconChevronUp size={18} aria-hidden="true" className="shrink-0" />
+          ) : (
+            <IconChevronDown size={18} aria-hidden="true" className="shrink-0" />
+          )}
         </span>
       </button>
 

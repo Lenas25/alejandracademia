@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { LoadingButton } from "@/components/intranet/ui/LoadingButton";
+import { useToast } from "@/components/intranet/ui/Toast";
 import { useAppDispatch, useAppSelector } from "@/redux/stores";
 import { fetchActivity } from "@/redux/service/activityService";
 import { fetchEnrollment } from "@/redux/service/enrollmentService";
@@ -32,6 +33,7 @@ type ViewMode = "input" | "view";
 // comfortable and fully responsive).
 function NotasTab({ selectedSection }: NotasTabProps) {
   const dispatch = useAppDispatch();
+  const toast = useToast();
   const activities = useAppSelector((state) => state.activity.activities);
   const activityStatus = useAppSelector((state) => state.activity.status);
   const enrollments = useAppSelector((state) => state.enrollment.enrollments);
@@ -45,7 +47,6 @@ function NotasTab({ selectedSection }: NotasTabProps) {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("input");
   const [activitySearch, setActivitySearch] = useState("");
-  const [message, setMessage] = useState<string>("");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   // Derived selection: the user's pick if it still exists, otherwise the
@@ -74,13 +75,6 @@ function NotasTab({ selectedSection }: NotasTabProps) {
       dispatch(fetchGrade(activeActivity.id));
     }
   }, [dispatch, activeActivity?.id, viewMode]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   // Constancia de Calificaciones PDF export (PLAN_FEATURES 4.4). Fetches
   // the full section grade report on demand (not kept in sync with the
@@ -111,15 +105,15 @@ function NotasTab({ selectedSection }: NotasTabProps) {
       if (fetchSectionReport.fulfilled.match(resultAction)) {
         const activeStudents = resultAction.payload.data.students.filter((student) => student.active);
         if (activeStudents.length === 0) {
-          setMessage("Error: No hay estudiantes para generar constancias");
+          toast.error("No hay estudiantes para generar constancias");
           return;
         }
         await generateConstanciaPdf(resultAction.payload.data, config);
       } else {
-        setMessage(`Error: ${resultAction.payload ?? "no se pudo generar la constancia"}`);
+        toast.error(resultAction.payload ?? "No se pudo generar la constancia");
       }
     } catch (error) {
-      setMessage(`Error: ${error instanceof Error ? error.message : "no se pudo generar la constancia"}`);
+      toast.error(error instanceof Error ? error.message : "No se pudo generar la constancia");
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -184,12 +178,6 @@ function NotasTab({ selectedSection }: NotasTabProps) {
           </LoadingButton>
         </div>
       </TabHeader>
-
-      {message && (
-        <div className={`alert ${message.includes("Error") ? "alert-error" : "alert-success"} text-white`}>
-          {message}
-        </div>
-      )}
 
       <div
         className={
