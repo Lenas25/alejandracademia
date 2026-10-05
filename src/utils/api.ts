@@ -1,6 +1,6 @@
 import axios from "axios";
 import rutas from "./endpoints";
-import { mapApiError } from "./extractErrorMessage";
+import { looksCustomSpanish, mapApiError } from "./extractErrorMessage";
 
 function decodeJwt(token: string): Record<string, unknown> | null {
   try {
@@ -76,7 +76,8 @@ export const login = async (username: string, password: string) => {
     // Keep the `{ error, message }` shape LoginForm reads; the message is
     // always Spanish (backend 401 text "Credenciales inválidas" passes through).
     const body = axios.isAxiosError(error) ? (error.response?.data as { message?: unknown } | undefined) : undefined;
-    const backendMsg = typeof body?.message === "string" ? body.message : undefined;
+    const backendMsg =
+      typeof body?.message === "string" && looksCustomSpanish(body.message) ? body.message : undefined;
     return {
       ...(typeof body === "object" && body ? body : {}),
       error: true,

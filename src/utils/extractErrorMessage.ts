@@ -16,31 +16,33 @@ import axios from "axios";
 //   409 {message: "Ya existe un registro"} -> "Ya existe un registro"
 //   network error / timeout -> "No se pudo conectar con el servidor. Revisa tu conexión."
 
-const FIELD_LABELS: Record<string, string> = {
-  name: "nombre",
-  lastName: "apellido",
-  username: "usuario",
-  email: "correo",
-  phone: "celular",
-  id: "DNI",
-  password: "contraseña",
-  percentage: "porcentaje",
-  initialDate: "fecha de inicio",
-  endDate: "fecha de fin",
-  installmentsCount: "número de cuotas",
-  duration: "duración",
-  amount: "monto",
-  paidDate: "fecha de pago",
-  dueDate: "fecha de vencimiento",
-  grade: "nota",
-  date: "fecha",
-  role: "rol",
-  description: "descripción",
-  id_course: "curso",
-  id_tutor: "tutor",
-  sectionId: "sección",
-  activities: "actividades",
-  status: "estado",
+type Label = { label: string; art: "El" | "La" };
+
+const FIELD_LABELS: Record<string, Label> = {
+  name: { label: "nombre", art: "El" },
+  lastName: { label: "apellido", art: "El" },
+  username: { label: "usuario", art: "El" },
+  email: { label: "correo", art: "El" },
+  phone: { label: "celular", art: "El" },
+  id: { label: "DNI", art: "El" },
+  password: { label: "contraseña", art: "La" },
+  percentage: { label: "porcentaje", art: "El" },
+  initialDate: { label: "fecha de inicio", art: "La" },
+  endDate: { label: "fecha de fin", art: "La" },
+  installmentsCount: { label: "número de cuotas", art: "El" },
+  duration: { label: "duración", art: "La" },
+  amount: { label: "monto", art: "El" },
+  paidDate: { label: "fecha de pago", art: "La" },
+  dueDate: { label: "fecha de vencimiento", art: "La" },
+  grade: { label: "nota", art: "La" },
+  date: { label: "fecha", art: "La" },
+  role: { label: "rol", art: "El" },
+  description: { label: "descripción", art: "La" },
+  id_course: { label: "curso", art: "El" },
+  id_tutor: { label: "tutor", art: "El" },
+  sectionId: { label: "sección", art: "La" },
+  activities: { label: "lista de actividades", art: "La" },
+  status: { label: "estado", art: "El" },
 };
 
 const ITEM_LABELS: Record<string, string> = {
@@ -62,6 +64,10 @@ const RULES: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/must be shorter than or equal to (\d+)/i, (m) => `debe tener como máximo ${m[1]} caracteres`],
   [/must be an email/i, () => "debe ser un correo válido"],
   [/must be an integer number/i, () => "debe ser un número entero"],
+  [/must contain at least (\d+) elements?/i, (m) => `debe incluir al menos ${m[1]} ${m[1] === "1" ? "elemento" : "elementos"}`],
+  [/must be an array/i, () => "debe ser una lista"],
+  [/must be a boolean/i, () => "debe ser verdadero o falso"],
+  [/must be one of the following values|must be a valid enum value/i, () => "tiene un valor no permitido"],
   [/must be a number/i, () => "debe ser un número"],
   [/must be a string/i, () => "debe ser un texto"],
   [/must be a valid iso 8601 date|YYYY-MM-DD/i, () => "debe ser una fecha válida (AAAA-MM-DD)"],
@@ -71,8 +77,8 @@ const ENGLISH_RE = /\b(the|must|should|cannot|failed|invalid|duplicate|violates|
 
 const GENERIC = "Revisa los datos ingresados.";
 
-function labelFor(segment: string): string {
-  return FIELD_LABELS[segment] ?? segment;
+function labelFor(segment: string): Label {
+  return FIELD_LABELS[segment] ?? { label: segment, art: "El" };
 }
 
 function capitalize(s: string): string {
@@ -94,10 +100,10 @@ function translateValidation(raw: string): string | null {
   const idxPos = segments.findIndex((s) => /^\d+$/.test(s));
   const field = labelFor(last);
   if (idxPos > 0) {
-    const item = ITEM_LABELS[segments[idxPos - 1]] ?? capitalize(labelFor(segments[idxPos - 1]));
-    return `${item} ${Number(segments[idxPos]) + 1}: el ${field} ${predicate}`;
+    const item = ITEM_LABELS[segments[idxPos - 1]] ?? capitalize(labelFor(segments[idxPos - 1]).label);
+    return `${item} ${Number(segments[idxPos]) + 1}: ${field.art.toLowerCase()} ${field.label} ${predicate}`;
   }
-  return `El ${field} ${predicate}`;
+  return `${field.art} ${field.label} ${predicate}`;
 }
 
 function mapValidation(list: string[]): string {
@@ -112,7 +118,7 @@ function mapValidation(list: string[]): string {
   return shown.join("\n");
 }
 
-function looksCustomSpanish(s: string): boolean {
+export function looksCustomSpanish(s: string): boolean {
   const t = s.trim();
   return t.length > 0 && t.length <= 200 && !ENGLISH_RE.test(t) && !/\bat \S+:\d+|ER_|SQLSTATE/.test(t);
 }
