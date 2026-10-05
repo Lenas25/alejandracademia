@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { extractErrorMessage } from "@/utils/extractErrorMessage";
+import { mapApiError } from "@/utils/extractErrorMessage";
 import { CreateSection, Section, UpdateSection } from "@/types/section";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -23,9 +23,9 @@ export const fetchSections = createAsyncThunk(
       return {message: response.data.message, data: response.data.data};
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(mapApiError(error));
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -42,9 +42,9 @@ export const fetchSectionById = createAsyncThunk(
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(mapApiError(error));
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -65,7 +65,7 @@ export const createSection = createAsyncThunk<
         dispatch(fetchSections());
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
-        return rejectWithValue(extractErrorMessage(error));
+        return rejectWithValue(mapApiError(error));
       }
     }
 );
@@ -94,7 +94,7 @@ export const updateSection = createAsyncThunk<
         dispatch(fetchSections());
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
-        return rejectWithValue(extractErrorMessage(error));
+        return rejectWithValue(mapApiError(error));
       }
     }
 );
@@ -112,9 +112,9 @@ export const deleteSection = createAsyncThunk(
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          return { message: "Error al eliminar la sección", error: error.response.data.error };
+          return { message: "Error al eliminar la sección", error: mapApiError(error) };
         }
-        return { message: 'An unknown error occurred' };
+        return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
       }
     }
 );

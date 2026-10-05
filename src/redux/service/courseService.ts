@@ -2,6 +2,7 @@ import rutas from "@/utils/endpoints";
 import { Course, CreateCourse } from "@/types/course";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { mapApiError } from "@/utils/extractErrorMessage";
 
 const coursesAPI = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}${rutas.courses}`,
@@ -22,9 +23,9 @@ export const fetchCourses = createAsyncThunk(
       return {message: response.data.message, data: response.data.data};
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(mapApiError(error));
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -42,9 +43,9 @@ export const createCourse = createAsyncThunk(
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          return { message: "Error al crear el curso", error: error.response.data.error };
+          return { message: "Error al crear el curso", error: mapApiError(error) };
         }
-        return { message: "An unexpected error occurred", error: "Unexpected error" };
+        return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
       }
     }
 );
@@ -64,9 +65,9 @@ export const updateCourse = createAsyncThunk(
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          return { message: "Error al editar el curso", error: error.response.data.error };
+          return { message: "Error al editar el curso", error: mapApiError(error) };
         }
-        return { message: "An unexpected error occurred", error: "Unexpected error" };
+        return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
       }
     }
 );
@@ -84,9 +85,9 @@ export const deleteCourse = createAsyncThunk(
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          return { message: "Error al eliminar el curso", error: error.response.data.error };
+          return { message: "Error al eliminar el curso", error: mapApiError(error) };
         }
-        return { message: 'An unknown error occurred' };
+        return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
       }
     }
 );

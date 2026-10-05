@@ -2,6 +2,7 @@ import rutas from "@/utils/endpoints";
 import { CreateEnrollment } from "@/types/enrollment";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { mapApiError } from "@/utils/extractErrorMessage";
 import { fetchCourses } from "./courseService";
 
 const enrollmentAPI = axios.create({
@@ -27,9 +28,9 @@ export const fetchEnrollment = createAsyncThunk(
       return [];
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(mapApiError(error));
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -50,9 +51,9 @@ export const fetchEnrollmentByUser = createAsyncThunk(
       return [];
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data.message);
+        return rejectWithValue(mapApiError(error));
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -71,9 +72,9 @@ export const updateEnrollment = createAsyncThunk(
         return { message: response.data.message, data: response.data.data };
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          return { message: "Error al editar el usuario", error: error.response.data.error };
+          return { message: "Error al editar el usuario", error: mapApiError(error) };
         }
-        return { message: "An unexpected error occurred", error: "Unexpected error" };
+        return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
       }
     }
 );
@@ -97,9 +98,9 @@ export const finishEnrollment = createAsyncThunk(
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return { message: "Error al finalizar la inscripción", error: error.response.data.error };
+        return { message: "Error al finalizar la inscripción", error: mapApiError(error) };
       }
-      return { message: "An unexpected error occurred", error: "Unexpected error" };
+      return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
     }
   }
 );
@@ -118,9 +119,9 @@ export const reopenEnrollment = createAsyncThunk(
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        return { message: "Error al reabrir la sección", error: error.response.data.error };
+        return { message: "Error al reabrir la sección", error: mapApiError(error) };
       }
-      return { message: "An unexpected error occurred", error: "Unexpected error" };
+      return { message: "Ocurrió un error inesperado", error: mapApiError(error) };
     }
   }
 );

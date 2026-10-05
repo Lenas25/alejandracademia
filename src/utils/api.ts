@@ -1,5 +1,6 @@
 import axios from "axios";
 import rutas from "./endpoints";
+import { mapApiError } from "./extractErrorMessage";
 
 function decodeJwt(token: string): Record<string, unknown> | null {
   try {
@@ -71,12 +72,16 @@ export const login = async (username: string, password: string) => {
     }
     return data;
   } catch (error) {
-    console.error("Error al refrescar el token:", error);
-    if (axios.isAxiosError(error) && error.response) {
-      return error.response.data;
-    }
-    console.error("Unexpected error:", error);
-    return null;
+    console.error("Login error:", error);
+    // Keep the `{ error, message }` shape LoginForm reads; the message is
+    // always Spanish (backend 401 text "Credenciales inválidas" passes through).
+    const body = axios.isAxiosError(error) ? (error.response?.data as { message?: unknown } | undefined) : undefined;
+    const backendMsg = typeof body?.message === "string" ? body.message : undefined;
+    return {
+      ...(typeof body === "object" && body ? body : {}),
+      error: true,
+      message: mapApiError(error, { unauthorized: backendMsg ?? "Usuario o contraseña incorrectos." }),
+    };
   }
 };
 

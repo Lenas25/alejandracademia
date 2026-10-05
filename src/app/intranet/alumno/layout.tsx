@@ -2,6 +2,7 @@
 
 import { Sidebar } from "@/components";
 import RequireAuth from "@/components/intranet/RequireAuth";
+import { ToastProvider } from "@/components/intranet/ui/Toast";
 import { usePathname } from "next/navigation";
 
 export default function Layout({
@@ -13,6 +14,7 @@ export default function Layout({
 
   return (
     <RequireAuth>
+      <ToastProvider>
       <div className="relative p-5 md:p-10 lg:min-h-screen overflow-x-clip">
         <Sidebar pathname={pathname} />
         {/* `pt-16` clears the fixed mobile hamburger button (Sidebar);
@@ -24,6 +26,7 @@ export default function Layout({
         {children}
         </div>
       </div>
+      </ToastProvider>
     </RequireAuth>
   );
 }

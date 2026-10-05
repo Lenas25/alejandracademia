@@ -1,5 +1,7 @@
 
 import { LoginForm } from "@/components";
+import { ToastProvider } from "@/components/intranet/ui/Toast";
+
 import Image from "next/image";
 import s from "./login.module.css";
 
@@ -32,7 +34,9 @@ export default function Login() {
             Ingresa tus datos completos para visualizar tus cursos y notas
           </p>
         </div>
-        <LoginForm />
+        <ToastProvider>
+          <LoginForm />
+        </ToastProvider>
       </div>
       <div className="fixed z-10 inset-0 overflow-hidden">
         <Image

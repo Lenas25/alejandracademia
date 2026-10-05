@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { extractErrorMessage } from "@/utils/extractErrorMessage";
+import { mapApiError } from "@/utils/extractErrorMessage";
 import {
   AttendanceDayDetail,
   AttendanceDaySummary,
@@ -48,7 +48,7 @@ export const createAttendanceDay = createAsyncThunk<
       if (axios.isAxiosError(error) && error.response?.status === 409) {
         return rejectWithValue("Ya existe un registro para esa fecha");
       }
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -69,7 +69,7 @@ export const fetchAttendanceDays = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -90,7 +90,7 @@ export const fetchAttendanceDay = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -116,7 +116,7 @@ export const updateAttendanceDay = createAsyncThunk<
       );
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -137,7 +137,7 @@ export const deleteAttendanceDay = createAsyncThunk<
       });
       return { message: response.data.message, dayId };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -160,7 +160,7 @@ export const fetchMyAttendance = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -181,7 +181,7 @@ export const fetchAttendanceMetrics = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );

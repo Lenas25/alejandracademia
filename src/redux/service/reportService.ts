@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { extractErrorMessage } from "@/utils/extractErrorMessage";
+import { mapApiError } from "@/utils/extractErrorMessage";
 import { SectionReport } from "@/types/report";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -34,7 +34,7 @@ export const fetchSectionReport = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );

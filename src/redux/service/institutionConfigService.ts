@@ -1,5 +1,5 @@
 import rutas from "@/utils/endpoints";
-import { extractErrorMessage } from "@/utils/extractErrorMessage";
+import { mapApiError } from "@/utils/extractErrorMessage";
 import { InstitutionConfig } from "@/types/institutionConfig";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -33,7 +33,7 @@ export const fetchInstitutionConfig = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
@@ -55,7 +55,7 @@ export const updateInstitutionConfig = createAsyncThunk<
       });
       return { message: response.data.message, data: response.data.data };
     } catch (error) {
-      return rejectWithValue(extractErrorMessage(error));
+      return rejectWithValue(mapApiError(error));
     }
   }
 );
